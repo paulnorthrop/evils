@@ -1,0 +1,29 @@
+Package: evils
+Title: Evaluate Extreme Value Likelihoods Safely
+Version: 1.0.0.9000
+Date: 2022-04-23
+Authors@R: person(c("Paul", "J."), "Northrop", email = "p.northrop@ucl.ac.uk",
+  role = c("aut", "cre", "cph"))
+Description: Provides functions to calculate the log-likelihood function, score 
+  function and observed information matrix for extreme value models even in 
+  cases where the shape parameter is very close to zero.  If the shape 
+  parameter is close enough to zero direct evaluation of some of the quantities 
+  involved can be unreliable. In these cases, these quantities are expressed as 
+  a series expansion, whose value is approximated using the 'sumR' package 
+  <https://cran.r-project.org/package=sumR>.   
+Imports: matrixStats,
+    stats,
+    sumR
+License: GPL (>= 2)
+Encoding: UTF-8
+Depends:
+    R (>= 3.3.0)
+RoxygenNote: 7.1.2
+Suggests: 
+    knitr,
+    rmarkdown,
+    testthat (>= 3.0.0)
+VignetteBuilder: knitr
+URL: https://paulnorthrop.github.io/evils/, https://github.com/paulnorthrop/evils
+BugReports: https://github.com/paulnorthrop/evils/issues
+Config/testthat/edition: 3

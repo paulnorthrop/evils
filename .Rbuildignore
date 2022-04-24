@@ -1,0 +1,9 @@
+^.*\.Rproj$
+^\.Rproj\.user$
+^README\.Rmd$
+^appveyor\.yml$
+^checks$
+^_pkgdown\.yml$
+^cran-comments\.md$
+^doc$
+^Meta$
