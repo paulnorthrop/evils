@@ -6,6 +6,10 @@
 \alias{log1pxOverxApprox}
 \alias{log1pxOverxLogFunction}
 \alias{log1pxOverxDirect}
+\alias{gpLogLikDirect}
+\alias{rGenPareto}
+\alias{qGenPareto}
+\alias{BoxCoxVec}
 \title{Internal evils functions}
 \usage{
 log1pxOverx(x, tol = 1e-04, epsilon = 1e-15)
@@ -15,6 +19,14 @@ log1pxOverxApprox(x, epsilon = 1e-15)
 log1pxOverxLogFunction(n, x)
 
 log1pxOverxDirect(x)
+
+gpLogLikDirect(pars, excesses, individual = FALSE)
+
+rGenPareto(n, loc = 0, scale = 1, shape = 0)
+
+qGenPareto(p, loc = 0, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE)
+
+BoxCoxVec(x, lambda = 1, lambda_tol = 1e-06)
 }
 \description{
 Internal evils functions
