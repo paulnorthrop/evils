@@ -22,7 +22,16 @@
 #' @param epsilon The desired error margin for an approximation used when
 #'    \eqn{|\xi| <} \code{tol}.  This is passed to
 #'    \code{\link[sumR]{infiniteSum}} as the argument \code{epsilon}.
-#' @details If \eqn{|\xi| \geq}{|\xi| >=} \code{tol} all quantities are
+#' @details
+#'   \strong{Log-likelihood} (\code{gpLogLikelihood}). The problematic part of
+#'   the log-likelihood is \ifelse{html}{log(1+z) / z}{\eqn{\log(1+z)/z}},
+#'   where \ifelse{html}{z=\eqn{\xi}\eqn{y} / \eqn{\sigma}\out{<sub>u</sub>}}{
+#'   \eqn{z} = \eqn{\xi}\eqn{y} / \eqn{\sigma_u}} and where \eqn{y} is a
+#'   threshold excess.
+#'
+#'   The term of the
+#'   log-likelihood in which the observations appear.
+#' If \eqn{|\xi| \geq}{|\xi| >=} \code{tol} all quantities are
 #'   calculated in a direct manner, using R functions that correspond to the
 #'   expressions involved.
 #'
@@ -121,8 +130,8 @@ gpLogLikelihood <- function(pars, excesses, individual = FALSE, tol = 1e-4,
   if (any(t0 <= 0)) {
     stop("The likelihood is 0 for this combination of data and parameters")
   }
-  # Adjust epsilon based on the multiplier of the log term
-  mult <- (x + 1) * (y / s)
+  # Adjust epsilon based on the multiplier of logterm below
+  mult <- (x + 1) * y / s
   logterm <- mapply(log1pxOverx, x = zy, epsilon = epsilon / mult,
                     MoreArgs = list(tol = tol))
   gploglik <- -log(s) - mult * logterm

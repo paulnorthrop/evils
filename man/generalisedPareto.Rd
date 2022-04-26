@@ -67,6 +67,14 @@ a random sample from a generalised Pareto (GP) distribution, including cases
 where the shape parameter is very close to zero.
 }
 \details{
+\strong{Log-likelihood} (\code{gpLogLikelihood}). The problematic part of
+  the log-likelihood is \ifelse{html}{log(1+z) / z}{\eqn{\log(1+z)/z}},
+  where \ifelse{html}{z=\eqn{\xi}\eqn{y} / \eqn{\sigma}\out{<sub>u</sub>}}{
+  \eqn{z} = \eqn{\xi}\eqn{y} / \eqn{\sigma_u}} and where \eqn{y} is a
+  threshold excess.
+
+  The term of the
+  log-likelihood in which the observations appear.
 If \eqn{|\xi| \geq}{|\xi| >=} \code{tol} all quantities are
   calculated in a direct manner, using R functions that correspond to the
   expressions involved.
