@@ -16,9 +16,13 @@ log1pxOverx <- function(x, tol = 1e-4, epsilon = 1e-15) {
     stop("tol must be no larger than 1 and should be close to 0")
   }
   if (abs(x) < tol) {
+    print("approx")
     val <- log1pxOverxApprox(x, epsilon = epsilon)
+    print(val)
   } else {
+    print("direct")
     val <- log1pxOverxDirect(x)
+    print(val)
   }
   return(val)
 }
@@ -40,8 +44,9 @@ log1pxOverxApprox <- function(x, epsilon = 1e-15) {
   } else {
     logL <- NULL
   }
-  temp <- sumR::infiniteSum(log1pxOverxLogFunction, parameters = x, logL = logL,
-                           alternate = alternate, epsilon = epsilon)
+  temp <- sumR::infiniteSum(log1pxOverxLogFunction, parameters = x,
+                            logL = logL, alternate = alternate,
+                            epsilon = epsilon)
   return(exp(temp$sum))
 }
 
@@ -103,6 +108,43 @@ gpLogLikDirect <- function(pars, excesses, individual = FALSE) {
     gploglik <- sum(gploglik)
   }
   return(gploglik)
+}
+
+# ---------------------------------- GEV ------------------------------------ #
+
+#' @keywords internal
+#' @rdname evils-internal
+#' @export
+gevLogLikDirect <- function(pars, maxima, individual = FALSE) {
+  y <- maxima
+  # mu
+  m <- pars[1]
+  # sigma
+  s <- pars[2]
+  if (s <= 0) {
+    stop("The GEV scale parameter must be positive")
+  }
+  # xi
+  x <- pars[3]
+  #
+  z <- x / s
+  w <- y - m
+  v <- w / s
+  zw <- z * w
+  t0 <- 1 + zw
+  if (any(t0 <= 0)) {
+    stop("The likelihood is 0 for this combination of data and parameters")
+  }
+  if (x == 0) {
+    gevloglik <- -log(s) - v - exp(-v)
+  } else {
+    log1pzwx <- log1p(zw) / x
+    gevloglik <- -log(s) - (x + 1) * log1pzwx - exp(-log1pzwx)
+  }
+  if (!individual) {
+    gevloglik <- sum(gevloglik)
+  }
+  return(gevloglik)
 }
 
 # ==================== Simulation from a GP distribution ==================== #
@@ -176,4 +218,47 @@ BoxCoxVec <- function(x, lambda = 1, lambda_tol = 1e-6) {
                                  ifelse(x == 0, ifelse(lambda > 0, -1 / lambda, -Inf),
                                         log(x) * (1 + log(x) * lambda / 2)))))
   return(retval)
+}
+
+# ==================== Simulation from a GEV distribution =================== #
+
+#' @keywords internal
+#' @rdname evils-internal
+#' @export
+rGenExtremeValue <- function (n, loc = 0, scale = 1, shape = 0) {
+  max_len <- ifelse(length(n) > 1, length(n), n)
+  loc <- rep_len(loc, max_len)
+  scale <- rep_len(scale, max_len)
+  shape <- rep_len(shape, max_len)
+  return(qGenExtremeValue(stats::runif(n), loc = loc, scale = scale,
+                          shape = shape))
+}
+
+#' @keywords internal
+#' @rdname evils-internal
+qGenExtremeValue <- function (p, loc = 0, scale = 1, shape = 0,
+                              lower.tail = TRUE, log.p = FALSE) {
+  if (any(scale <= 0)) {
+    stop("invalid scale: scale must be positive.")
+  }
+  if (length(p) == 0) {
+    return(numeric(0))
+  }
+  if (!log.p & any(p < 0 | p > 1, na.rm = TRUE)) {
+    stop("invalid p: p must be in [0,1].")
+  }
+  max_len <- max(length(p), length(loc), length(scale), length(shape))
+  p <- rep_len(p, max_len)
+  loc <- rep_len(loc, max_len)
+  scale <- rep_len(scale, max_len)
+  shape <- rep_len(shape, max_len)
+  if (log.p) {
+    p <- exp(p)
+  }
+  if (!lower.tail) {
+    p <- 1 - p
+  }
+  xp <- -log(p)
+  mult <- BoxCoxVec(x = xp, lambda = -shape)
+  return(loc - scale * mult)
 }
