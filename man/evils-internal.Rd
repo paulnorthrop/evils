@@ -7,9 +7,12 @@
 \alias{log1pxOverxLogFunction}
 \alias{log1pxOverxDirect}
 \alias{gpLogLikDirect}
+\alias{gevLogLikDirect}
 \alias{rGenPareto}
 \alias{qGenPareto}
 \alias{BoxCoxVec}
+\alias{rGenExtremeValue}
+\alias{qGenExtremeValue}
 \title{Internal evils functions}
 \usage{
 log1pxOverx(x, tol = 1e-04, epsilon = 1e-15)
@@ -22,11 +25,24 @@ log1pxOverxDirect(x)
 
 gpLogLikDirect(pars, excesses, individual = FALSE)
 
+gevLogLikDirect(pars, maxima, individual = FALSE)
+
 rGenPareto(n, loc = 0, scale = 1, shape = 0)
 
 qGenPareto(p, loc = 0, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE)
 
 BoxCoxVec(x, lambda = 1, lambda_tol = 1e-06)
+
+rGenExtremeValue(n, loc = 0, scale = 1, shape = 0)
+
+qGenExtremeValue(
+  p,
+  loc = 0,
+  scale = 1,
+  shape = 0,
+  lower.tail = TRUE,
+  log.p = FALSE
+)
 }
 \description{
 Internal evils functions
