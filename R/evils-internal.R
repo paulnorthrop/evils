@@ -16,13 +16,9 @@ log1pxOverx <- function(x, tol = 1e-4, epsilon = 1e-15) {
     stop("tol must be no larger than 1 and should be close to 0")
   }
   if (abs(x) < tol) {
-    print("approx")
     val <- log1pxOverxApprox(x, epsilon = epsilon)
-    print(val)
   } else {
-    print("direct")
     val <- log1pxOverxDirect(x)
-    print(val)
   }
   return(val)
 }
