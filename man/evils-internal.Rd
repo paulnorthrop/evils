@@ -6,8 +6,8 @@
 \alias{log1pxOverxApprox}
 \alias{log1pxOverxLogFunction}
 \alias{log1pxOverxDirect}
-\alias{gpLogLikDirect}
-\alias{gevLogLikDirect}
+\alias{gpLoglikDirect}
+\alias{gevLoglikDirect}
 \alias{rGenPareto}
 \alias{qGenPareto}
 \alias{BoxCoxVec}
@@ -23,9 +23,9 @@ log1pxOverxLogFunction(n, x)
 
 log1pxOverxDirect(x)
 
-gpLogLikDirect(pars, excesses, individual = FALSE)
+gpLoglikDirect(pars, excesses, individual = FALSE)
 
-gevLogLikDirect(pars, maxima, individual = FALSE)
+gevLoglikDirect(pars, maxima, individual = FALSE)
 
 rGenPareto(n, loc = 0, scale = 1, shape = 0)
 

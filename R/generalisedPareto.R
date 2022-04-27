@@ -11,7 +11,7 @@
 #' @param excesses A numeric vector containing positive observations.
 #'   Typically, these are threshold excesses, that is, amounts by which
 #'   exceedances of a threshold exceed that threshold.
-#' @param individual A logical scalar. Relevant to \code{gpLogLikelihood} and
+#' @param individual A logical scalar. Relevant to \code{gpLoglik} and
 #'   \code{gpScore}. If \code{individual = FALSE} then only the sum of
 #'   contributions from all observations in \code{excesses} is calculated.  If
 #'   \code{indidivdual = TRUE} then individual contributions from each
@@ -23,7 +23,7 @@
 #'    \eqn{|\xi| <} \code{tol}.  This is passed to
 #'    \code{\link[sumR]{infiniteSum}} as the argument \code{epsilon}.
 #' @details
-#'   \strong{Log-likelihood} (\code{gpLogLikelihood}). The problematic part of
+#'   \strong{Log-likelihood} (\code{gpLoglik}). The problematic part of
 #'   the log-likelihood is \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}},
 #'   where \ifelse{html}{z=\eqn{\xi}\eqn{y} / \eqn{\sigma}\out{<sub>u</sub>}}{
 #'   \eqn{z} = \eqn{\xi}\eqn{y} / \eqn{\sigma_u}} and where \eqn{y} is a
@@ -39,7 +39,7 @@
 #'   the log-likelihood. If \code{z = 0} then
 #'   \ifelse{html}{log(1+z)/z = 1}{\eqn{\log(1+z)/z} = 1}.
 #' @return
-#'   \strong{Log-likelihood} (\code{gpLogLikelihood}). If
+#'   \strong{Log-likelihood} (\code{gpLoglik}). If
 #'   \code{individual = FALSE} the value of the log-likelihood. If
 #'   \code{individual = TRUE} a vector of length \code{length{excesses}}
 #'   containing the contributions to the log-likelihood from each of the
@@ -71,17 +71,17 @@ NULL
 #' ### Log-likelihood
 #'
 #' # Approximation using sumR::infinitesum()
-#' gpLogLikelihood(pars = c(1, 1e-8), excesses = y)
-#' gpLogLikelihood(pars = c(1, -1e-8), excesses = y)
-#' gpLogLikelihood(pars = c(1, 0), excesses = y)
+#' gpLoglik(pars = c(1, 1e-8), excesses = y)
+#' gpLoglik(pars = c(1, -1e-8), excesses = y)
+#' gpLoglik(pars = c(1, 0), excesses = y)
 #'
 #' # Direct calculation, involving (1 + 1 / xi) * log1p(xi * y / sigmau)
 #' # Mostly fine, but breaks down eventually
-#' gpLogLikDirect(pars = c(1, 1e-309), excesses = y)
-#' gpLogLikDirect(pars = c(1, -1e-309), excesses = y)
+#' gpLoglikDirect(pars = c(1, 1e-309), excesses = y)
+#' gpLogikDirect(pars = c(1, -1e-309), excesses = y)
 #' @rdname gp
 #' @export
-gpLogLikelihood <- function(pars, excesses, individual = FALSE, tol = 1e-4,
+gpLoglik <- function(pars, excesses, individual = FALSE, tol = 1e-4,
                             epsilon = 1e-15) {
   if (tol <= 0) {
     stop("'tol' must be positive")

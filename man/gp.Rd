@@ -2,16 +2,10 @@
 % Please edit documentation in R/generalisedPareto.R
 \name{gp}
 \alias{gp}
-\alias{gpLogLikelihood}
+\alias{gpLoglik}
 \title{Generalised Pareto functions}
 \usage{
-gpLogLikelihood(
-  pars,
-  excesses,
-  individual = FALSE,
-  tol = 1e-04,
-  epsilon = 1e-15
-)
+gpLoglik(pars, excesses, individual = FALSE, tol = 1e-04, epsilon = 1e-15)
 }
 \arguments{
 \item{pars}{A numeric parameter vector of length 2 containing the respective
@@ -23,7 +17,7 @@ and shape \eqn{\xi} parameters.}
 Typically, these are threshold excesses, that is, amounts by which
 exceedances of a threshold exceed that threshold.}
 
-\item{individual}{A logical scalar. Relevant to \code{gpLogLikelihood} and
+\item{individual}{A logical scalar. Relevant to \code{gpLoglik} and
 \code{gpScore}. If \code{individual = FALSE} then only the sum of
 contributions from all observations in \code{excesses} is calculated.  If
 \code{indidivdual = TRUE} then individual contributions from each
@@ -38,7 +32,7 @@ the quantity.  See \strong{Details}.}
 \code{\link[sumR]{infiniteSum}} as the argument \code{epsilon}.}
 }
 \value{
-\strong{Log-likelihood} (\code{gpLogLikelihood}). If
+\strong{Log-likelihood} (\code{gpLoglik}). If
   \code{individual = FALSE} the value of the log-likelihood. If
   \code{individual = TRUE} a vector of length \code{length{excesses}}
   containing the contributions to the log-likelihood from each of the
@@ -62,7 +56,7 @@ a random sample from a generalised Pareto (GP) distribution, including cases
 where the shape parameter is very close to zero.
 }
 \details{
-\strong{Log-likelihood} (\code{gpLogLikelihood}). The problematic part of
+\strong{Log-likelihood} (\code{gpLoglik}). The problematic part of
   the log-likelihood is \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}},
   where \ifelse{html}{z=\eqn{\xi}\eqn{y} / \eqn{\sigma}\out{<sub>u</sub>}}{
   \eqn{z} = \eqn{\xi}\eqn{y} / \eqn{\sigma_u}} and where \eqn{y} is a
@@ -87,12 +81,12 @@ y <- rGenPareto(100, 0, 1, 0)
 ### Log-likelihood
 
 # Approximation using sumR::infinitesum()
-gpLogLikelihood(pars = c(1, 1e-8), excesses = y)
-gpLogLikelihood(pars = c(1, -1e-8), excesses = y)
-gpLogLikelihood(pars = c(1, 0), excesses = y)
+gpLoglik(pars = c(1, 1e-8), excesses = y)
+gpLoglik(pars = c(1, -1e-8), excesses = y)
+gpLoglik(pars = c(1, 0), excesses = y)
 
 # Direct calculation, involving (1 + 1 / xi) * log1p(xi * y / sigmau)
 # Mostly fine, but breaks down eventually
-gpLogLikDirect(pars = c(1, 1e-309), excesses = y)
-gpLogLikDirect(pars = c(1, -1e-309), excesses = y)
+gpLoglikDirect(pars = c(1, 1e-309), excesses = y)
+gpLogikDirect(pars = c(1, -1e-309), excesses = y)
 }

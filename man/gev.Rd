@@ -2,16 +2,10 @@
 % Please edit documentation in R/generalisedExtremeValue.R
 \name{gev}
 \alias{gev}
-\alias{gevLogLikelihood}
+\alias{gevLoglik}
 \title{Generalised Extreme Value functions}
 \usage{
-gevLogLikelihood(
-  pars,
-  maxima,
-  individual = FALSE,
-  tol = 1e-04,
-  epsilon = 1e-15
-)
+gevLoglik(pars, maxima, individual = FALSE, tol = 1e-04, epsilon = 1e-15)
 }
 \arguments{
 \item{pars}{A numeric parameter vector of length 2 containing the respective
@@ -22,7 +16,7 @@ values of the GEV location \eqn{\mu}, scale \eqn{\sigma} and shape
 block maxima, that is, the largest observation in a block of contiguous
 observations.}
 
-\item{individual}{A logical scalar. Relevant to \code{gevLogLikelihood} and
+\item{individual}{A logical scalar. Relevant to \code{gevLoglik} and
 \code{gevScore}. If \code{individual = FALSE} then only the sum of
 contributions from all observations in \code{maxima} is calculated.  If
 \code{indidivdual = TRUE} then individual contributions from each
@@ -37,7 +31,7 @@ the quantity.  See \strong{Details}.}
 \code{\link[sumR]{infiniteSum}} as the argument \code{epsilon}.}
 }
 \value{
-\strong{Log-likelihood} (\code{gevLogLikelihood}). If
+\strong{Log-likelihood} (\code{gevLoglik}). If
   \code{individual = FALSE} the value of the log-likelihood. If
   \code{individual = TRUE} a vector of length \code{length{maxima}}
   containing the contributions to the log-likelihood from each of the
@@ -61,7 +55,7 @@ a random sample from a generalised extreme value (GEV) distribution,
 including cases where the shape parameter is very close to zero.
 }
 \details{
-\strong{Log-likelihood} (\code{gevLogLikelihood}). The two problematic
+\strong{Log-likelihood} (\code{gevLoglik}). The two problematic
   terms of the log-likelihood both involve
   \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}},
   where \ifelse{html}{z=\eqn{\xi}\eqn{(y - \mu)} / \eqn{\sigma}}{
@@ -88,12 +82,12 @@ y <- rGenExtremeValue(100, 0, 1, 0)
 ### Log-likelihood
 
 # Approximation using sumR::infinitesum()
-gevLogLikelihood(pars = c(0, 1, 1e-8), maxima = y, individual = TRUE)
-gevLogLikelihood(pars = c(0, 1, -1e-8), maxima = y, individual = TRUE)
-gevLogLikelihood(pars = c(0, 1, 0), maxima = y, individual = TRUE)
+gevLoglik(pars = c(0, 1, 1e-8), maxima = y, individual = TRUE)
+gevLoglik(pars = c(0, 1, -1e-8), maxima = y, individual = TRUE)
+gevLoglik(pars = c(0, 1, 0), maxima = y, individual = TRUE)
 
 # Direct calculation, involving (1 + 1 / xi) * log1p(xi * y / sigmau)
 # Mostly fine, but breaks down eventually
-gevLogLikDirect(pars = c(0, 1, 1e-309), maxima = y)
-gevLogLikDirect(pars = c(0, 1, -1e-309), maxima = y)
+gevLoglikDirect(pars = c(0, 1, 1e-309), maxima = y)
+gevLoglikDirect(pars = c(0, 1, -1e-309), maxima = y)
 }

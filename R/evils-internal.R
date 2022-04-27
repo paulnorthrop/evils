@@ -79,7 +79,7 @@ log1pxOverxDirect <- function(x) {
 #' @keywords internal
 #' @rdname evils-internal
 #' @export
-gpLogLikDirect <- function(pars, excesses, individual = FALSE) {
+gpLoglikDirect <- function(pars, excesses, individual = FALSE) {
   y <- excesses
   # sigma_u
   s <- pars[1]
@@ -111,7 +111,7 @@ gpLogLikDirect <- function(pars, excesses, individual = FALSE) {
 #' @keywords internal
 #' @rdname evils-internal
 #' @export
-gevLogLikDirect <- function(pars, maxima, individual = FALSE) {
+gevLoglikDirect <- function(pars, maxima, individual = FALSE) {
   y <- maxima
   # mu
   m <- pars[1]
