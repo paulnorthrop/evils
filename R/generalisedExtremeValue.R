@@ -21,35 +21,24 @@
 #' @param epsilon The desired error margin for an approximation used when
 #'    \eqn{|\xi| <} \code{tol}.  This is passed to
 #'    \code{\link[sumR]{infiniteSum}} as the argument \code{epsilon}.
-#' @details If \eqn{|\xi| \geq}{|\xi| >=} \code{tol} all quantities are
-#'   calculated in a direct manner, using R functions that correspond to the
-#'   expressions involved.
-#'
-#'   If \eqn{\xi = 0} then all quantities are calculated directly, using
-#'   expressions based on limiting values as \eqn{\xi} tends to zero where
-#'   necessary.
-#'
-#'   If \eqn{|\xi| <} \code{tol}, for those quantities for which this direct
-#'   calculation is unreliable when \eqn{|\xi|} is very close to zero,
-#'   \code{\link[sumR]{infiniteSum}} is used to approximate their values.  The
-#'   theoretical error margin is controlled using the argument \code{epsilon}.
-#'   The algorithms are described in the \code{\link[sumR]{infiniteSum}}
-#'   documentation.  If \eqn{\xi < 0} then the Sum-to-threshold method is used.
-#'   If \eqn{\xi > 0} then the Batches method is used.
-#'
-#'   The following notes for which quantities we need to take this approach
-#'   when \eqn{\xi} is very small.
-#'
-#'   \strong{Log-likelihood} (\code{gevLogLikelihood}). The term of the
-#'   log-likelihood in which the observations appear.
-#'
-#'   \strong{Score} (\code{gevSCore}).  The second element of the score, that
-#'   is, the contributions to the score from the derivatives of the the
-#'   log-likelihood with respect to the shape parameter \eqn{\xi}.
-#'
-#'   \strong{Observed information} (\code{gevInfo}).  The \code{[2, 2]} element
-#'   of the matrix, corresponding to the negated second derivative of the
-#'   log-likelihood with respect to \eqn{\xi}.
+#' @details
+#'   \strong{Log-likelihood} (\code{gevLogLikelihood}). The two problematic
+#'   terms of the log-likelihood both involve
+#'   \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}},
+#'   where \ifelse{html}{z=\eqn{\xi}\eqn{(y - \mu)} / \eqn{\sigma}}{
+#'   \eqn{z} = \eqn{\xi}\eqn{(y - \mu)} / \eqn{\sigma}} and where \eqn{y} is a
+#'   sample maximum. In one part this is exponentiated, in the other it is not.
+#'   If \eqn{|z| \geq}{|z| >=} \code{tol} then this is calculated directly,
+#'   using \code{log1p(z)/z}.
+#'   If \eqn{|z| <} \code{tol} then we use \code{\link[sumR]{infiniteSum}}
+#'   to approximate the series \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}}
+#'   \ifelse{html}{= 1 - z/2 + z\out{<sup>2</sup>}/3 - z\out{<sup>3</sup>}/4 +
+#'   ...}{\eqn{= 1 - z/2 + z^2/3 - z^3/4 + ...}}. Before the call to
+#'   \code{\link[sumR]{infiniteSum}} the input value of \code{epsilon}
+#'   is adjusted to achieve the desired error margin for the approximation of
+#'   the log-likelihood, taking into account the error of approximation from
+#'   both terms. If \code{z = 0} then
+#'   \ifelse{html}{log(1+z)/z = 1}{\eqn{\log(1+z)/z} = 1}.
 #' @return
 #'   \strong{Log-likelihood} (\code{gevLogLikelihood}). If
 #'   \code{individual = FALSE} the value of the log-likelihood. If
@@ -68,12 +57,7 @@
 #' \strong{Observed information} (\code{gevInfo}).  The observed information: a
 #'   \eqn{2 \times 2}{2 x 2} matrix with row and column names
 #'   \code{c(sigma[u], xi)}.
-#'
-#' If \code{\link[sumR]{infiniteSum}}, and the the maximum number of iterations
-#' \code{maxIter} (= \code{1e+5}) in \code{\link[sumR]{infiniteSum}} has been
-#' reached, then the returned object has a attribute that indicates where this
-#' sign of a lack of convergence has occurred.
-#' @name generalisedExtremeValue
+#' @name gev
 NULL
 ## NULL
 
@@ -96,7 +80,7 @@ NULL
 #' # Mostly fine, but breaks down eventually
 #' gevLogLikDirect(pars = c(0, 1, 1e-309), maxima = y)
 #' gevLogLikDirect(pars = c(0, 1, -1e-309), maxima = y)
-#' @rdname generalisedExtremeValue
+#' @rdname gev
 #' @export
 gevLogLikelihood <- function(pars, maxima, individual = FALSE, tol = 1e-4,
                              epsilon = 1e-15) {
