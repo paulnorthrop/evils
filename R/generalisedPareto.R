@@ -16,12 +16,10 @@
 #'   contributions from all observations in \code{excesses} is calculated.  If
 #'   \code{indidivdual = TRUE} then individual contributions from each
 #'   observation in \code{excesses} are calculated.
-#' @param tol A positive numeric scalar.  If \eqn{|\xi| <} \code{tol} then some
-#'   of the required quantities are approximated using a series expansion for
-#'   the quantity.  See \strong{Details}.
-#' @param epsilon The desired error margin for an approximation used when
-#'    \eqn{|\xi| <} \code{tol}.  This is passed to
-#'    \code{\link[sumR]{infiniteSum}} as the argument \code{epsilon}.
+#' @param tol A positive numeric scalar.  Tolerance used to determine whether
+#'   to perform a calculation directly or via a series expansion approximation.
+#'   See \strong{Details}.
+#' @param epsilon The desired error margin when an approximation is used.
 #' @details
 #'   \strong{Log-likelihood} (\code{gpLoglik}). The problematic part of
 #'   the log-likelihood is \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}},
@@ -33,7 +31,7 @@
 #'   If \eqn{|z| <} \code{tol} then we use \code{\link[sumR]{infiniteSum}}
 #'   to approximate the series \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}}
 #'   \ifelse{html}{= 1 - z/2 + z\out{<sup>2</sup>}/3 - z\out{<sup>3</sup>}/4 +
-#'   ...}{\eqn{= 1 - z/2 + z^2/3 - z^3/4 + ...}}. Before the call to
+#'   ...}{\eqn{= 1 - z/2 + z^2/3 - z^3/4 + \cdots}}. Before the call to
 #'   \code{\link[sumR]{infiniteSum}} the input value of \code{epsilon}
 #'   is adjusted to achieve the desired error margin for the approximation of
 #'   the log-likelihood. If \code{z = 0} then
