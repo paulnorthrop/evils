@@ -14,7 +14,7 @@
 #' @param individual A logical scalar. Relevant to \code{gpLoglik} and
 #'   \code{gpScore}. If \code{individual = FALSE} then only the sum of
 #'   contributions from all observations in \code{excesses} is calculated.  If
-#'   \code{indidivdual = TRUE} then individual contributions from each
+#'   \code{individual = TRUE} then individual contributions from each
 #'   observation in \code{excesses} are calculated.
 #' @param tol A positive numeric scalar.  Tolerance used to determine whether
 #'   to perform a calculation directly or via a series expansion approximation.
@@ -80,7 +80,7 @@ NULL
 #' @rdname gp
 #' @export
 gpLoglik <- function(pars, excesses, individual = FALSE, tol = 1e-4,
-                            epsilon = 1e-15) {
+                     epsilon = 1e-15) {
   if (tol <= 0) {
     stop("'tol' must be positive")
   }

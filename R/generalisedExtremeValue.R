@@ -4,7 +4,7 @@
 #' a random sample from a generalised extreme value (GEV) distribution,
 #' including cases where the shape parameter is very close to zero.
 #'
-#' @param pars A numeric parameter vector of length 2 containing the respective
+#' @param pars A numeric parameter vector of length 3 containing the respective
 #'   values of the GEV location \eqn{\mu}, scale \eqn{\sigma} and shape
 #'   \eqn{\xi} parameters.
 #' @param maxima A numeric vector of observations. Typically, these are
@@ -13,7 +13,7 @@
 #' @param individual A logical scalar. Relevant to \code{gevLoglik} and
 #'   \code{gevScore}. If \code{individual = FALSE} then only the sum of
 #'   contributions from all observations in \code{maxima} is calculated.  If
-#'   \code{indidivdual = TRUE} then individual contributions from each
+#'   \code{individual = TRUE} then individual contributions from each
 #'   observation in \code{maxima} are calculated.
 #' @param tol A positive numeric scalar.  Tolerance used to determine whether
 #'   to perform a calculation directly or via a series expansion approximation.
@@ -81,7 +81,7 @@ NULL
 #' @rdname gev
 #' @export
 gevLoglik <- function(pars, maxima, individual = FALSE, tol = 1e-4,
-                             epsilon = 1e-15) {
+                      epsilon = 1e-15) {
   if (tol <= 0) {
     stop("'tol' must be positive")
   }

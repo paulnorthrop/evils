@@ -20,7 +20,7 @@ exceedances of a threshold exceed that threshold.}
 \item{individual}{A logical scalar. Relevant to \code{gpLoglik} and
 \code{gpScore}. If \code{individual = FALSE} then only the sum of
 contributions from all observations in \code{excesses} is calculated.  If
-\code{indidivdual = TRUE} then individual contributions from each
+\code{individual = TRUE} then individual contributions from each
 observation in \code{excesses} are calculated.}
 
 \item{tol}{A positive numeric scalar.  Tolerance used to determine whether

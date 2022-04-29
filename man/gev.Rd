@@ -8,7 +8,7 @@
 gevLoglik(pars, maxima, individual = FALSE, tol = 1e-04, epsilon = 1e-15)
 }
 \arguments{
-\item{pars}{A numeric parameter vector of length 2 containing the respective
+\item{pars}{A numeric parameter vector of length 3 containing the respective
 values of the GEV location \eqn{\mu}, scale \eqn{\sigma} and shape
 \eqn{\xi} parameters.}
 
@@ -19,7 +19,7 @@ observations.}
 \item{individual}{A logical scalar. Relevant to \code{gevLoglik} and
 \code{gevScore}. If \code{individual = FALSE} then only the sum of
 contributions from all observations in \code{maxima} is calculated.  If
-\code{indidivdual = TRUE} then individual contributions from each
+\code{individual = TRUE} then individual contributions from each
 observation in \code{maxima} are calculated.}
 
 \item{tol}{A positive numeric scalar.  Tolerance used to determine whether
