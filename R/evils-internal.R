@@ -143,6 +143,51 @@ gevLoglikDirect <- function(pars, maxima, individual = FALSE) {
   return(gevloglik)
 }
 
+# ---------------------------------- NHPP ----------------------------------- #
+
+#' @keywords internal
+#' @rdname evils-internal
+#' @export
+nhppLoglikDirect <- function(pars, data, u, b = 1, nb = 365,
+                             individual = FALSE) {
+  y <- data
+  # mu
+  m <- pars[1]
+  # sigma
+  s <- pars[2]
+  if (s <= 0) {
+    stop("The GEV scale parameter must be positive")
+  }
+  # xi
+  x <- pars[3]
+  #
+  zw <- x * (y - m) / s
+  t0 <- 1 + zw
+  zu <- x * (u - m) / s
+  u0 <- 1 + zu
+  if (any(t0 <= 0) || any(u0 <= 0)) {
+    stop("The likelihood is 0 for this combination of data and parameters")
+  }
+  # Which observations is y exceed the threshold u?
+  isExc <- y > u
+  if (x == 0) {
+    print("HERE")
+    nhpploglik <- -isExc * (log(b) + log(s) + (y - m) / s) -
+      exp(-(u - m) / s) / nb
+  } else {
+    log1pzwx <- log1p(zw) / x
+    log1pzux <- log1p(zu) / x
+    print(log1pzux)
+    print(log1pzwx)
+    nhpploglik <- -isExc * (log(b) + log(s) + (x + 1) * log1pzwx) -
+      exp(-log1pzux) / nb
+  }
+  if (!individual) {
+    nhpploglik <- sum(nhpploglik)
+  }
+  return(nhpploglik)
+}
+
 # ==================== Simulation from a GP distribution ==================== #
 
 #' @keywords internal
