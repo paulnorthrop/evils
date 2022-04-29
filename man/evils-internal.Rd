@@ -8,6 +8,7 @@
 \alias{log1pxOverxDirect}
 \alias{gpLoglikDirect}
 \alias{gevLoglikDirect}
+\alias{nhppLoglikDirect}
 \alias{rGenPareto}
 \alias{qGenPareto}
 \alias{BoxCoxVec}
@@ -26,6 +27,8 @@ log1pxOverxDirect(x)
 gpLoglikDirect(pars, excesses, individual = FALSE)
 
 gevLoglikDirect(pars, maxima, individual = FALSE)
+
+nhppLoglikDirect(pars, data, u, b = 1, nb = 365, individual = FALSE)
 
 rGenPareto(n, loc = 0, scale = 1, shape = 0)
 

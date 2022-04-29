@@ -74,7 +74,7 @@ NULL
 #' gevLoglik(pars = c(0, 1, -1e-8), maxima = y, individual = TRUE)
 #' gevLoglik(pars = c(0, 1, 0), maxima = y, individual = TRUE)
 #'
-#' # Direct calculation, involving (1 + 1 / xi) * log1p(xi * y / sigmau)
+#' # Direct calculation, involving (1 / xi) * log1p(xi * (y - mu) / sigma)
 #' # Mostly fine, but breaks down eventually
 #' gevLoglikDirect(pars = c(0, 1, 1e-309), maxima = y)
 #' gevLoglikDirect(pars = c(0, 1, -1e-309), maxima = y)

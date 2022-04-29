@@ -83,8 +83,8 @@ gpLoglik(pars = c(1, 1e-8), excesses = y)
 gpLoglik(pars = c(1, -1e-8), excesses = y)
 gpLoglik(pars = c(1, 0), excesses = y)
 
-# Direct calculation, involving (1 + 1 / xi) * log1p(xi * y / sigmau)
+# Direct calculation, involving (1 / xi) * log1p(xi * y / sigmau)
 # Mostly fine, but breaks down eventually
-gpLoglikDirect(pars = c(1, 1e-309), excesses = y)
-gpLogikDirect(pars = c(1, -1e-309), excesses = y)
+gpLoglikDirect(pars = c(1, 1e-323), excesses = y)
+gpLoglikDirect(pars = c(1, -1e-323), excesses = y)
 }
