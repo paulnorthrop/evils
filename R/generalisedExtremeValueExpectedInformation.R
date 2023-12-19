@@ -58,5 +58,6 @@ gevExpectedInformation <- function(pars, eps = 1e-3) {
   val[2, 1] <- val[1, 2] <- ims(sigma, xi, eps)
   val[3, 1] <- val[1, 3] <- imx(sigma, xi, eps)
   val[3, 2] <- val[2, 3] <- isx(sigma, xi, eps)
+  dimnames(val) <- list(c("mu", "sigma", "xi"), c("mu", "sigma", "xi"))
   return(val)
 }
