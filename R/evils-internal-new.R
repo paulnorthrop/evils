@@ -128,7 +128,7 @@ isx0Constant <- isx0Fn()
 #' @keywords internal
 #' @rdname evils-internal
 isxFn <- function(xi) {
-  val <- -(1 - EulersConstant + (1 - gamma(1 + 2 * xi)) / xi - qxi(xi) +
+  val <- -(1 - EulersConstant + (1 - gamma(2 + xi)) / xi - qxi(xi) +
              pxi(xi) / xi) / (xi ^ 2)
   return(val)
 }
