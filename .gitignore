@@ -6,3 +6,4 @@ inst/doc
 checks
 /doc/
 /Meta/
+tests/testthat/test-GEVexpectedInformationLocally.R
