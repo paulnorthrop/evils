@@ -45,3 +45,18 @@ isx <- function(sigma, xi, eps = 1e-3) {
   val <- expInfoComponent(fun = isxFn, fun0 = isx0Constant, xi = xi, eps = eps)
   return(val / sigma)
 }
+
+#' @rdname gevExpectedInformation
+#' @export
+gevExpectedInformation <- function(pars, eps = 1e-3) {
+  sigma <- pars[2]
+  xi <- pars[3]
+  val <- matrix(NA, 3, 3)
+  val[1, 1] <- imm(sigma, xi)
+  val[2, 2] <- iss(sigma, xi, eps)
+  val[3, 3] <- ixx(sigma, xi, eps)
+  val[2, 1] <- val[1, 2] <- ims(sigma, xi, eps)
+  val[3, 1] <- val[1, 3] <- imx(sigma, xi, eps)
+  val[3, 2] <- val[2, 3] <- isx(sigma, xi, eps)
+  return(val)
+}
