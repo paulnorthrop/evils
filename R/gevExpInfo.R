@@ -1,54 +1,60 @@
-#' Generalised Extreme Value Expected Information
+#' GEV Distribution Expected Information
 #'
-#' Describe
-#' @name gevExpectedInformation
+#' Calculates the expected information matrix for the GEV distribution.
+#'
+#' @param sigma,xi Numeric vectors.
+#'
+#' * `gevExpInfo`: `sigma` and `xi` must have length 1.
+#' * `imm`, `iss`, `ixx`, `ims`, `imx`, `isx`:
+#' @param eps tolerance
+#' @name gevExpInfo
 NULL
 ## NULL
 
-#' @rdname gevExpectedInformation
+#' @rdname gevExpInfo
 #' @export
 imm <- function(sigma, xi) {
   return(pxi(xi) / sigma ^ 2)
 }
 
-#' @rdname gevExpectedInformation
+#' @rdname gevExpInfo
 #' @export
 iss <- function(sigma, xi, eps = 3e-3) {
-  val <- GEVExpInfoComp(fun = issFn, fun0 = iss0Constant, xi = xi, eps = eps)
+  val <- gevExpInfoComp(fun = issFn, fun0 = iss0Constant, xi = xi, eps = eps)
   return(val / sigma ^ 2)
 }
 
-#' @rdname gevExpectedInformation
+#' @rdname gevExpInfo
 #' @export
 ixx <- function(sigma, xi, eps = 3e-3) {
-  val <- GEVExpInfoComp(fun = ixxFn, fun0 = ixx0Constant, xi = xi, eps = eps)
+  val <- gevExpInfoComp(fun = ixxFn, fun0 = ixx0Constant, xi = xi, eps = eps)
   return(val)
 }
 
-#' @rdname gevExpectedInformation
+#' @rdname gevExpInfo
 #' @export
 ims <- function(sigma, xi, eps = 3e-3) {
-  val <- GEVExpInfoComp(fun = imsFn, fun0 = ims0Constant, xi = xi, eps = eps)
+  val <- gevExpInfoComp(fun = imsFn, fun0 = ims0Constant, xi = xi, eps = eps)
   return(val / sigma ^ 2)
 }
 
-#' @rdname gevExpectedInformation
+#' @rdname gevExpInfo
 #' @export
 imx <- function(sigma, xi, eps = 3e-3) {
-  val <- GEVExpInfoComp(fun = imxFn, fun0 = imx0Constant, xi = xi, eps = eps)
+  val <- gevExpInfoComp(fun = imxFn, fun0 = imx0Constant, xi = xi, eps = eps)
   return(val / sigma)
 }
 
-#' @rdname gevExpectedInformation
+#' @rdname gevExpInfo
 #' @export
 isx <- function(sigma, xi, eps = 3e-3) {
-  val <- GEVExpInfoComp(fun = isxFn, fun0 = isx0Constant, xi = xi, eps = eps)
+  val <- gevExpInfoComp(fun = isxFn, fun0 = isx0Constant, xi = xi, eps = eps)
   return(val / sigma)
 }
 
-#' @rdname gevExpectedInformation
+#' @rdname gevExpInfo
 #' @export
-gevExpectedInformation <- function(sigma, xi, eps = 3e-3) {
+gevExpInfo <- function(sigma, xi, eps = 3e-3) {
   if (xi <= -0.5) {
     stop("The GEV expected information is undefined for xi <= -0.5")
   }
