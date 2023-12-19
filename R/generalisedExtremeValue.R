@@ -10,51 +10,51 @@
 #' @param maxima A numeric vector of observations. Typically, these are
 #'   block maxima, that is, the largest observation in a block of contiguous
 #'   observations.
-#' @param individual A logical scalar. Relevant to \code{gevLoglik} and
-#'   \code{gevScore}. If \code{individual = FALSE} then only the sum of
-#'   contributions from all observations in \code{maxima} is calculated.  If
-#'   \code{individual = TRUE} then individual contributions from each
-#'   observation in \code{maxima} are calculated.
+#' @param individual A logical scalar. Relevant to `gevLoglik` and
+#'   `gevScore`. If `individual = FALSE` then only the sum of
+#'   contributions from all observations in `maxima` is calculated.  If
+#'   `individual = TRUE` then individual contributions from each
+#'   observation in `maxima` are calculated.
 #' @param tol A positive numeric scalar.  Tolerance used to determine whether
 #'   to perform a calculation directly or via a series expansion approximation.
-#'   See \strong{Details}.
+#'   See **Details**.
 #' @param epsilon The desired error margin when an approximation is used.
 #' @details
-#'   \strong{Log-likelihood} (\code{gevLoglik}). The two problematic
+#'   **Log-likelihood** (`gevLoglik`). The two problematic
 #'   terms of the log-likelihood both involve
 #'   \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}},
 #'   where \ifelse{html}{z=\eqn{\xi}\eqn{(y - \mu)} / \eqn{\sigma}}{
 #'   \eqn{z} = \eqn{\xi}\eqn{(y - \mu)} / \eqn{\sigma}} and where \eqn{y} is a
 #'   sample maximum. In one part this is exponentiated, in the other it is not.
-#'   If \eqn{|z| \geq}{|z| >=} \code{tol} then this is calculated directly,
-#'   using \code{log1p(z)/z}.
-#'   If \eqn{|z| <} \code{tol} then we use \code{\link[sumR]{infiniteSum}}
+#'   If \eqn{|z| \geq}{|z| >=} `tol` then this is calculated directly,
+#'   using `log1p(z)/z`.
+#'   If \eqn{|z| <} `tol` then we use [sumR::infiniteSum()]
 #'   to approximate the series \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}}
 #'   \ifelse{html}{= 1 - z/2 + z\out{<sup>2</sup>}/3 - z\out{<sup>3</sup>}/4 +
 #'   ...}{\eqn{= 1 - z/2 + z^2/3 - z^3/4 + \cdots}}. Before the call to
-#'   \code{\link[sumR]{infiniteSum}} the input value of \code{epsilon}
+#'   [sumR::infiniteSum()] the input value of `epsilon`
 #'   is adjusted to achieve the desired error margin for the approximation of
 #'   the log-likelihood, taking into account the error of approximation from
-#'   both terms. If \code{z = 0} then
+#'   both terms. If `z = 0` then
 #'   \ifelse{html}{log(1+z)/z = 1}{\eqn{\log(1+z)/z} = 1}.
 #' @return
-#'   \strong{Log-likelihood} (\code{gevLoglik}). If
-#'   \code{individual = FALSE} the value of the log-likelihood. If
-#'   \code{individual = TRUE} a vector of length \code{length{maxima}}
+#'   **Log-likelihood** (`gevLoglik`). If
+#'   `individual = FALSE` the value of the log-likelihood. If
+#'   `individual = TRUE` a vector of length \code{length{maxima}}
 #'   containing the contributions to the log-likelihood from each of the
 #'   observations.
 #'
-#' \strong{Score} (\code{gevScore}).  If \code{individual = FALSE} the value
+#' **Score** (`gevScore`).  If `individual = FALSE` the value
 #'  of the score, a vector of length 2 containing the derivative of the
 #'  log-likelihood evaluated at the input parameter values.
-#'  If \code{individual = TRUE} the values of the contributions to the score
+#'  If `individual = TRUE` the values of the contributions to the score
 #'  from each of the observations, a
-#'   \code{length(maxima)}\eqn{ \times 2}{ x 2} matrix.
-#'   The columns are named \code{sigma[u]} and \code{xi}.
+#'   `length(maxima)`\eqn{ \times 2}{ x 2} matrix.
+#'   The columns are named `sigma[u]` and `xi`.
 #'
-#' \strong{Observed information} (\code{gevInfo}).  The observed information: a
+#' **Observed information** (`gevInfo`).  The observed information: a
 #'   \eqn{2 \times 2}{2 x 2} matrix with row and column names
-#'   \code{c(sigma[u], xi)}.
+#'   `c(sigma[u], xi)`.
 #' @name gev
 NULL
 ## NULL

@@ -11,7 +11,9 @@ Description: Provides functions to calculate the log-likelihood function, score
   involved can be unreliable. In these cases, these quantities are expressed as 
   a series expansion, whose value is approximated using the 'sumR' package 
   <https://cran.r-project.org/package=sumR>.   
-Imports: matrixStats,
+Imports: 
+    DPQ,
+    matrixStats,
     stats,
     sumR
 License: GPL (>= 2)
@@ -27,3 +29,4 @@ VignetteBuilder: knitr
 URL: https://paulnorthrop.github.io/evils/, https://github.com/paulnorthrop/evils
 BugReports: https://github.com/paulnorthrop/evils/issues
 Config/testthat/edition: 3
+Roxygen: list(markdown = TRUE)
