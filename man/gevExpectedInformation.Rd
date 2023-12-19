@@ -22,7 +22,7 @@ imx(sigma, xi, eps = 0.003)
 
 isx(sigma, xi, eps = 0.003)
 
-gevExpectedInformation(pars, eps = 0.003)
+gevExpectedInformation(sigma, xi, eps = 0.003)
 }
 \description{
 Describe
