@@ -13,42 +13,42 @@ imm <- function(sigma, xi) {
 
 #' @rdname gevExpectedInformation
 #' @export
-iss <- function(sigma, xi, eps = 1e-3) {
-  val <- expInfoComponent(fun = issFn, fun0 = iss0Constant, xi = xi, eps = eps)
+iss <- function(sigma, xi, eps = 3e-3) {
+  val <- GEVExpInfoComponent(fun = issFn, fun0 = iss0Constant, xi = xi, eps = eps)
   return(val / sigma ^ 2)
 }
 
 #' @rdname gevExpectedInformation
 #' @export
-ixx <- function(sigma, xi, eps = 1e-3) {
-  val <- expInfoComponent(fun = ixxFn, fun0 = ixx0Constant, xi = xi, eps = eps)
+ixx <- function(sigma, xi, eps = 3e-3) {
+  val <- GEVExpInfoComponent(fun = ixxFn, fun0 = ixx0Constant, xi = xi, eps = eps)
   return(val)
 }
 
 #' @rdname gevExpectedInformation
 #' @export
-ims <- function(sigma, xi, eps = 1e-3) {
-  val <- expInfoComponent(fun = imsFn, fun0 = ims0Constant, xi = xi, eps = eps)
+ims <- function(sigma, xi, eps = 3e-3) {
+  val <- GEVExpInfoComponent(fun = imsFn, fun0 = ims0Constant, xi = xi, eps = eps)
   return(val / sigma ^ 2)
 }
 
 #' @rdname gevExpectedInformation
 #' @export
-imx <- function(sigma, xi, eps = 1e-3) {
-  val <- expInfoComponent(fun = imxFn, fun0 = imx0Constant, xi = xi, eps = eps)
+imx <- function(sigma, xi, eps = 3e-3) {
+  val <- GEVExpInfoComponent(fun = imxFn, fun0 = imx0Constant, xi = xi, eps = eps)
   return(val / sigma)
 }
 
 #' @rdname gevExpectedInformation
 #' @export
-isx <- function(sigma, xi, eps = 1e-3) {
-  val <- expInfoComponent(fun = isxFn, fun0 = isx0Constant, xi = xi, eps = eps)
+isx <- function(sigma, xi, eps = 3e-3) {
+  val <- GEVExpInfoComponent(fun = isxFn, fun0 = isx0Constant, xi = xi, eps = eps)
   return(val / sigma)
 }
 
 #' @rdname gevExpectedInformation
 #' @export
-gevExpectedInformation <- function(pars, eps = 1e-3) {
+gevExpectedInformation <- function(pars, eps = 3e-3) {
   sigma <- pars[2]
   xi <- pars[3]
   val <- matrix(NA, 3, 3)

@@ -12,15 +12,17 @@
 \usage{
 imm(sigma, xi)
 
-iss(sigma, xi, eps = 0.001)
+iss(sigma, xi, eps = 0.003)
 
-ixx(sigma, xi, eps = 0.001)
+ixx(sigma, xi, eps = 0.003)
 
-ims(sigma, xi, eps = 0.001)
+ims(sigma, xi, eps = 0.003)
 
-imx(sigma, xi, eps = 0.001)
+imx(sigma, xi, eps = 0.003)
 
-isx(sigma, xi, eps = 0.001)
+isx(sigma, xi, eps = 0.003)
+
+gevExpectedInformation(pars, eps = 0.003)
 }
 \description{
 Describe
