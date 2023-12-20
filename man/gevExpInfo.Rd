@@ -75,6 +75,10 @@ interpolation of the values from the direct calculation for \eqn{\xi = }
 # Expected information matrices for ...
 # ... sigma = 2 and xi = -0.4
 gevExpInfo(2, -0.4)
+# ... sigma = 3 and xi = 0.001
+gevExpInfo(3, 0.001)
+# ... sigma = 3 and xi = 0
+gevExpInfo(3, 0)
 # ... sigma = 1 and xi = 0.1
 gevExpInfo(1, 0.1)
 
