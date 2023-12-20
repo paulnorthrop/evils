@@ -14,7 +14,7 @@ evilsMat1 <- cbind(c(imm(1, 0), ims0Constant, imx0Constant),
 # Based on calling the functions with xi = 0
 evilsMat2 <- cbind(c(imm(1, 0), ims(1, 0), imx(1, 0)),
                    c(ims(1, 0), iss(1, 0), isx(1, 0)),
-                   c(imx(1, 0), isx(1, 0), ixx(1, 0)))
+                   c(imx(1, 0), isx(1, 0), ixx(0)))
 
 test_that("Expected Information constants agree with mev::gev.infomat()", {
   testthat::expect_equal(mevMat, evilsMat1)
