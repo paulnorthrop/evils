@@ -6,31 +6,50 @@
 \usage{
 log1pdx(
   x,
-  tol_logcf = 1e-14,
-  eps2 = 0.01,
   minL1 = -0.79149064,
-  trace.lcf = FALSE,
-  logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.
+  eps2 = 0.01,
+  tol_logcf = 1e-14,
+  trace.lcf = FALSE
 )
 }
 \arguments{
-\item{epsilon}{The desired error margin when an approximation is used.}
+\item{x}{A numeric vector with values \eqn{x > -1}.}
+
+\item{minL1}{A negative cutoff \eqn{m_l}. For \eqn{x \in (m_l, 1)} the
+computations are based on the series expansion 4.1.29 on page 68 of
+Abramowitz and Stegun (1972).}
+
+\item{eps2}{A non-negative cutoff \eqn{\epsilon_2}. For
+\eqn{|x| > \epsilon_2}, \code{\link[DPQ:logcf]{logcf}} is used when computing
+\eqn{\log(1+x)/x} using the series expansion. Otherwise, that is,
+\eqn{|x| \leq \epsilon_2}, only a few terms of the expansion are used.}
+
+\item{tol_logcf}{A non-negative number indicating the tolerance (maximal
+relative error) for the \code{\link[DPQ:logcf]{logcf}} function.}
+
+\item{trace.lcf}{A logical scalar. Used in
+\code{\link[DPQ:logcf]{logcf}}\verb{(.., trace = trace.lcf)}.}
 }
 \value{
-Returns
+A numeric vector (with the same attributes as \code{x}).
 }
 \description{
 Compute \eqn{\log(1+x)/x} accurately also for small \eqn{x}, that is,
-\eqn{|x| \ll 1}{|x| << 1}
+\eqn{|x| \ll 1}{|x| << 1}.
 }
 \details{
-Add details
+For \eqn{x} in \eqn{(m_l, 1)} the computations are based on the
+series expansion
+\deqn{\log(1+x) = 2 \left( t+\frac{t^3}{3}+\frac{t^5}{5}+\cdots \right),}
+where \eqn{t = x/(2+x)} which is formula 4.1.29 on page 68 of Abramowitz and Stegun (1972).
+
+Different computations are used in 3 different ranges of \eqn{x}, that is,
 \itemize{
-\item Do not need to treat \eqn{\xi = 0} as a special case.
-\item The expansion should not be in \eqn{\xi} but in something else.
-\item I can generalise the existing R function for a series approximation with
-an arbitrary numebr of terms.
-\item Create a C++ version.
+\item \eqn{x < m_l} or \eqn{x > 1}: \verb{log1pdx(x):= } \code{\link{log1p}} \verb{/ x}.
+\item \eqn{|x| \leq \epsilon_2}:
+\eqn{\frac{2}{2+x}((((\frac19y+\frac17)y+\frac15)y+\frac13)y+1)}
+\item \eqn{x \in (m_l, 1)} and \eqn{|x| > \epsilon_2}:
+\eqn{\frac{2}{2+x}} \code{\link{logcf}}\eqn{(y, 1, 2)}, where \eqn{y = t^2}.
 }
 }
 \examples{
@@ -53,4 +72,14 @@ y2 <- log1p(x) / x
 y3 <- log(1 + x) / x # y3 is known to behave poorly near 0
 y <- cbind(y1, y2)
 matplot(x, y, type = "l", lty = 1, col = c("black", "red", "green"))
+}
+\references{
+Abramowitz, M. and Stegun, I. A. (1972) Handbook of Mathematical
+Functions. New York: Dover.
+\url{https://en.wikipedia.org/wiki/Abramowitz_and_Stegun}
+provides links to the full text, which is in public domain.
+}
+\author{
+Paul Northrop created this function by modifying the code in
+\code{\link[DPQ:log1pmx]{log1pmx}}.
 }
