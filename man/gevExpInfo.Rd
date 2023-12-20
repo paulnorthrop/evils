@@ -67,8 +67,9 @@ respect to \eqn{\xi}. Note that \eqn{i_{\xi\xi}} depends only on
 The expectation in \code{imm} can be calculated in a directly way for all
 \eqn{\xi > -0.5}. For the other components, direct calculation of the
 expectation is unstable when \eqn{\xi} is close to 0. Instead, we use
-a quadratic approximation over \verb{(-eps, eps)}, that recovers the values
-from the direct calculation for \eqn{\xi = } \code{-eps}, 0 and \code{eps}.
+a quadratic approximation over \verb{(-eps, eps)}, from a Lagrangian
+interpolation of the values from the direct calculation for \eqn{\xi = }
+\code{-eps}, 0 and \code{eps}.
 }
 \examples{
 # Expected information matrices for ...

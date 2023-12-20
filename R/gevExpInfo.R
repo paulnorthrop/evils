@@ -32,8 +32,9 @@
 #'   The expectation in `imm` can be calculated in a directly way for all
 #'   \eqn{\xi > -0.5}. For the other components, direct calculation of the
 #'   expectation is unstable when \eqn{\xi} is close to 0. Instead, we use
-#'   a quadratic approximation over `(-eps, eps)`, that recovers the values
-#'   from the direct calculation for \eqn{\xi = } `-eps`, 0 and `eps`.
+#'   a quadratic approximation over `(-eps, eps)`, from a Lagrangian
+#'   interpolation of the values from the direct calculation for \eqn{\xi = }
+#'   `-eps`, 0 and `eps`.
 #' @returns `gevExpInfo` returns a 3 by 3 numeric matrix with row and column
 #'   names `mu, sigma, xi`. The other functions return a numeric vector of
 #'   length equal to the maximum of the lengths of the arguments, excluding
