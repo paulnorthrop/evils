@@ -22,6 +22,8 @@
 \alias{isx0Fn}
 \alias{isx0Constant}
 \alias{isxFn}
+\alias{gevExpInfoComp}
+\alias{lagrangianInterpolation}
 \alias{log1pxOverxVec}
 \alias{log1pxOverxVec2}
 \alias{log1pxOverx}
@@ -90,6 +92,10 @@ isx0Fn()
 isx0Constant
 
 isxFn(xi)
+
+gevExpInfoComp(fun, fun0, xi, eps = 0.003)
+
+lagrangianInterpolation(x0, y0)
 
 log1pxOverxVec(x, tol = 1e-04, epsilon = 1e-15)
 

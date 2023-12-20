@@ -136,7 +136,7 @@ isxFn <- function(xi) {
 # -- Calculate a component using a quadratic approximation if xi is near 0 -- #
 
 #' @keywords internal
-#' @export
+#' @rdname evils-internal
 gevExpInfoComp <- function(fun, fun0, xi, eps = 3e-3) {
   eps <- abs(eps)
   val <- xi
@@ -144,14 +144,24 @@ gevExpInfoComp <- function(fun, fun0, xi, eps = 3e-3) {
     aa <- fun0
     yp <- fun(eps)
     ym <- fun(-eps)
-    xiOverEps <- xi[xiNearZero] / eps
-    cc <- (yp + ym - 2 * aa) * xiOverEps ^ 2 / 2
-    bb <- (yp - aa) * xiOverEps
-    val[xiNearZero] <- aa + bb * xi[xiNearZero] + cc * xi[xiNearZero] ^ 2
+    ff <- lagrangianInterpolation(c(-eps, 0, eps), c(ym, aa, yp))
+    val[xiNearZero] <- ff(xi[xiNearZero])
   }
   val[!xiNearZero] <- fun(xi[!xiNearZero])
   return(val)
 }
+
+#' @keywords internal
+#' @rdname evils-internal
+lagrangianInterpolation <- function(x0, y0) {
+  f <- function(x) {
+    sum(y0 * sapply(seq_along(x0), \(j) {
+      prod(x - x0[-j])/prod(x0[j] - x0[-j])
+    }))
+  }
+  return(Vectorize(f, "x"))
+}
+
 # ================= Functions to calculate log(1 + x) / x =================== #
 
 #' @keywords internal
