@@ -138,6 +138,7 @@ isxFn <- function(xi) {
 #' @keywords internal
 #' @export
 gevExpInfoComp <- function(fun, fun0, xi, eps = 3e-3) {
+  eps <- abs(eps)
   val <- xi
   if (any(xiNearZero <- abs(xi) < eps)) {
     aa <- fun0
