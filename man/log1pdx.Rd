@@ -9,7 +9,8 @@ log1pdx(
   minL1 = -0.79149064,
   eps2 = 0.01,
   tol_logcf = 1e-14,
-  trace.lcf = FALSE
+  trace.lcf = FALSE,
+  logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.
 )
 }
 \arguments{
@@ -29,6 +30,10 @@ relative error) for the \code{\link[DPQ:logcf]{logcf}} function.}
 
 \item{trace.lcf}{A logical scalar. Used in
 \code{\link[DPQ:logcf]{logcf}}\verb{(.., trace = trace.lcf)}.}
+
+\item{logCF}{The function to be used as \code{\link[DPQ:logcf]{logcf}}. The default
+chooses the pure \R \code{logcfR()} when \code{x} is not numeric, and chooses the
+C-based \code{logcf()} when \code{is.numeric(x)} is \code{TRUE}.}
 }
 \value{
 A numeric vector (with the same attributes as \code{x}).
