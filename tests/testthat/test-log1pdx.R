@@ -1,7 +1,17 @@
 # Check that log1pdx() gives the correct values
 
 # Values of x to check:
-# -1.1, 1, minL1 = -0.79149064, -eps = 0.01, 0, eps = 0.01, 1, 1.1
+xvals <- c(-1.1, -1, "minL1" = -0.79149064, "-eps" = 0.01,
+           "zero" = 0, "eps" = 0.01, 1, 1.1)
+# Check all values in one call
+res1 <- suppressWarnings(log1pdx(xvals))
+res2 <- suppressWarnings(log1p(xvals) / xvals)
+res2[names(xvals) == "zero"] <- 1
+test_that("log1pdx() and log1p(x) / x agree for various x", {
+  testthat::expect_equal(res1, res2)
+})
+
+# Check values individually
 
 # x < -1: expect warning and NAN result
 x <- -1.1
