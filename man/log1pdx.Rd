@@ -21,8 +21,8 @@ computations are based on the series expansion 4.1.29 on page 68 of
 Abramowitz and Stegun (1972).}
 
 \item{eps2}{A non-negative cutoff \eqn{\epsilon_2}. For
-\eqn{|x| > \epsilon_2}, \code{\link[DPQ:logcf]{logcf}} is used when computing
-\eqn{\log(1+x)/x} using the series expansion. Otherwise, that is,
+\eqn{|x| > \epsilon_2}, \code{\link[DPQ:logcf]{logcf}} is used in the computation
+of \eqn{\log(1+x)/x} using the series expansion. Otherwise, that is,
 \eqn{|x| \leq \epsilon_2}, only a few terms of the expansion are used.}
 
 \item{tol_logcf}{A non-negative number indicating the tolerance (maximal
@@ -46,7 +46,8 @@ Compute \eqn{\log(1+x)/x} accurately also for small \eqn{x}, that is,
 For \eqn{x} in \eqn{(m_l, 1)} the computations are based on the
 series expansion
 \deqn{\log(1+x) = 2 \left( t+\frac{t^3}{3}+\frac{t^5}{5}+\cdots \right),}
-where \eqn{t = x/(2+x)} which is formula 4.1.29 on page 68 of Abramowitz and Stegun (1972).
+where \eqn{t = x/(2+x)} which is formula 4.1.29 on page 68 of
+Abramowitz and Stegun (1972).
 
 Different computations are used in 3 different ranges of \eqn{x}, that is,
 \itemize{
@@ -58,7 +59,7 @@ Different computations are used in 3 different ranges of \eqn{x}, that is,
 }
 }
 \examples{
-# In the limit as x tends to 0 log(1+x)/x = 1
+# In the limit as x tends to 0, log(1+x)/x = 1
 log1pdx(0)
 
 #

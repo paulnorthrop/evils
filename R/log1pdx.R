@@ -8,8 +8,8 @@
 #'   computations are based on the series expansion 4.1.29 on page 68 of
 #'   Abramowitz and Stegun (1972).
 #' @param eps2 A non-negative cutoff \eqn{\epsilon_2}. For
-#'   \eqn{|x| > \epsilon_2}, [`logcf`][`DPQ::logcf`] is used when computing
-#'   \eqn{\log(1+x)/x} using the series expansion. Otherwise, that is,
+#'   \eqn{|x| > \epsilon_2}, [`logcf`][`DPQ::logcf`] is used in the computation
+#'   of \eqn{\log(1+x)/x} using the series expansion. Otherwise, that is,
 #'   \eqn{|x| \leq \epsilon_2}, only a few terms of the expansion are used.
 #' @param tol_logcf A non-negative number indicating the tolerance (maximal
 #'   relative error) for the [`logcf`][`DPQ::logcf`] function.
@@ -21,7 +21,8 @@
 #' @details For \eqn{x} in \eqn{(m_l, 1)} the computations are based on the
 #'   series expansion
 #' \deqn{\log(1+x) = 2 \left( t+\frac{t^3}{3}+\frac{t^5}{5}+\cdots \right),}
-#'   where \eqn{t = x/(2+x)} which is formula 4.1.29 on page 68 of Abramowitz and Stegun (1972).
+#'   where \eqn{t = x/(2+x)} which is formula 4.1.29 on page 68 of
+#'   Abramowitz and Stegun (1972).
 #'
 #' Different computations are used in 3 different ranges of \eqn{x}, that is,
 #'
@@ -40,7 +41,7 @@
 #' provides links to the full text, which is in public domain.
 
 #' @examples
-#' # In the limit as x tends to 0 log(1+x)/x = 1
+#' # In the limit as x tends to 0, log(1+x)/x = 1
 #' log1pdx(0)
 #'
 #' #
@@ -69,24 +70,26 @@ log1pdx <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
             -1 <= minL1, minL1 < 0)
 
   # Create return vector of the correct length
+  r <- x
   # There are 3 cases:
   #
+  # 1. x > 1 or x < minL1
+  # 2. -eps2 <= x <= eps2
+  # 3. x in [minL1, -eps2) or x in (eps2, 1]
   #
-  #
-  r <- x
-  if (any(c1 <- (x > 1 | x < minL1)))
+  # 1.
+  if (any(c1 <- (x > 1 | x < minL1))) {
     r[c1] <- log1p(x[c1]) / x[c1]
-  ## else { ## ##/* expand in [x/(2+x)]^2 */
+  }
+  # Not 1.
   if (any(c2 <- !c1)) {
     x <- x[c2]
     term <- x / (2 + x)
     term2 <- 2 / (2 + x)
     y <- term * term
-    r[c2] <- term2 * { ## not using ifelse(), rather what works with "mpfr"
-      ## ifelse(abs(x) < eps2,
-      ##        (((2 / 9 * y + 2 / 7) * y + 2 / 5) * y + 2 / 3) * y - x,
-      ##        2 * y * logcf(y, 3, 2, tol_logcf) - x)
+    r[c2] <- term2 * {
       A <- x
+      # 2.
       if (any(isSml <- abs(x) <= eps2)) {
         i <- which(isSml)
         y. <- y[i]
@@ -94,6 +97,7 @@ log1pdx <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
         z <- if (is.numeric(x)) 1 else 1 + 0 * y.
         A[i] <- ((((z / 9 * y. + z / 7) * y. + z / 5) * y. + z / 3) * y. + 1)
       }
+      # 3.
       if (length(iLrg <- which(!isSml))) {
         y. <- y[iLrg]
         A[iLrg] <- logCF(y., 1, 2, tol_logcf, trace = trace.lcf)
