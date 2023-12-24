@@ -26,9 +26,9 @@
 #'
 #' Different computations are used in 3 different ranges of \eqn{x}, that is,
 #'
-#'  * \eqn{x < m_l} or \eqn{x > 1}: `log1pdx(x):= ` [`log1p`] `/ x`.
+#'  * \eqn{x < m_l} or \eqn{x > 1}: `log1pdx(x):= ` [`log1p`] `/ x`;
 #'  * \eqn{|x| \leq \epsilon_2}:
-#'    \eqn{\frac{2}{2+x}((((\frac19y+\frac17)y+\frac15)y+\frac13)y+1)}
+#'    \eqn{\frac{2}{2+x}((((\frac19y+\frac17)y+\frac15)y+\frac13)y+1)};
 #'  * \eqn{x \in (m_l, 1)} and \eqn{|x| > \epsilon_2}:
 #'    \eqn{\frac{2}{2+x}} [`logcf`]\eqn{(y, 1, 2)}, where \eqn{y = t^2}.
 #'
@@ -44,22 +44,13 @@
 #' # In the limit as x tends to 0, log(1+x)/x = 1
 #' log1pdx(0)
 #'
-#' #
-#' x <- seq(from = -1, to = 4, by = 0.01)
+#' # log1p(x) / x is fine unless x is 0 or extremely close to 0, e.g. 1e-324,
+#' # when it returns NaN
+#' x <- seq(from = -1, to = 2, by = 0.01)
 #' y1 <- log1pdx(x)
 #' y2 <- log1p(x) / x
-#' y3 <- log(1 + x) / x
-#' y <- cbind(y1, y2, y3)
-#' matplot(x, y, type = "l")
-#'
-#' #
-#' ep <- 1e-8
-#' x <- seq(from = -ep, to = ep, len = 10001)
-#' y1 <- log1pdx(x)
-#' y2 <- log1p(x) / x
-#' y3 <- log(1 + x) / x # y3 is known to behave poorly near 0
 #' y <- cbind(y1, y2)
-#' matplot(x, y, type = "l", lty = 1, col = c("black", "red", "green"))
+#' matplot(x, y, type = "l")
 #' @export
 log1pdx <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
                     trace.lcf = FALSE,
