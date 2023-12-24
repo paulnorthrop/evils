@@ -1,7 +1,8 @@
-#' Accurate `log(1+x)/x` computation
+#' Accurate `log(1+x)/x` computation (and similar)
 #'
 #' Compute \eqn{\log(1+x)/x} accurately also for small \eqn{x}, that is,
-#' \eqn{|x| \ll 1}{|x| << 1}.
+#' \eqn{|x| \ll 1}{|x| << 1}.  Similarly, compute
+#' \eqn{\log(1+x)/x^2 - x^{-1}(1+x)^{-1}}.
 #'
 #' @param x A numeric vector with values \eqn{x > -1}.
 #' @param minL1 A negative cutoff \eqn{m_l}. For \eqn{x \in (m_l, 1)} the
@@ -18,13 +19,16 @@
 #' @param logCF The function to be used as [`logcf`][`DPQ::logcf`]. The default
 #'   chooses the pure \R `logcfR()` when `x` is not numeric, and chooses the
 #'   C-based `logcf()` when `is.numeric(x)` is `TRUE`.
-#' @details For \eqn{x} in \eqn{(m_l, 1)} the computations are based on the
+#' @details
+#'
+#' For \eqn{x} in \eqn{(m_l, 1)} the computations are based on the
 #'   series expansion
 #' \deqn{\log(1+x) = 2 \left( t+\frac{t^3}{3}+\frac{t^5}{5}+\cdots \right),}
 #'   where \eqn{t = x/(2+x)} which is formula 4.1.29 on page 68 of
 #'   Abramowitz and Stegun (1972).
 #'
-#' Different computations are used in 3 different ranges of \eqn{x}, that is,
+#' For `log1pdx`, different computations are used in 3 different ranges of
+#' \eqn{x}, that is,
 #'
 #'  * \eqn{x < m_l} or \eqn{x > 1}: `log1pdx(x):= ` [`log1p`] `/ x`;
 #'  * \eqn{|x| \leq \epsilon_2}:
@@ -39,7 +43,6 @@
 #' Functions. New York: Dover.
 #' [https://en.wikipedia.org/wiki/Abramowitz_and_Stegun](https://en.wikipedia.org/wiki/Abramowitz_and_Stegun)
 #' provides links to the full text, which is in public domain.
-
 #' @examples
 #' # In the limit as x tends to 0, log(1+x)/x = 1
 #' log1pdx(0)
@@ -51,6 +54,11 @@
 #' y2 <- log1p(x) / x
 #' y <- cbind(y1, y2)
 #' matplot(x, y, type = "l")
+#' @name log1pdx
+NULL
+## NULL
+
+#' @rdname log1pdx
 #' @export
 log1pdx <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
                     trace.lcf = FALSE,
@@ -97,4 +105,12 @@ log1pdx <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
     }
   }
   return(r)
+}
+
+#' @rdname log1pdx
+#' @export
+log1pdx2 <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
+                     trace.lcf = FALSE,
+                     logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.) {
+   return(x)
 }

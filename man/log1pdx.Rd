@@ -2,9 +2,19 @@
 % Please edit documentation in R/log1pdx.R
 \name{log1pdx}
 \alias{log1pdx}
-\title{Accurate \code{log(1+x)/x} computation}
+\alias{log1pdx2}
+\title{Accurate \code{log(1+x)/x} computation (and similar)}
 \usage{
 log1pdx(
+  x,
+  minL1 = -0.79149064,
+  eps2 = 0.01,
+  tol_logcf = 1e-14,
+  trace.lcf = FALSE,
+  logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.
+)
+
+log1pdx2(
   x,
   minL1 = -0.79149064,
   eps2 = 0.01,
@@ -40,7 +50,8 @@ A numeric vector (with the same attributes as \code{x}).
 }
 \description{
 Compute \eqn{\log(1+x)/x} accurately also for small \eqn{x}, that is,
-\eqn{|x| \ll 1}{|x| << 1}.
+\eqn{|x| \ll 1}{|x| << 1}.  Similarly, compute
+\eqn{\log(1+x)/x^2 - x^{-1}(1+x)^{-1}}.
 }
 \details{
 For \eqn{x} in \eqn{(m_l, 1)} the computations are based on the
@@ -49,7 +60,8 @@ series expansion
 where \eqn{t = x/(2+x)} which is formula 4.1.29 on page 68 of
 Abramowitz and Stegun (1972).
 
-Different computations are used in 3 different ranges of \eqn{x}, that is,
+For \code{log1pdx}, different computations are used in 3 different ranges of
+\eqn{x}, that is,
 \itemize{
 \item \eqn{x < m_l} or \eqn{x > 1}: \verb{log1pdx(x):= } \code{\link{log1p}} \verb{/ x};
 \item \eqn{|x| \leq \epsilon_2}:
