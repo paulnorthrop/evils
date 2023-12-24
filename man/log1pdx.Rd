@@ -89,6 +89,6 @@ Functions. New York: Dover.
 provides links to the full text, which is in public domain.
 }
 \author{
-Paul Northrop created this function by modifying the code in
+Paul Northrop created these functions by modifying the code in
 \code{\link[DPQ:log1pmx]{log1pmx}}.
 }

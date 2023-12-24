@@ -37,7 +37,7 @@
 #'    \eqn{\frac{2}{2+x}} [`logcf`]\eqn{(y, 1, 2)}, where \eqn{y = t^2}.
 #'
 #' @return A numeric vector (with the same attributes as `x`).
-#' @author Paul Northrop created this function by modifying the code in
+#' @author Paul Northrop created these functions by modifying the code in
 #'   [`log1pmx`][`DPQ::log1pmx`].
 #' @references Abramowitz, M. and Stegun, I. A. (1972) Handbook of Mathematical
 #' Functions. New York: Dover.
