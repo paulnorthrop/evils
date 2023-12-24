@@ -15,6 +15,9 @@
 #'   relative error) for the [`logcf`][`DPQ::logcf`] function.
 #' @param trace.lcf A logical scalar. Used in
 #'   [`logcf`][`DPQ::logcf`]`(.., trace = trace.lcf)`.
+#' @param logCF The function to be used as [`logcf`][`DPQ::logcf`]. The default
+#'   chooses the pure \R `logcfR()` when `x` is not numeric, and chooses the
+#'   C-based `logcf()` when `is.numeric(x)` is `TRUE`.
 #' @details For \eqn{x} in \eqn{(m_l, 1)} the computations are based on the
 #'   series expansion
 #' \deqn{\log(1+x) = 2 \left( t+\frac{t^3}{3}+\frac{t^5}{5}+\cdots \right),}
@@ -58,11 +61,18 @@
 #' matplot(x, y, type = "l", lty = 1, col = c("black", "red", "green"))
 #' @export
 log1pdx <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
-                    trace.lcf = FALSE) {
+                    trace.lcf = FALSE,
+                    logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.) {
 
   # Check input values of eps2 and minL1
   stopifnot(is.numeric(eps2), eps2 >= 0, is.numeric(minL1),
             -1 <= minL1, minL1 < 0)
+
+  # Create return vector of the correct length
+  # There are 3 cases:
+  #
+  #
+  #
   r <- x
   if (any(c1 <- (x > 1 | x < minL1)))
     r[c1] <- log1p(x[c1]) / x[c1]
@@ -80,12 +90,13 @@ log1pdx <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
       if (any(isSml <- abs(x) <= eps2)) {
         i <- which(isSml)
         y. <- y[i]
-        z <- if(is.numeric(x)) 1 else 1 + 0*y. # becomes y-like (e.g. mpfr)
+        # Becomes y-like (e.g. mpfr)
+        z <- if (is.numeric(x)) 1 else 1 + 0 * y.
         A[i] <- ((((z / 9 * y. + z / 7) * y. + z / 5) * y. + z / 3) * y. + 1)
       }
       if (length(iLrg <- which(!isSml))) {
         y. <- y[iLrg]
-        A[iLrg] <- DPQ::logCF(y., 1, 2, tol_logcf, trace = trace.lcf)
+        A[iLrg] <- logCF(y., 1, 2, tol_logcf, trace = trace.lcf)
       }
       A
     }
