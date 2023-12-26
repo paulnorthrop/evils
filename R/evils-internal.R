@@ -7,69 +7,159 @@
 #' @keywords internal
 NULL
 
-# ================= Functions to calculate log(1 + x) / x =================== #
+# =============== For calculating the GEV expected information ============== #
+
+# --------------------- Constants and helper functions ---------------------- #
 
 #' @keywords internal
 #' @rdname evils-internal
-log1pxOverx <- function(x, tol = 1e-4, epsilon = 1e-15) {
-  if (tol > 1) {
-    stop("tol must be no larger than 1 and should be close to 0")
-  }
-  if (abs(x) < tol) {
-    val <- log1pxOverxApprox(x, epsilon = epsilon)
-  } else {
-    val <- log1pxOverxDirect(x)
-  }
+EulersConstant <- 0.57721566490153286060651209008240243104215933593992
+
+#' @keywords internal
+#' @rdname evils-internal
+AperysConstant <- 1.202056903159594285399738161511449990764986292
+
+#' @keywords internal
+#' @rdname evils-internal
+pxi <- function(xi) {
+  return((1 + xi) ^ 2 * gamma(1 + 2 * xi))
+}
+
+#' @keywords internal
+#' @rdname evils-internal
+qxi <- function(xi) {
+  return(gamma(2 + xi) * (digamma(1 + xi) + (1 + xi) / xi))
+}
+
+# ------------------------------ (sigma, sigma) ----------------------------- #
+
+#' @keywords internal
+#' @rdname evils-internal
+iss0Fn <- function() {
+  return(pi ^ 2 / 6 + (1 - EulersConstant) ^ 2)
+}
+
+#' @keywords internal
+#' @rdname evils-internal
+iss0Constant <- iss0Fn()
+
+#' @keywords internal
+#' @rdname evils-internal
+issFn <- function(xi) {
+  return((1 - 2 * gamma(2 + xi) + pxi(xi)) / (xi ^ 2))
+}
+
+# --------------------------------- (xi, xi) -------------------------------- #
+
+#' @keywords internal
+#' @rdname evils-internal
+ixx0Fn <- function() {
+  val <- pi ^ 2 / 6 - pi ^ 2 * EulersConstant / 2 + EulersConstant ^ 2 -
+    EulersConstant ^ 3 - 2 * AperysConstant +
+    2 * EulersConstant * AperysConstant + pi ^ 2 * EulersConstant ^ 2 / 4 +
+    EulersConstant ^ 4 / 4 + 3 * pi ^ 4 / 80
   return(val)
 }
 
-# ------- Approximation of log(1 + x) / x  using sumR::infiniteSum() -------- #
+#' @keywords internal
+#' @rdname evils-internal
+ixx0Constant <- ixx0Fn()
 
 #' @keywords internal
 #' @rdname evils-internal
-log1pxOverxApprox <- function(x, epsilon = 1e-15) {
-  if (x <= -1 || x >= 1) {
-    stop("x must be in (-1, 1)")
-  }
-  if (x == 0) {
-    return(1)
-  }
-  alternate <- as.numeric(x > 0)
-  if (x < 0) {
-    logL <- log(abs(x))
-  } else {
-    logL <- NULL
-  }
-  temp <- sumR::infiniteSum(log1pxOverxLogFunction, parameters = x,
-                            logL = logL, alternate = alternate,
-                            epsilon = epsilon)
-  return(exp(temp$sum))
-}
-
-#' @keywords internal
-#' @rdname evils-internal
-log1pxOverxLogFunction <- function(n, x) {
-  # x must be in (-1, 1) for the series to converge
-  # Return the log of the absolute value of the nth term in the series in which
-  # contributions from all excesses are accumulated
-  return(n * log(abs(x)) - log(n + 1))
-}
-
-# -------------------- Direct evaluation of log(1 + x) / x ------------------ #
-
-#' @keywords internal
-#' @rdname evils-internal
-log1pxOverxDirect <- function(x) {
-  if (x < -1) {
-    stop("x must be greater than or equal to -1")
-  }
-  # Calculate ln(1+x) / x
-  if (x == 0) {
-    val <- 1
-  } else {
-    val <- exp(log(abs(log1p(x))) - log(abs(x)))
-  }
+ixxFn <- function(xi) {
+  val <- (pi ^ 2 / 6 + (1 - EulersConstant + 1 / xi) ^ 2 - 2 * qxi(xi) / xi +
+            pxi(xi) / xi ^ 2) / (xi ^ 2)
   return(val)
+}
+
+# -------------------------------- (mu, sigma) ------------------------------ #
+
+#' @keywords internal
+#' @rdname evils-internal
+ims0Fn <- function() {
+  return(EulersConstant - 1)
+}
+
+#' @keywords internal
+#' @rdname evils-internal
+ims0Constant <- ims0Fn()
+
+#' @keywords internal
+#' @rdname evils-internal
+imsFn <- function(xi) {
+  val <- (gamma(2 + xi) - pxi(xi)) / xi
+  return(val)
+}
+
+# --------------------------------- (mu, xi) -------------------------------- #
+
+#' @keywords internal
+#' @rdname evils-internal
+imx0Fn <- function() {
+  return((pi ^ 2 / 6 + EulersConstant ^ 2 - 2 * EulersConstant) / 2)
+}
+
+#' @keywords internal
+#' @rdname evils-internal
+imx0Constant <- imx0Fn()
+
+#' @keywords internal
+#' @rdname evils-internal
+imxFn <- function(xi) {
+  val <- (pxi(xi) / xi - qxi(xi)) / xi
+  return(val)
+}
+
+# ------------------------------- (sigma, xi) ------------------------------- #
+
+#' @keywords internal
+#' @rdname evils-internal
+isx0Fn <- function() {
+  val <- (4 * EulersConstant + 4 * AperysConstant + pi ^ 2 * EulersConstant +
+     2 * EulersConstant ^ 3 - pi ^ 2 - 6 * EulersConstant ^ 2) / 4
+  return(val)
+}
+
+#' @keywords internal
+#' @rdname evils-internal
+isx0Constant <- isx0Fn()
+
+#' @keywords internal
+#' @rdname evils-internal
+isxFn <- function(xi) {
+  val <- -(1 - EulersConstant + (1 - gamma(2 + xi)) / xi - qxi(xi) +
+             pxi(xi) / xi) / (xi ^ 2)
+  return(val)
+}
+
+# -- Calculate a component using a quadratic approximation if xi is near 0 -- #
+
+#' @keywords internal
+#' @rdname evils-internal
+gevExpInfoComp <- function(fun, fun0, xi, eps = 3e-3) {
+  eps <- abs(eps)
+  val <- xi
+  if (any(xiNearZero <- abs(xi) < eps)) {
+    aa <- fun0
+    yp <- fun(eps)
+    ym <- fun(-eps)
+    ff <- lagrangianInterpolation(c(-eps, 0, eps), c(ym, aa, yp))
+    val[xiNearZero] <- ff(xi[xiNearZero])
+  }
+  val[!xiNearZero] <- fun(xi[!xiNearZero])
+  return(val)
+}
+
+#' @keywords internal
+#' @rdname evils-internal
+lagrangianInterpolation <- function(x0, y0) {
+  f <- function(x) {
+    sum(y0 * sapply(seq_along(x0), \(j) {
+      prod(x - x0[-j])/prod(x0[j] - x0[-j])
+    }))
+  }
+  return(Vectorize(f, "x"))
 }
 
 # ======================= Direct functions for checking ===================== #
