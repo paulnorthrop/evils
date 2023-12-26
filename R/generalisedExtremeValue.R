@@ -4,43 +4,36 @@
 #' a random sample from a generalised extreme value (GEV) distribution,
 #' including cases where the shape parameter is very close to zero.
 #'
-#' @param pars A numeric parameter vector of length 3 containing the respective
-#'   values of the GEV location \eqn{\mu}, scale \eqn{\sigma} and shape
-#'   \eqn{\xi} parameters.
-#' @param maxima A numeric vector of observations. Typically, these are
+#' @param x A numeric vector of observations. Typically, these are
 #'   block maxima, that is, the largest observation in a block of contiguous
 #'   observations.
+#' @param loc A numeric vector. Values of the GEV location parameter \eqn{\mu}.
+#' @param scale A numeric vector. Values of the GEV scale parameter
+#'   \eqn{\sigma}.
+#' @param shape A numeric vector. Values of the GEV shape parameter \eqn{\xi}.
 #' @param individual A logical scalar. Relevant to `gevLoglik` and
 #'   `gevScore`. If `individual = FALSE` then only the sum of
-#'   contributions from all observations in `maxima` is calculated.  If
+#'   contributions from all observations in `x` is calculated.  If
 #'   `individual = TRUE` then individual contributions from each
-#'   observation in `maxima` are calculated.
-#' @param tol A positive numeric scalar.  Tolerance used to determine whether
-#'   to perform a calculation directly or via a series expansion approximation.
-#'   See **Details**.
-#' @param epsilon The desired error margin when an approximation is used.
+#'   observation in `x` are calculated.
+#' @param ... Further arguments to be passed to [`log1pdx`], which evaluates
+#'   terms of the form \eqn{\log(1+x)/x} in the GEV log-likelihood.
 #' @details
+#'   **GEV density** (`dGEV`). The input vectors `x`, `loc`, `scale` and
+#'   `shape` are recycled, if necessary, so that the length of the returned
+#'   vector is the maximum of the lengths of these arguments. For any element
+#'   of `scale` that is non-positive, `NaN` is returned, with no warning.
+#'
 #'   **Log-likelihood** (`gevLoglik`). The two problematic
-#'   terms of the log-likelihood both involve
-#'   \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}},
-#'   where \ifelse{html}{z=\eqn{\xi}\eqn{(y - \mu)} / \eqn{\sigma}}{
-#'   \eqn{z} = \eqn{\xi}\eqn{(y - \mu)} / \eqn{\sigma}} and where \eqn{y} is a
+#'   terms of the log-likelihood both involve \eqn{\log(1+z)/z},
+#'   where \eqn{z = \xi (y - \mu)/ \sigma} and where \eqn{y} is a
 #'   sample maximum. In one part this is exponentiated, in the other it is not.
-#'   If \eqn{|z| \geq}{|z| >=} `tol` then this is calculated directly,
-#'   using `log1p(z)/z`.
-#'   If \eqn{|z| <} `tol` then we use [sumR::infiniteSum()]
-#'   to approximate the series \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}}
-#'   \ifelse{html}{= 1 - z/2 + z\out{<sup>2</sup>}/3 - z\out{<sup>3</sup>}/4 +
-#'   ...}{\eqn{= 1 - z/2 + z^2/3 - z^3/4 + \cdots}}. Before the call to
-#'   [sumR::infiniteSum()] the input value of `epsilon`
-#'   is adjusted to achieve the desired error margin for the approximation of
-#'   the log-likelihood, taking into account the error of approximation from
-#'   both terms. If `z = 0` then
-#'   \ifelse{html}{log(1+z)/z = 1}{\eqn{\log(1+z)/z} = 1}.
+#'   The function [`log1pdx`] is used to calculate \eqn{\log(1+z)/z}, with
+#'   special case taken for cases where `z` is close to zero.
 #' @return
 #'   **Log-likelihood** (`gevLoglik`). If
 #'   `individual = FALSE` the value of the log-likelihood. If
-#'   `individual = TRUE` a vector of length \code{length{maxima}}
+#'   `individual = TRUE` a vector of length `length{x}`
 #'   containing the contributions to the log-likelihood from each of the
 #'   observations.
 #'
@@ -49,7 +42,7 @@
 #'  log-likelihood evaluated at the input parameter values.
 #'  If `individual = TRUE` the values of the contributions to the score
 #'  from each of the observations, a
-#'   `length(maxima)`\eqn{ \times 2}{ x 2} matrix.
+#'   `length(x)`\eqn{ \times 2}{ x 2} matrix.
 #'   The columns are named `sigma[u]` and `xi`.
 #'
 #' **Observed information** (`gevInfo`).  The observed information: a
@@ -69,10 +62,10 @@ NULL
 #'
 #' ### Log-likelihood
 #'
-#' # Approximation using sumR::infinitesum()
-#' gevLoglik(pars = c(0, 1, 1e-8), maxima = y, individual = TRUE)
-#' gevLoglik(pars = c(0, 1, -1e-8), maxima = y, individual = TRUE)
-#' gevLoglik(pars = c(0, 1, 0), maxima = y, individual = TRUE)
+#' # Calculation using log1pdx()
+#' gevLoglik(y, 0, 1, 1e-8, )
+#' gevLoglik(y, 0, 1, -1e-8)
+#' gevLoglik(y, 0, 1, 0)
 #'
 #' # Direct calculation, involving (1 / xi) * log1p(xi * (y - mu) / sigma)
 #' # Mostly fine, but breaks down eventually
@@ -80,45 +73,41 @@ NULL
 #' gevLoglikDirect(pars = c(0, 1, -1e-309), maxima = y)
 #' @rdname gev
 #' @export
-gevLoglik <- function(pars, maxima, individual = FALSE, tol = 1e-4,
-                      epsilon = 1e-15) {
-  if (tol <= 0) {
-    stop("'tol' must be positive")
-  }
-  if (tol > 1) {
-    stop("tol must be no larger than 1 and should be close to 0")
-  }
-  y <- maxima
-  # mu
-  m <- pars[1]
-  # sigma
-  s <- pars[2]
-  if (s <= 0) {
-    stop("The GEV scale parameter must be positive")
-  }
-  # xi
-  x <- pars[3]
-  #
-  zw <- x * (y - m) / s
-  t0 <- 1 + zw
-  if (any(t0 <= 0)) {
-    stop("The likelihood is 0 for this combination of data and parameters")
-  }
-  # Adjust epsilon based on the errors of approximation for each of the 2 terms
-  # in the log-likelihood.  We work with epsilon / 2, because there are 2
-  # terms, and make an adjustment for the exp() in the 2nd term
-  mult1 <- (x + 1) * (y - m) / s
-  mult2 <- (y - m) / s
-  absmult1 <- abs(mult1)
-  absmult2 <- abs(mult2)
-  delta <- pmin(-log(1 - epsilon * exp(absmult2) / 2) / absmult2,
-                log(1 + epsilon * exp(absmult2) / 2) / absmult2,
-                epsilon / (2 * absmult1))
-  logterm <- mapply(log1pxOverx, x = zw, epsilon = delta,
-                    MoreArgs = list(tol = tol))
-  gevloglik <- -log(s) - mult1 * logterm - exp(-mult2 * logterm)
+gevLoglik <- function(x, loc, scale, shape, individual = TRUE, ...) {
+  loglik <- dGEV(x, loc, scale, shape, log = TRUE, ...)
   if (!individual) {
-    gevloglik <- sum(gevloglik)
+    loglik <- sum(loglik)
   }
-  return(gevloglik)
+  return(loglik)
+}
+
+#' @rdname gev
+#' @export
+dGEV <- function(x, loc = 0, scale = 1, shape = 0, log = FALSE, ...) {
+  # Recycle the vector input x, loc, scale and shape, if necessary
+  maxLen <- max(length(x), length(loc), length(scale), length(shape))
+  x <- rep_len(x, maxLen)
+  loc <- rep_len(loc, maxLen)
+  scale <- rep_len(scale, maxLen)
+  shape <- rep_len(shape, maxLen)
+  # The density is undefined if scale <= 0
+  if (any(invalidScale <- scale <= 0)) {
+    x[invalidScale] <- NaN
+  }
+  # The density is 0 if 1 + shape * (x - loc) / scale <= 0
+  zw <- shape * (x - loc) / scale
+  if (any(zerod <- 1 + zw <= 0 & !invalidScale)) {
+    x[zerod] <- -Inf
+  }
+  # Otherwise, the density is positive
+  if (any(posd <- !zerod & !invalidScale)) {
+    m1 <- (shape[posd] + 1) * (x[posd] - loc[posd]) / scale[posd]
+    m2 <- (x[posd] - loc[posd]) / scale[posd]
+    logterm <- log1pdx(zw[posd], ...)
+    x[posd] <- -log(scale[posd]) - m1 * logterm - exp(-m2 * logterm)
+  }
+  if (!log) {
+    x <- exp(x)
+  }
+  return(x)
 }

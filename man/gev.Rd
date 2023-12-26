@@ -3,49 +3,52 @@
 \name{gev}
 \alias{gev}
 \alias{gevLoglik}
+\alias{dGEV}
 \title{Generalised Extreme Value functions}
 \usage{
-gevLoglik(pars, maxima, individual = FALSE, tol = 1e-04, epsilon = 1e-15)
+gevLoglik(x, loc, scale, shape, individual = TRUE, ...)
+
+dGEV(x, loc = 0, scale = 1, shape = 0, log = FALSE, ...)
 }
 \arguments{
-\item{pars}{A numeric parameter vector of length 3 containing the respective
-values of the GEV location \eqn{\mu}, scale \eqn{\sigma} and shape
-\eqn{\xi} parameters.}
-
-\item{maxima}{A numeric vector of observations. Typically, these are
+\item{x}{A numeric vector of observations. Typically, these are
 block maxima, that is, the largest observation in a block of contiguous
 observations.}
 
+\item{loc}{A numeric vector. Values of the GEV location parameter \eqn{\mu}.}
+
+\item{scale}{A numeric vector. Values of the GEV scale parameter
+\eqn{\sigma}.}
+
+\item{shape}{A numeric vector. Values of the GEV shape parameter \eqn{\xi}.}
+
 \item{individual}{A logical scalar. Relevant to \code{gevLoglik} and
 \code{gevScore}. If \code{individual = FALSE} then only the sum of
-contributions from all observations in \code{maxima} is calculated.  If
+contributions from all observations in \code{x} is calculated.  If
 \code{individual = TRUE} then individual contributions from each
-observation in \code{maxima} are calculated.}
+observation in \code{x} are calculated.}
 
-\item{tol}{A positive numeric scalar.  Tolerance used to determine whether
-to perform a calculation directly or via a series expansion approximation.
-See \strong{Details}.}
-
-\item{epsilon}{The desired error margin when an approximation is used.}
+\item{...}{Further arguments to be passed to \code{\link{log1pdx}}, which evaluates
+terms of the form \eqn{\log(1+x)/x} in the GEV log-likelihood.}
 }
 \value{
 \strong{Log-likelihood} (\code{gevLoglik}). If
-  \code{individual = FALSE} the value of the log-likelihood. If
-  \code{individual = TRUE} a vector of length \code{length{maxima}}
-  containing the contributions to the log-likelihood from each of the
-  observations.
+\code{individual = FALSE} the value of the log-likelihood. If
+\code{individual = TRUE} a vector of length \verb{length\{x\}}
+containing the contributions to the log-likelihood from each of the
+observations.
 
 \strong{Score} (\code{gevScore}).  If \code{individual = FALSE} the value
- of the score, a vector of length 2 containing the derivative of the
- log-likelihood evaluated at the input parameter values.
- If \code{individual = TRUE} the values of the contributions to the score
- from each of the observations, a
-  \code{length(maxima)}\eqn{ \times 2}{ x 2} matrix.
-  The columns are named \code{sigma[u]} and \code{xi}.
+of the score, a vector of length 2 containing the derivative of the
+log-likelihood evaluated at the input parameter values.
+If \code{individual = TRUE} the values of the contributions to the score
+from each of the observations, a
+\code{length(x)}\eqn{ \times 2}{ x 2} matrix.
+The columns are named \code{sigma[u]} and \code{xi}.
 
 \strong{Observed information} (\code{gevInfo}).  The observed information: a
-  \eqn{2 \times 2}{2 x 2} matrix with row and column names
-  \code{c(sigma[u], xi)}.
+\eqn{2 \times 2}{2 x 2} matrix with row and column names
+\code{c(sigma[u], xi)}.
 }
 \description{
 Calculate the log-likelihood function, score and observed information for
@@ -53,23 +56,17 @@ a random sample from a generalised extreme value (GEV) distribution,
 including cases where the shape parameter is very close to zero.
 }
 \details{
+\strong{GEV density} (\code{dGEV}). The input vectors \code{x}, \code{loc}, \code{scale} and
+\code{shape} are recycled, if necessary, so that the length of the returned
+vector is the maximum of the lengths of these arguments. For any element
+of \code{scale} that is non-positive, \code{NaN} is returned, with no warning.
+
 \strong{Log-likelihood} (\code{gevLoglik}). The two problematic
-  terms of the log-likelihood both involve
-  \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}},
-  where \ifelse{html}{z=\eqn{\xi}\eqn{(y - \mu)} / \eqn{\sigma}}{
-  \eqn{z} = \eqn{\xi}\eqn{(y - \mu)} / \eqn{\sigma}} and where \eqn{y} is a
-  sample maximum. In one part this is exponentiated, in the other it is not.
-  If \eqn{|z| \geq}{|z| >=} \code{tol} then this is calculated directly,
-  using \code{log1p(z)/z}.
-  If \eqn{|z| <} \code{tol} then we use \code{\link[sumR]{infiniteSum}}
-  to approximate the series \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}}
-  \ifelse{html}{= 1 - z/2 + z\out{<sup>2</sup>}/3 - z\out{<sup>3</sup>}/4 +
-  ...}{\eqn{= 1 - z/2 + z^2/3 - z^3/4 + \cdots}}. Before the call to
-  \code{\link[sumR]{infiniteSum}} the input value of \code{epsilon}
-  is adjusted to achieve the desired error margin for the approximation of
-  the log-likelihood, taking into account the error of approximation from
-  both terms. If \code{z = 0} then
-  \ifelse{html}{log(1+z)/z = 1}{\eqn{\log(1+z)/z} = 1}.
+terms of the log-likelihood both involve \eqn{\log(1+z)/z},
+where \eqn{z = \xi (y - \mu)/ \sigma} and where \eqn{y} is a
+sample maximum. In one part this is exponentiated, in the other it is not.
+The function \code{\link{log1pdx}} is used to calculate \eqn{\log(1+z)/z}, with
+special case taken for cases where \code{z} is close to zero.
 }
 \examples{
 ### Simulate some data
@@ -79,10 +76,10 @@ y <- rGenExtremeValue(100, 0, 1, 0)
 
 ### Log-likelihood
 
-# Approximation using sumR::infinitesum()
-gevLoglik(pars = c(0, 1, 1e-8), maxima = y, individual = TRUE)
-gevLoglik(pars = c(0, 1, -1e-8), maxima = y, individual = TRUE)
-gevLoglik(pars = c(0, 1, 0), maxima = y, individual = TRUE)
+# Calculation using log1pdx()
+gevLoglik(y, 0, 1, 1e-8, )
+gevLoglik(y, 0, 1, -1e-8)
+gevLoglik(y, 0, 1, 0)
 
 # Direct calculation, involving (1 / xi) * log1p(xi * (y - mu) / sigma)
 # Mostly fine, but breaks down eventually
