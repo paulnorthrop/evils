@@ -3,6 +3,7 @@
 \name{log1pdx}
 \alias{log1pdx}
 \alias{log1pdx2}
+\alias{log1pdx3}
 \title{Accurate \code{log(1+x)/x} computation (and similar)}
 \usage{
 log1pdx(
@@ -15,6 +16,15 @@ log1pdx(
 )
 
 log1pdx2(
+  x,
+  minL1 = -0.79149064,
+  eps2 = 0.01,
+  tol_logcf = 1e-14,
+  trace.lcf = FALSE,
+  logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.
+)
+
+log1pdx3(
   x,
   minL1 = -0.79149064,
   eps2 = 0.01,
@@ -51,7 +61,8 @@ A numeric vector (with the same attributes as \code{x}).
 \description{
 Compute \eqn{\log(1+x)/x} accurately also for small \eqn{x}, that is,
 \eqn{|x| \ll 1}{|x| << 1}.  Similarly, compute
-\eqn{\log(1+x)/x^2 - x^{-1}(1+x)^{-1}}.
+\eqn{\log(1+x)/x^2 - x^{-1}(1+x)^{-1}} and
+\eqn{-2 \log(1+x)/x^3 + 2 x^{-2}(1+x)^{-1} + x^{-1}(1+x)^{-2}}.
 }
 \details{
 For \eqn{x} in \eqn{(m_l, 1)} the computations are based on the
@@ -60,14 +71,29 @@ series expansion
 where \eqn{t = x/(2+x)} which is formula 4.1.29 on page 68 of
 Abramowitz and Stegun (1972).
 
-For \code{log1pdx}, different computations are used in 3 different ranges of
-\eqn{x}, that is,
+Different computations are used in 3 different ranges of \eqn{x}.
+Let \eqn{y = t^2}.
+
+For \code{log1pdx}:
 \itemize{
-\item \eqn{x < m_l} or \eqn{x > 1}: \verb{log1pdx(x):= } \code{\link{log1p}} \verb{/ x};
+\item \eqn{x < m_l} or \eqn{x > 1}:
+\verb{log1pdx(x):=} \code{\link{log1p}} \verb{/ x};
 \item \eqn{|x| \leq \epsilon_2}:
 \eqn{\frac{2}{2+x}((((\frac19y+\frac17)y+\frac15)y+\frac13)y+1)};
 \item \eqn{x \in (m_l, 1)} and \eqn{|x| > \epsilon_2}:
-\eqn{\frac{2}{2+x}} \code{\link{logcf}}\eqn{(y, 1, 2)}, where \eqn{y = t^2}.
+\eqn{\frac{2}{2+x}} \code{\link{logcf}}\eqn{(y, 1, 2)}.
+}
+
+For \code{log1pdx2}:
+\itemize{
+\item \eqn{x < m_l} or \eqn{x > 1}:
+\verb{log1pdx2(x):=} \code{\link{log1p}} \verb{/ x ^ 2 - 1 / (x * (1 + x))};
+\item \eqn{|x| \leq \epsilon_2}:
+\eqn{\frac{1}{(2+x)^2}} \eqn{(\frac{2+x}{1+x} + 2 t}
+\eqn{((((\frac{1}{11}y+\frac19)y+\frac17)y+\frac15)y+\frac13)};
+\item \eqn{x \in (m_l, 1)} and \eqn{|x| > \epsilon_2}:
+\eqn{\frac{1}{(2+x)^2}} \eqn{(\frac{2+x}{1+x} + 2 t}
+\code{\link{logcf}}\eqn{(y, 3, 2))}.
 }
 }
 \examples{

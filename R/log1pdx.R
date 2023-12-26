@@ -2,7 +2,8 @@
 #'
 #' Compute \eqn{\log(1+x)/x} accurately also for small \eqn{x}, that is,
 #' \eqn{|x| \ll 1}{|x| << 1}.  Similarly, compute
-#' \eqn{\log(1+x)/x^2 - x^{-1}(1+x)^{-1}}.
+#' \eqn{\log(1+x)/x^2 - x^{-1}(1+x)^{-1}} and
+#' \eqn{-2 \log(1+x)/x^3 + 2 x^{-2}(1+x)^{-1} + x^{-1}(1+x)^{-2}}.
 #'
 #' @param x A numeric vector with values \eqn{x > -1}.
 #' @param minL1 A negative cutoff \eqn{m_l}. For \eqn{x \in (m_l, 1)} the
@@ -19,22 +20,34 @@
 #' @param logCF The function to be used as [`logcf`][`DPQ::logcf`]. The default
 #'   chooses the pure \R `logcfR()` when `x` is not numeric, and chooses the
 #'   C-based `logcf()` when `is.numeric(x)` is `TRUE`.
-#' @details
-#'
-#' For \eqn{x} in \eqn{(m_l, 1)} the computations are based on the
+#' @details For \eqn{x} in \eqn{(m_l, 1)} the computations are based on the
 #'   series expansion
 #' \deqn{\log(1+x) = 2 \left( t+\frac{t^3}{3}+\frac{t^5}{5}+\cdots \right),}
 #'   where \eqn{t = x/(2+x)} which is formula 4.1.29 on page 68 of
 #'   Abramowitz and Stegun (1972).
 #'
-#' For `log1pdx`, different computations are used in 3 different ranges of
-#' \eqn{x}, that is,
+#' Different computations are used in 3 different ranges of \eqn{x}.
+#' Let \eqn{y = t^2}.
 #'
-#'  * \eqn{x < m_l} or \eqn{x > 1}: `log1pdx(x):= ` [`log1p`] `/ x`;
+#' For `log1pdx`:
+#'
+#'  * \eqn{x < m_l} or \eqn{x > 1}:
+#'    `log1pdx(x):=` [`log1p`] `/ x`;
 #'  * \eqn{|x| \leq \epsilon_2}:
 #'    \eqn{\frac{2}{2+x}((((\frac19y+\frac17)y+\frac15)y+\frac13)y+1)};
 #'  * \eqn{x \in (m_l, 1)} and \eqn{|x| > \epsilon_2}:
-#'    \eqn{\frac{2}{2+x}} [`logcf`]\eqn{(y, 1, 2)}, where \eqn{y = t^2}.
+#'    \eqn{\frac{2}{2+x}} [`logcf`]\eqn{(y, 1, 2)}.
+#'
+#' For `log1pdx2`:
+#'
+#'  * \eqn{x < m_l} or \eqn{x > 1}:
+#'    `log1pdx2(x):=` [`log1p`] `/ x ^ 2 - 1 / (x * (1 + x))`;
+#'  * \eqn{|x| \leq \epsilon_2}:
+#'    \eqn{\frac{1}{(2+x)^2}} \eqn{(\frac{2+x}{1+x} + 2 t}
+#'    \eqn{((((\frac{1}{11}y+\frac19)y+\frac17)y+\frac15)y+\frac13)};
+#'  * \eqn{x \in (m_l, 1)} and \eqn{|x| > \epsilon_2}:
+#'    \eqn{\frac{1}{(2+x)^2}} \eqn{(\frac{2+x}{1+x} + 2 t}
+#'    [`logcf`]\eqn{(y, 3, 2))}.
 #'
 #' @return A numeric vector (with the same attributes as `x`).
 #' @author Paul Northrop created these functions by modifying the code in
@@ -167,4 +180,12 @@ log1pdx2 <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
     }
   }
   return(r)
+}
+
+#' @rdname log1pdx
+#' @export
+log1pdx3 <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
+                     trace.lcf = FALSE,
+                     logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.) {
+  return(x)
 }
