@@ -119,6 +119,18 @@ y1 <- log1pdx2(x)
 y2 <- log1p(x) / x ^ 2 - 1 / (x * (1 + x))
 y <- cbind(y1, y2)
 matplot(x, y, type = "l")
+
+# In the limit as x tends to 0, -2log(1+x)/x^3+2/(x^2*(1+x))+1/(x(1+x)^2)
+# tends to -2/3
+log1pdx3(0)
+
+# -2log(1+x)/x^3+2/(x^2*(1+x))+1/(x(1+x)^2) becomes unstable for
+# abs(x) < 1e-6
+x <- seq(from = -1, to = 2, by = 0.01)
+y1 <- log1pdx3(x)
+y2 <- -2 * log1p(x) / x ^ 3 + 2 / (x ^ 2 * (1 + x)) + 1 / (x * (1 + x) ^ 2)
+y <- cbind(y1, y2)
+matplot(x, y, type = "l")
 }
 \references{
 Abramowitz, M. and Stegun, I. A. (1972) Handbook of Mathematical

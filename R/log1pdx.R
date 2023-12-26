@@ -79,6 +79,18 @@
 #' y2 <- log1p(x) / x ^ 2 - 1 / (x * (1 + x))
 #' y <- cbind(y1, y2)
 #' matplot(x, y, type = "l")
+#'
+#' # In the limit as x tends to 0, -2log(1+x)/x^3+2/(x^2*(1+x))+1/(x(1+x)^2)
+#' # tends to -2/3
+#' log1pdx3(0)
+#'
+#' # -2log(1+x)/x^3+2/(x^2*(1+x))+1/(x(1+x)^2) becomes unstable for
+#' # abs(x) < 1e-6
+#' x <- seq(from = -1, to = 2, by = 0.01)
+#' y1 <- log1pdx3(x)
+#' y2 <- -2 * log1p(x) / x ^ 3 + 2 / (x ^ 2 * (1 + x)) + 1 / (x * (1 + x) ^ 2)
+#' y <- cbind(y1, y2)
+#' matplot(x, y, type = "l")
 #' @name log1pdx
 NULL
 ## NULL
@@ -187,5 +199,48 @@ log1pdx2 <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
 log1pdx3 <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
                      trace.lcf = FALSE,
                      logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.) {
-  return(x)
+
+  # Check input values of eps2 and minL1
+  stopifnot(is.numeric(eps2), eps2 >= 0, is.numeric(minL1),
+            -1 <= minL1, minL1 < 0)
+
+  # Create return vector of the correct length
+  r <- x
+  # There are 3 cases:
+  #
+  # 1. x > 1 or x < minL1
+  # 2. -eps2 <= x <= eps2
+  # 3. x in [minL1, -eps2) or x in (eps2, 1]
+  #
+  # 1.
+  if (any(c1 <- (x > 1 | x < minL1))) {
+    r[c1] <- -2 * log1p(x[c1]) / x[c1] ^ 3  + 2 / (x[c1] ^ 2 * (1 + x[c1])) +
+      1 / (x[c1] * (1 + x[c1]) ^ 2)
+  }
+  # Not 1.
+  if (any(c2 <- !c1)) {
+    x <- x[c2]
+    term <- x / (2 + x)
+    term2 <- -4 / (2 + x) ^ 3
+    y <- term * term
+    r[c2] <- term2 * {
+      A <- x
+      # 2.
+      if (any(isSml <- abs(x) <= eps2)) {
+        i <- which(isSml)
+        y. <- y[i]
+        # Becomes y-like (e.g. mpfr)
+        z <- if (is.numeric(x)) 1 else 1 + 0 * y.
+        A[i] <- ((((z / 11 * y. + z / 9) * y. + z / 7) * y. + z / 5) * y. +
+                   1 / 3)
+      }
+      # 3.
+      if (length(iLrg <- which(!isSml))) {
+        y. <- y[iLrg]
+        A[iLrg] <- logCF(y., 3, 2, tol_logcf, trace = trace.lcf)
+      }
+      A + (2 + x) ^ 2 / (4 * (1 + x) ^ 2)
+    }
+  }
+  return(r)
 }
