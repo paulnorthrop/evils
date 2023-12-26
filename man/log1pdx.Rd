@@ -81,6 +81,18 @@ y1 <- log1pdx(x)
 y2 <- log1p(x) / x
 y <- cbind(y1, y2)
 matplot(x, y, type = "l")
+
+# In the limit as x tends to 0, log(1+x)/x^2 - 1/(x*(1+x)) tends to 1/2
+log1pdx2(0)
+
+# log1p(x) / x ^ 2 - 1 / (x * (1 + x)) is fine unless x is 0 (NaN returned)
+# or extremely close to 0, e.g. 1e-15 returns 0.625, 1e-16 returns 0
+# when it returns NaN
+x <- seq(from = -1, to = 2, by = 0.01)
+y1 <- log1pdx2(x)
+y2 <- log1p(x) / x ^ 2 - 1 / (x * (1 + x))
+y <- cbind(y1, y2)
+matplot(x, y, type = "l")
 }
 \references{
 Abramowitz, M. and Stegun, I. A. (1972) Handbook of Mathematical
