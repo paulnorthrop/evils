@@ -334,7 +334,7 @@ BC <- function(x, lambda, eps = 1e-6) {
     x[nas] <- NA
   }
   # If abs(lambda) > eps or lambda = NA then use the usual formula
-  if (any(large <- abs(lambda) > eps)) {
+  if (any(large <- !is.na(x) & abs(lambda) > eps)) {
     x[large] <- (x[large] ^ lambda[large] - 1) / lambda[large]
   }
   # Indicator of lambda < 0
