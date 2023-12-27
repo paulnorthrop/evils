@@ -321,6 +321,44 @@ qGenPareto <- function (p, loc = 0, scale = 1, shape = 0,
 
 #' @keywords internal
 #' @rdname evils-internal
+BC <- function(x, lambda, eps = 1e-6) {
+  # Recycle the vector input q, loc, scale and shape, if necessary
+  maxLen <- max(length(x), length(lambda))
+  x <- rep_len(x, maxLen)
+  lambda <- rep_len(lambda, maxLen)
+  # If abs(lambda) > eps use the usual formula
+  if (any(large <- abs(lambda) > eps)) {
+    x[large] <- (x[large] ^ lambda[large] - 1) / lambda[large]
+  }
+  # Indicators of 0 < lambda <= eps or -eps <= lambda < 0
+  pos <- !large & lambda > 0
+  neg <- !large & lambda < 0
+  # Indicators of being Inf or 0
+  xInf <- is.infinite(x)
+  xZero <- x == 0
+  # Calculations for combinations of these indicators
+  if (any(xInfNeg <- xInf & neg)) {
+    x[xInfNeg] <- -1 / lambda[xInfNeg]
+  }
+  if (any(xInfPos <- xInf & pos)) {
+    x[xInfPos] <- Inf
+  }
+  if (any(xZeroNeg <- xZero & neg)) {
+    x[xZeroNeg] <- -Inf
+  }
+  if (any(xZeroPos <- xZero & pos)) {
+    x[xZeroPos] <- -1 / lambda[xZeroPos]
+  }
+  # Use Taylor series expansion for other cases
+  if (any(rest <- !large & !xInf & !xZero)) {
+    logxlam <- log(x[rest]) * lambda[rest]
+    x[rest] <- log(x[rest]) * (1 + logxlam / 2 + logxlam ^ 2 / 6)
+  }
+  return(x)
+}
+
+#' @keywords internal
+#' @rdname evils-internal
 BoxCoxVec <- function(x, lambda = 1, lambda_tol = 1e-6) {
   #
   # Computes the Box-Cox transformation of a vector.  If lambda is very close
