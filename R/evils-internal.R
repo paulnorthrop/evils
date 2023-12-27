@@ -329,7 +329,7 @@ BC <- function(x, lambda, eps = 1e-6) {
   maxLen <- max(length(x), length(lambda))
   x <- rep_len(x, maxLen)
   lambda <- rep_len(lambda, maxLen)
-  #
+  # If either x or lambda is NA then return NA
   if (any(nas <- is.na(x) | is.na(lambda))) {
     x[nas] <- NA
   }
