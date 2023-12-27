@@ -339,7 +339,7 @@ BC <- function(x, lambda, eps = 1e-6) {
   }
   # Indicator of lambda < 0
   neg <- !large & !nas & lambda < 0
-  nonNeg <- !large & !nas & lambda >=0
+  nonNeg <- !large & !nas & lambda >= 0
   # Indicators of being Inf or 0
   xInf <- is.infinite(x)
   xZero <- x == 0
