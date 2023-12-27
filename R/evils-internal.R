@@ -330,8 +330,7 @@ BC <- function(x, lambda, eps = 1e-6) {
   if (any(large <- abs(lambda) > eps)) {
     x[large] <- (x[large] ^ lambda[large] - 1) / lambda[large]
   }
-  # Indicators of 0 < lambda <= eps or -eps <= lambda < 0
-  pos <- !large & lambda > 0
+  # Indicator of lambda < 0
   neg <- !large & lambda < 0
   # Indicators of being Inf or 0
   xInf <- is.infinite(x)
@@ -340,14 +339,14 @@ BC <- function(x, lambda, eps = 1e-6) {
   if (any(xInfNeg <- xInf & neg)) {
     x[xInfNeg] <- -1 / lambda[xInfNeg]
   }
-  if (any(xInfPos <- xInf & pos)) {
-    x[xInfPos] <- Inf
+  if (any(xInfNonNeg <- xInf & !neg)) {
+    x[xInfNonNeg] <- Inf
   }
   if (any(xZeroNeg <- xZero & neg)) {
     x[xZeroNeg] <- -Inf
   }
-  if (any(xZeroPos <- xZero & pos)) {
-    x[xZeroPos] <- -1 / lambda[xZeroPos]
+  if (any(xZeroNonNeg <- xZero & !neg)) {
+    x[xZeroNonNeg] <- -1 / lambda[xZeroNonNeg]
   }
   # Use Taylor series expansion for other cases
   if (any(rest <- !large & !xInf & !xZero)) {
