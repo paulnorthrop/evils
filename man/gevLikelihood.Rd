@@ -33,35 +33,42 @@ terms of the form \eqn{\log(1+x)/x} in the GEV log-likelihood.}
 }
 \value{
 \strong{Log-likelihood} (\code{gevLoglik}). If
-\code{individual = FALSE} the value of the log-likelihood. If
-\code{individual = TRUE} a vector of length \verb{length\{x\}}
+\code{sum = TRUE} a scalar, the value of the log-likelihood. If
+\code{sum = FALSE} a vector of length \verb{length\{x\}}
 containing the contributions to the log-likelihood from each of the
 observations.
 
-\strong{Score} (\code{gevScore}).  If \code{individual = FALSE} the value
-of the score, a vector of length 2 containing the derivative of the
+\strong{Score} (\code{gevScore}).  If \code{sum = TRUE} the value
+of the score, a vector of length 3 containing the derivative of the
 log-likelihood evaluated at the input parameter values.
-If \code{individual = TRUE} the values of the contributions to the score
+If \code{sum = FALSE} the values of the contributions to the score
 from each of the observations, a
-\code{length(x)}\eqn{ \times 2}{ x 2} matrix.
+\code{length(x)}\eqn{ \times 3} matrix.
 The columns are named \code{sigma[u]} and \code{xi}.
 
 \strong{Observed information} (\code{gevInfo}).  The observed information: a
-\eqn{2 \times 2}{2 x 2} matrix with row and column names
+\eqn{2 \times 2} matrix with row and column names
 \code{c(sigma[u], xi)}.
 }
 \description{
-Calculate the log-likelihood function, score and observed information for
+Calculate the log-likelihood, score and observed information for
 a random sample from a generalised extreme value (GEV) distribution,
 including cases where the shape parameter is very close to zero.
 }
 \details{
 \strong{Log-likelihood} (\code{gevLoglik}). The two problematic
 terms of the log-likelihood both involve \eqn{\log(1+z)/z},
-where \eqn{z = \xi (y - \mu)/ \sigma} and where \eqn{y} is a
-sample maximum. In one part this is exponentiated, in the other it is not.
-The function \code{\link{log1pdx}} is used to calculate \eqn{\log(1+z)/z}, with
-special case taken for cases where \code{z} is close to zero.
+where \eqn{z = \xi (x - \mu)/ \sigma}. In one part this is exponentiated,
+in the other it is not. The function \code{\link{log1pdx}} is used to calculate
+\eqn{\log(1+z)/z}, with special case taken for cases where \code{z} is close to
+zero.
+
+\strong{Score} (\code{gevScore}). The first derivatives of the log-likelihood with
+respect to \eqn{\mu} and \eqn{\sigma} both involve \eqn{\log(1+z)/z},
+calculated using \code{\link{log1pdx}}. The first derivative of the log-likelihood
+with respect to \eqn{\xi} involves \eqn{\log(1+z)/z} and also
+\eqn{\log(1+z)/z^2 - z^{-1}(1+z)^{-1}}. The latter is calculated using
+\code{\link{log1pdx2}}.
 }
 \examples{
 ### Simulate some data

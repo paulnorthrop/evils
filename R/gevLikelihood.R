@@ -1,6 +1,6 @@
 #' Generalised Extreme Value functions
 #'
-#' Calculate the log-likelihood function, score and observed information for
+#' Calculate the log-likelihood, score and observed information for
 #' a random sample from a generalised extreme value (GEV) distribution,
 #' including cases where the shape parameter is very close to zero.
 #'
@@ -21,27 +21,34 @@
 #' @details
 #'   **Log-likelihood** (`gevLoglik`). The two problematic
 #'   terms of the log-likelihood both involve \eqn{\log(1+z)/z},
-#'   where \eqn{z = \xi (y - \mu)/ \sigma} and where \eqn{y} is a
-#'   sample maximum. In one part this is exponentiated, in the other it is not.
-#'   The function [`log1pdx`] is used to calculate \eqn{\log(1+z)/z}, with
-#'   special case taken for cases where `z` is close to zero.
+#'   where \eqn{z = \xi (x - \mu)/ \sigma}. In one part this is exponentiated,
+#'   in the other it is not. The function [`log1pdx`] is used to calculate
+#'   \eqn{\log(1+z)/z}, with special case taken for cases where `z` is close to
+#'   zero.
+#'
+#'   **Score** (`gevScore`). The first derivatives of the log-likelihood with
+#'   respect to \eqn{\mu} and \eqn{\sigma} both involve \eqn{\log(1+z)/z},
+#'   calculated using [`log1pdx`]. The first derivative of the log-likelihood
+#'   with respect to \eqn{\xi} involves \eqn{\log(1+z)/z} and also
+#'   \eqn{\log(1+z)/z^2 - z^{-1}(1+z)^{-1}}. The latter is calculated using
+#'   [`log1pdx2`].
 #' @return
 #'   **Log-likelihood** (`gevLoglik`). If
-#'   `individual = FALSE` the value of the log-likelihood. If
-#'   `individual = TRUE` a vector of length `length{x}`
+#'   `sum = TRUE` a scalar, the value of the log-likelihood. If
+#'   `sum = FALSE` a vector of length `length{x}`
 #'   containing the contributions to the log-likelihood from each of the
 #'   observations.
 #'
-#' **Score** (`gevScore`).  If `individual = FALSE` the value
-#'  of the score, a vector of length 2 containing the derivative of the
+#' **Score** (`gevScore`).  If `sum = TRUE` the value
+#'  of the score, a vector of length 3 containing the derivative of the
 #'  log-likelihood evaluated at the input parameter values.
-#'  If `individual = TRUE` the values of the contributions to the score
+#'  If `sum = FALSE` the values of the contributions to the score
 #'  from each of the observations, a
-#'   `length(x)`\eqn{ \times 2}{ x 2} matrix.
+#'   `length(x)`\eqn{ \times 3} matrix.
 #'   The columns are named `sigma[u]` and `xi`.
 #'
 #' **Observed information** (`gevInfo`).  The observed information: a
-#'   \eqn{2 \times 2}{2 x 2} matrix with row and column names
+#'   \eqn{2 \times 2} matrix with row and column names
 #'   `c(sigma[u], xi)`.
 #' @name gevLikelihood
 NULL
@@ -68,8 +75,10 @@ NULL
 #' gevLoglikDirect(pars = c(0, 1, -1e-309), maxima = y)
 #'
 #' # Score
+#' set.seed(28122023)
 #' x <- rGEV(10)
 #' gevScore(x)
+#' gevScore(x, sum = TRUE)
 #' nieve::dGEV(x, log = TRUE, deriv = TRUE)
 #' @rdname gevLikelihood
 #' @export
