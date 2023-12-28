@@ -322,10 +322,10 @@ qGenPareto <- function (p, loc = 0, scale = 1, shape = 0,
 #' @keywords internal
 #' @rdname evils-internal
 BC <- function(x, lambda, eps = 1e-6) {
-  eps <- abs(eps)
   if (any(x < 0, na.rm = TRUE)) {
     stop("Invalid x: x must be non-negative")
   }
+  eps <- abs(eps)
   # Recycle the vector input q, loc, scale and shape, if necessary
   maxLen <- max(length(x), length(lambda))
   x <- rep_len(x, maxLen)
@@ -368,47 +368,30 @@ BC <- function(x, lambda, eps = 1e-6) {
 #' @keywords internal
 #' @rdname evils-internal
 BC2 <- function(x, lambda, eps = 1e-6) {
-  eps <- abs(eps)
   if (any(x < 0, na.rm = TRUE)) {
     stop("Invalid x: x must be non-negative")
   }
+  eps <- abs(eps)
   # Recycle the vector input q, loc, scale and shape, if necessary
   maxLen <- max(length(x), length(lambda))
   x <- rep_len(x, maxLen)
   lambda <- rep_len(lambda, maxLen)
+  #
+  y <- lambda * log(x)
   # If either x or lambda is NA then return NA
   if (any(nas <- is.na(x) | is.na(lambda))) {
     x[nas] <- NA
   }
-  # If abs(lambda) > eps or lambda = NA then use the usual formula
-  if (any(large <- !nas & abs(lambda) >= eps)) {
-    xlambda <- x[large] * lambda[large]
-    x[large] <- log(x[large]) * expm1(xlambda) / xlambda
+  fun <- function(y) {
+    if (any(large <- !nas & abs(y) >= eps)) {
+      x[large] <- log(x[large]) * expm1(y[large]) / y[large]
+    }
+    if (any(small <- !nas & abs(y) < eps)) {
+      ysmall <- y[small]
+      x[small] <- log(x[small]) * (1 + ysmall / 2 + ysmall ^ 2 / 6)
+    }
   }
-  # Indicator of lambda < 0
-  neg <- !large & !nas & lambda < 0
-  nonNeg <- !large & !nas & lambda >= 0
-  # Indicators of being Inf or 0
-  xInf <- is.infinite(x)
-  xZero <- x == 0
-  # Calculations for combinations of these indicators
-  if (any(xInfNeg <- xInf & neg)) {
-    x[xInfNeg] <- -1 / lambda[xInfNeg]
-  }
-  if (any(xInfNonNeg <- xInf & nonNeg)) {
-    x[xInfNonNeg] <- Inf
-  }
-  if (any(xZeroNeg <- xZero & neg)) {
-    x[xZeroNeg] <- -Inf
-  }
-  if (any(xZeroNonNeg <- xZero & nonNeg)) {
-    x[xZeroNonNeg] <- -1 / lambda[xZeroNonNeg]
-  }
-  # Use Taylor series expansion for other cases
-  if (any(rest <- !large & !xInf & !xZero & !nas)) {
-    logxlam <- log(x[rest]) * lambda[rest]
-    x[rest] <- log(x[rest]) * (1 + logxlam / 2 + logxlam ^ 2 / 6)
-  }
+  fun(y)
   return(x)
 }
 
