@@ -3,9 +3,12 @@
 \name{gevLikelihood}
 \alias{gevLikelihood}
 \alias{gevLoglik}
+\alias{gevScore}
 \title{Generalised Extreme Value functions}
 \usage{
-gevLoglik(x, loc, scale, shape, individual = TRUE, ...)
+gevLoglik(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
+
+gevScore(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 }
 \arguments{
 \item{x}{A numeric vector of observations. Typically, these are
@@ -19,10 +22,10 @@ GEV scale parameter \eqn{\sigma}.}
 
 \item{shape}{A numeric vector. Values of the GEV shape parameter \eqn{\xi}.}
 
-\item{individual}{A logical scalar. Relevant to \code{gevLoglik} and
-\code{gevScore}. If \code{individual = FALSE} then only the sum of
+\item{sum}{A logical scalar. Relevant to \code{gevLoglik} and
+\code{gevScore}. If \code{sum = TRUE} then only the sum of
 contributions from all observations in \code{x} is calculated.  If
-\code{individual = TRUE} then individual contributions from each
+\code{sum = FALSE} then individual contributions from each
 observation in \code{x} are calculated.}
 
 \item{...}{Further arguments to be passed to \code{\link{log1pdx}}, which evaluates
@@ -77,4 +80,9 @@ gevLoglik(y, 0, 1, 0)
 # Mostly fine, but breaks down eventually
 gevLoglikDirect(pars = c(0, 1, 1e-309), maxima = y)
 gevLoglikDirect(pars = c(0, 1, -1e-309), maxima = y)
+
+# Score
+x <- rGEV(10)
+gevScore(x)
+nieve::dGEV(x, log = TRUE, deriv = TRUE)
 }

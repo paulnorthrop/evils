@@ -11,10 +11,10 @@
 #' @param scale A numeric vector of **positive** values. Values of the
 #'   GEV scale parameter \eqn{\sigma}.
 #' @param shape A numeric vector. Values of the GEV shape parameter \eqn{\xi}.
-#' @param individual A logical scalar. Relevant to `gevLoglik` and
-#'   `gevScore`. If `individual = FALSE` then only the sum of
+#' @param sum A logical scalar. Relevant to `gevLoglik` and
+#'   `gevScore`. If `sum = TRUE` then only the sum of
 #'   contributions from all observations in `x` is calculated.  If
-#'   `individual = TRUE` then individual contributions from each
+#'   `sum = FALSE` then individual contributions from each
 #'   observation in `x` are calculated.
 #' @param ... Further arguments to be passed to [`log1pdx`], which evaluates
 #'   terms of the form \eqn{\log(1+x)/x} in the GEV log-likelihood.
@@ -66,12 +66,44 @@ NULL
 #' # Mostly fine, but breaks down eventually
 #' gevLoglikDirect(pars = c(0, 1, 1e-309), maxima = y)
 #' gevLoglikDirect(pars = c(0, 1, -1e-309), maxima = y)
+#'
+#' # Score
+#' x <- rGEV(10)
+#' gevScore(x)
+#' nieve::dGEV(x, log = TRUE, deriv = TRUE)
 #' @rdname gevLikelihood
 #' @export
-gevLoglik <- function(x, loc, scale, shape, individual = TRUE, ...) {
+gevLoglik <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
   loglik <- dGEV(x, loc, scale, shape, log = TRUE, ...)
-  if (!individual) {
+  if (sum) {
     loglik <- sum(loglik)
   }
   return(loglik)
+}
+
+#' @rdname gevLikelihood
+#' @export
+gevScore <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
+  # Recycle the vector input x, loc, scale and shape, if necessary
+  maxLen <- max(length(x), length(loc), length(scale), length(shape))
+  x <- rep_len(x, maxLen)
+  loc <- rep_len(loc, maxLen)
+  scale <- rep_len(scale, maxLen)
+  shape <- rep_len(shape, maxLen)
+  #
+  scoreMat <- matrix(NA, maxLen, 3)
+  w <- x - loc
+  zw <- shape * w / scale
+  # Derivative of the log-likelihood with respect to loc = mu
+  scoreMat[, 1] <- ((shape + 1) / (1 + zw) -
+                      exp(-(shape + 1) * w * log1pdx(zw) / scale)) / scale
+  # Derivative of the log-likelihood with respect to scale = sigma
+  scoreMat[, 2] <- (w * scoreMat[, 1] - 1) / scale
+  # Derivative of the log-likelihood with respect to shape = xi
+  scoreMat[, 3] <- w ^ 2 * log1pdx2(zw) * (1 - exp(-w * log1pdx(zw) / scale)) /
+    scale ^ 2 - w / (scale * (1 + zw))
+  if (sum) {
+    scoreMat <- colSums(scoreMat)
+  }
+  return(scoreMat)
 }
