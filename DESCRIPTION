@@ -8,14 +8,11 @@ Description: Provides functions to calculate the log-likelihood function, score
   function and observed information matrix for extreme value models even in 
   cases where the shape parameter is very close to zero.  If the shape 
   parameter is close enough to zero direct evaluation of some of the quantities 
-  involved can be unreliable. In these cases, these quantities are expressed as 
-  a series expansion, whose value is approximated using the 'sumR' package 
-  <https://cran.r-project.org/package=sumR>.   
+  involved can be unreliable. In these cases, ...
 Imports: 
     DPQ,
     matrixStats,
-    stats,
-    sumR
+    stats
 License: GPL (>= 2)
 Encoding: UTF-8
 Depends:
