@@ -99,20 +99,36 @@ gevScore <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
   loc <- rep_len(loc, maxLen)
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
-  #
+  # Create a 3-column matrix to store the results
   scoreMat <- matrix(NA, maxLen, 3)
+  # The density, and, hence the score, is undefined if scale <= 0
+  if (any(invalidScale <- scale <= 0)) {
+    scoreMat[invalidScale, ] <- NaN
+  }
   w <- x - loc
   zw <- shape * w / scale
-  # Derivative of the log-likelihood with respect to loc = mu
-  scoreMat[, 1] <- ((shape + 1) / (1 + zw) -
-                      exp(-(shape + 1) * w * log1pdx(zw) / scale)) / scale
-  # Derivative of the log-likelihood with respect to scale = sigma
-  scoreMat[, 2] <- (w * scoreMat[, 1] - 1) / scale
-  # Derivative of the log-likelihood with respect to shape = xi
-  scoreMat[, 3] <- w ^ 2 * log1pdx2(zw) * (1 - exp(-w * log1pdx(zw) / scale)) /
-    scale ^ 2 - w / (scale * (1 + zw))
+  # The density is 0 if 1 + shape * (x - loc) / scale <= 0
+  # Set the score to 0 for these cases
+  zw <- shape * (x - loc) / scale
+  if (any(zerod <- 1 + zw <= 0 & !invalidScale)) {
+    scoreMat[zerod] <- 0
+  }
+  # Otherwise, the density is positive
+  if (any(posd <- !zerod & !invalidScale)) {
+    # Derivative of the log-likelihood with respect to loc = mu
+    scoreMat[posd, 1] <- ((shape[posd] + 1) / (1 + zw[posd]) -
+                         exp(-(shape[posd] + 1) * w[posd] * log1pdx(zw[posd]) /
+                               scale[posd])) / scale[posd]
+    # Derivative of the log-likelihood with respect to scale = sigma
+    scoreMat[posd, 2] <- (w[posd] * scoreMat[posd, 1] - 1) / scale[posd]
+    # Derivative of the log-likelihood with respect to shape = xi
+    scoreMat[posd, 3] <- w[posd] ^ 2 * log1pdx2(zw[posd]) *
+      (1 - exp(-w[posd] * log1pdx(zw[posd]) / scale[posd])) /
+      scale[posd] ^ 2 - w[posd] / (scale[posd] * (1 + zw[posd]))
+  }
   if (sum) {
     scoreMat <- colSums(scoreMat)
   }
+  colnames(scoreMat) <- c("loc", "scale", "shape")
   return(scoreMat)
 }
