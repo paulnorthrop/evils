@@ -31,7 +31,7 @@ length 1.}
 
 \item{eps}{A numeric scalar. For values of \eqn{\xi} in \code{xi} that lie in
 \verb{(-eps, eps)} an approximation is used instead of a direct calculation.
-See \strong{Details}.}
+See \strong{Details}. If \code{eps} is a vector then only the first element is used.}
 }
 \value{
 \code{gevExpInfo} returns a 3 by 3 numeric matrix with row and column

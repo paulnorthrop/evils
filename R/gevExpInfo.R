@@ -7,7 +7,7 @@
 #'   length 1.
 #' @param eps A numeric scalar. For values of \eqn{\xi} in `xi` that lie in
 #'   `(-eps, eps)` an approximation is used instead of a direct calculation.
-#'   See **Details**.
+#'   See **Details**. If `eps` is a vector then only the first element is used.
 #' @details `gevExpInfo` calculates, for single pair of values
 #'   \eqn{(\sigma, \xi) = } `(sigma, xi)`, the expected information matrix for a
 #'   single observation from a GEV distribution with distribution function
@@ -71,6 +71,7 @@ imm <- function(sigma, xi) {
 #' @rdname gevExpInfo
 #' @export
 iss <- function(sigma, xi, eps = 3e-3) {
+  eps <- eps[1]
   val <- gevExpInfoComp(fun = issFn, fun0 = iss0Constant, xi = xi, eps = eps)
   m <- max(length(sigma), length(xi))
   return(rep_len(val, m) / rep_len(sigma ^ 2, m))
@@ -79,6 +80,7 @@ iss <- function(sigma, xi, eps = 3e-3) {
 #' @rdname gevExpInfo
 #' @export
 ixx <- function(xi, eps = 3e-3) {
+  eps <- eps[1]
   val <- gevExpInfoComp(fun = ixxFn, fun0 = ixx0Constant, xi = xi, eps = eps)
   return(val)
 }
@@ -86,6 +88,7 @@ ixx <- function(xi, eps = 3e-3) {
 #' @rdname gevExpInfo
 #' @export
 ims <- function(sigma, xi, eps = 3e-3) {
+  eps <- eps[1]
   val <- gevExpInfoComp(fun = imsFn, fun0 = ims0Constant, xi = xi, eps = eps)
   m <- max(length(sigma), length(xi))
   return(rep_len(val, m) / rep_len(sigma ^ 2, m))
@@ -94,6 +97,7 @@ ims <- function(sigma, xi, eps = 3e-3) {
 #' @rdname gevExpInfo
 #' @export
 imx <- function(sigma, xi, eps = 3e-3) {
+  eps <- eps[1]
   val <- gevExpInfoComp(fun = imxFn, fun0 = imx0Constant, xi = xi, eps = eps)
   m <- max(length(sigma), length(xi))
   return(rep_len(val, m) / rep_len(sigma, m))
@@ -102,6 +106,7 @@ imx <- function(sigma, xi, eps = 3e-3) {
 #' @rdname gevExpInfo
 #' @export
 isx <- function(sigma, xi, eps = 3e-3) {
+  eps <- eps[1]
   val <- gevExpInfoComp(fun = isxFn, fun0 = isx0Constant, xi = xi, eps = eps)
   m <- max(length(sigma), length(xi))
   return(rep_len(val, m) / rep_len(sigma, m))
