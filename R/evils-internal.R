@@ -322,6 +322,7 @@ qGenPareto <- function (p, loc = 0, scale = 1, shape = 0,
 #' @keywords internal
 #' @rdname evils-internal
 BC <- function(x, lambda, eps = 1e-6) {
+  eps <- abs(eps)
   if (any(x < 0, na.rm = TRUE)) {
     stop("Invalid x: x must be non-negative")
   }
@@ -334,7 +335,7 @@ BC <- function(x, lambda, eps = 1e-6) {
     x[nas] <- NA
   }
   # If abs(lambda) > eps or lambda = NA then use the usual formula
-  if (any(large <- !nas & abs(lambda) > eps)) {
+  if (any(large <- !nas & abs(lambda) >= eps)) {
     x[large] <- (x[large] ^ lambda[large] - 1) / lambda[large]
   }
   # Indicator of lambda < 0
