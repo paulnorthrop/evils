@@ -367,36 +367,6 @@ BC <- function(x, lambda, eps = 1e-6) {
 
 #' @keywords internal
 #' @rdname evils-internal
-BC2 <- function(x, lambda, eps = 1e-6) {
-  if (any(x < 0, na.rm = TRUE)) {
-    stop("Invalid x: x must be non-negative")
-  }
-  eps <- abs(eps)
-  # Recycle the vector input q, loc, scale and shape, if necessary
-  maxLen <- max(length(x), length(lambda))
-  x <- rep_len(x, maxLen)
-  lambda <- rep_len(lambda, maxLen)
-  #
-  y <- lambda * log(x)
-  # If either x or lambda is NA then return NA
-  if (any(nas <- is.na(x) | is.na(lambda))) {
-    x[nas] <- NA
-  }
-  fun <- function(y) {
-    if (any(large <- !nas & abs(y) >= eps)) {
-      x[large] <- log(x[large]) * expm1(y[large]) / y[large]
-    }
-    if (any(small <- !nas & abs(y) < eps)) {
-      ysmall <- y[small]
-      x[small] <- log(x[small]) * (1 + ysmall / 2 + ysmall ^ 2 / 6)
-    }
-  }
-  fun(y)
-  return(x)
-}
-
-#' @keywords internal
-#' @rdname evils-internal
 BoxCoxVec <- function(x, lambda = 1, lambda_tol = 1e-6) {
   #
   # Computes the Box-Cox transformation of a vector.  If lambda is very close
