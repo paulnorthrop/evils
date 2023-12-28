@@ -6,4 +6,5 @@ inst/doc
 checks
 /doc/
 /Meta/
-tests/testthat/test-GEVexpectedInformationLocally.R
+tests/testthat/test-gevExpInfoLocally.R
+tests/testthat/test-gevScoreLocally.R
