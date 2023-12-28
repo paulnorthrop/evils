@@ -8,8 +8,8 @@
 #'   block maxima, that is, the largest observation in a block of contiguous
 #'   observations.
 #' @param loc A numeric vector. Values of the GEV location parameter \eqn{\mu}.
-#' @param scale A numeric vector. Values of the GEV scale parameter
-#'   \eqn{\sigma}.
+#' @param scale A numeric vector of **positive** values. Values of the
+#'   GEV scale parameter \eqn{\sigma}.
 #' @param shape A numeric vector. Values of the GEV shape parameter \eqn{\xi}.
 #' @param individual A logical scalar. Relevant to `gevLoglik` and
 #'   `gevScore`. If `individual = FALSE` then only the sum of
@@ -19,12 +19,6 @@
 #' @param ... Further arguments to be passed to [`log1pdx`], which evaluates
 #'   terms of the form \eqn{\log(1+x)/x} in the GEV log-likelihood.
 #' @details
-#'   **GEV density** (`dGEV`) and **GEV distribution function** (`pGEV`).
-#'   The input vectors `x`, `loc`, `scale` and `shape` are recycled, so that
-#'   the length of the returned vector is the maximum of the lengths of these
-#'   arguments. For any element of `scale` that is non-positive, `NaN` is
-#'   returned, with no warning.
-#'
 #'   **Log-likelihood** (`gevLoglik`). The two problematic
 #'   terms of the log-likelihood both involve \eqn{\log(1+z)/z},
 #'   where \eqn{z = \xi (y - \mu)/ \sigma} and where \eqn{y} is a
@@ -49,7 +43,7 @@
 #' **Observed information** (`gevInfo`).  The observed information: a
 #'   \eqn{2 \times 2}{2 x 2} matrix with row and column names
 #'   `c(sigma[u], xi)`.
-#' @name gev
+#' @name gevLikelihood
 NULL
 ## NULL
 
@@ -72,7 +66,7 @@ NULL
 #' # Mostly fine, but breaks down eventually
 #' gevLoglikDirect(pars = c(0, 1, 1e-309), maxima = y)
 #' gevLoglikDirect(pars = c(0, 1, -1e-309), maxima = y)
-#' @rdname gev
+#' @rdname gevLikelihood
 #' @export
 gevLoglik <- function(x, loc, scale, shape, individual = TRUE, ...) {
   loglik <- dGEV(x, loc, scale, shape, log = TRUE, ...)
@@ -80,73 +74,4 @@ gevLoglik <- function(x, loc, scale, shape, individual = TRUE, ...) {
     loglik <- sum(loglik)
   }
   return(loglik)
-}
-
-#' @rdname gev
-#' @export
-dGEV <- function(x, loc = 0, scale = 1, shape = 0, log = FALSE, ...) {
-  # Recycle the vector input x, loc, scale and shape, if necessary
-  maxLen <- max(length(x), length(loc), length(scale), length(shape))
-  x <- rep_len(x, maxLen)
-  loc <- rep_len(loc, maxLen)
-  scale <- rep_len(scale, maxLen)
-  shape <- rep_len(shape, maxLen)
-  # The density is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0)) {
-    x[invalidScale] <- NaN
-  }
-  # The density is 0 if 1 + shape * (x - loc) / scale <= 0
-  zw <- shape * (x - loc) / scale
-  if (any(zerod <- 1 + zw <= 0 & !invalidScale)) {
-    x[zerod] <- -Inf
-  }
-  # Otherwise, the density is positive
-  if (any(posd <- !zerod & !invalidScale)) {
-    m1 <- (shape[posd] + 1) * (x[posd] - loc[posd]) / scale[posd]
-    m2 <- (x[posd] - loc[posd]) / scale[posd]
-    logterm <- log1pdx(zw[posd], ...)
-    x[posd] <- -log(scale[posd]) - m1 * logterm - exp(-m2 * logterm)
-  }
-  if (!log) {
-    x <- exp(x)
-  }
-  return(x)
-}
-
-#' @rdname gev
-#' @export
-pGEV <- function(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
-                 log.p = FALSE, ...) {
-  # Recycle the vector input q, loc, scale and shape, if necessary
-  maxLen <- max(length(q), length(loc), length(scale), length(shape))
-  q <- rep_len(q, maxLen)
-  loc <- rep_len(loc, maxLen)
-  scale <- rep_len(scale, maxLen)
-  shape <- rep_len(shape, maxLen)
-  # The cdf is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0)) {
-    q[invalidScale] <- NaN
-  }
-  # The cdf is 0 (shape > 0) or 1 (shape < 0) if 1+shape*(q-loc)/scale <= 0
-  zw <- shape * (q - loc) / scale
-  if (any(cdf01 <- 1 + zw <= 0 & !invalidScale)) {
-    q[cdf01] <- log(shape[cdf01] < 0)
-  }
-  # Otherwise, the cdf is in (0, 1)
-  if (any(cdfp <- !cdf01 & !invalidScale)) {
-    m2 <- (q[cdfp] - loc[cdfp]) / scale[cdfp]
-    logterm <- log1pdx(zw[cdfp], ...)
-    q[cdfp] <- -exp(-m2 * logterm)
-  }
-  if (lower.tail) {
-    if (!log.p) {
-      p <- exp(q)
-    }
-  } else {
-    p <- -expm1(q)
-    if (log.p) {
-      p <- log(p)
-    }
-  }
-  return(p)
 }
