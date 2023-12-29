@@ -3,21 +3,21 @@
 \name{gevLikelihood}
 \alias{gevLikelihood}
 \alias{gevLoglik}
+\alias{gevScore}
 \alias{gevdloc}
 \alias{gevdscale}
 \alias{gevdshape}
-\alias{gevScore}
 \title{Generalised Extreme Value functions}
 \usage{
 gevLoglik(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
+
+gevScore(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 
 gevdloc(x, loc, scale, shape)
 
 gevdscale(x, loc, scale, shape)
 
 gevdshape(x, loc, scale, shape)
-
-gevScore(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 }
 \arguments{
 \item{x}{A numeric vector of observations. Typically, these are
@@ -31,29 +31,29 @@ GEV scale parameter \eqn{\sigma}.}
 
 \item{shape}{A numeric vector. Values of the GEV shape parameter \eqn{\xi}.}
 
-\item{sum}{A logical scalar. Relevant to \code{gevLoglik} and
-\code{gevScore}. If \code{sum = TRUE} then only the sum of
-contributions from all observations in \code{x} is calculated.  If
-\code{sum = FALSE} then individual contributions from each
-observation in \code{x} are calculated.}
+\item{sum}{A logical scalar. Relevant to \code{gevLoglik} and \code{gevScore}. If
+\code{sum = TRUE} then only the sum of contributions from all combinations of
+observations in \code{x } and parameter values in \code{loc}, \code{scale} and \code{shape}
+is calculated.  If \code{sum = FALSE} then these individual contributions are
+summed to produce the result.}
 
-\item{...}{Further arguments to be passed to \code{\link{log1pdx}}, which evaluates
-terms of the form \eqn{\log(1+x)/x} in the GEV log-likelihood.}
+\item{...}{Further arguments to be passed to \code{\link{log1pdx}} or \code{\link{log1pdx2}}.
+See \strong{Details}.}
 }
 \value{
-\strong{Log-likelihood} (\code{gevLoglik}). If
-\code{sum = TRUE} a scalar, the value of the log-likelihood. If
-\code{sum = FALSE} a vector of length \verb{length\{x\}}
-containing the contributions to the log-likelihood from each of the
-observations.
+For \code{gevLoglik} and \code{gevScore} the number \code{n}, say, of combinations of the
+input parameters \code{x}, \code{loc}, \code{scale} and \code{shape} in the returned object is
+the maximum of the lengths of these arguments, with these arguments being
+recycled as necessary.
 
-\strong{Score} (\code{gevScore}).  If \code{sum = TRUE} the value
-of the score, a vector of length 3 containing the derivative of the
-log-likelihood evaluated at the input parameter values.
-If \code{sum = FALSE} the values of the contributions to the score
-from each of the observations, a
-\code{length(x)}\eqn{ \times 3} matrix.
-The columns are named \code{sigma[u]} and \code{xi}.
+\strong{Log-likelihood} (\code{gevLoglik}). If \code{sum = FALSE} a vector of length \code{n}
+containing individual log-likelihood contributions. If \code{sum = TRUE} a
+scalar, the value of sum of these contributions.
+
+\strong{Score} (\code{gevScore}). If \code{sum = FALSE} the values of the contributions
+to the score, an \code{n}\eqn{ \times 3} matrix. The columns are named
+\code{loc}, \code{scale} and \code{shape}. If \code{sum = TRUE}, a vector of length 3
+containing the column sums of the matrix returned if \code{sum = FALSE}.
 
 \strong{Observed information} (\code{gevInfo}).  The observed information: a
 \eqn{2 \times 2} matrix with row and column names
@@ -78,6 +78,15 @@ calculated using \code{\link{log1pdx}}. The first derivative of the log-likeliho
 with respect to \eqn{\xi} involves \eqn{\log(1+z)/z} and also
 \eqn{\log(1+z)/z^2 - z^{-1}(1+z)^{-1}}. The latter is calculated using
 \code{\link{log1pdx2}}.
+
+The functions \code{gevdloc}, \code{gevdscale} and \code{gevdshape} are used in
+\code{gevScore} to calculate the first derivatives of the GEV log-likelihood
+with respect to \eqn{\mu}, \eqn{\sigma} and \eqn{\xi}. The input vectors
+\code{x}, \code{loc}, \code{scale} and \code{shape} must have the same lengths and satisfy the
+parameter constraints \eqn{\sigma > 0} and
+\eqn{1 + \xi(x - \mu) / \sigma > 0}. These conditions are not checked
+in \code{gevdloc}, \code{gevdscale} and \code{gevdshape}, so the user must take care when
+calling these functions.
 }
 \examples{
 ### Simulate some data

@@ -11,13 +11,13 @@
 #' @param scale A numeric vector of **positive** values. Values of the
 #'   GEV scale parameter \eqn{\sigma}.
 #' @param shape A numeric vector. Values of the GEV shape parameter \eqn{\xi}.
-#' @param sum A logical scalar. Relevant to `gevLoglik` and
-#'   `gevScore`. If `sum = TRUE` then only the sum of
-#'   contributions from all observations in `x` is calculated.  If
-#'   `sum = FALSE` then individual contributions from each
-#'   observation in `x` are calculated.
-#' @param ... Further arguments to be passed to [`log1pdx`], which evaluates
-#'   terms of the form \eqn{\log(1+x)/x} in the GEV log-likelihood.
+#' @param sum A logical scalar. Relevant to `gevLoglik` and `gevScore`. If
+#'   `sum = TRUE` then only the sum of contributions from all combinations of
+#'   observations in `x ` and parameter values in `loc`, `scale` and `shape`
+#'   is calculated.  If `sum = FALSE` then these individual contributions are
+#'   summed to produce the result.
+#' @param ... Further arguments to be passed to [`log1pdx`] or [`log1pdx2`].
+#'   See **Details**.
 #' @details
 #'   **Log-likelihood** (`gevLoglik`). The two problematic
 #'   terms of the log-likelihood both involve \eqn{\log(1+z)/z},
@@ -32,20 +32,29 @@
 #'   with respect to \eqn{\xi} involves \eqn{\log(1+z)/z} and also
 #'   \eqn{\log(1+z)/z^2 - z^{-1}(1+z)^{-1}}. The latter is calculated using
 #'   [`log1pdx2`].
-#' @return
-#'   **Log-likelihood** (`gevLoglik`). If
-#'   `sum = TRUE` a scalar, the value of the log-likelihood. If
-#'   `sum = FALSE` a vector of length `length{x}`
-#'   containing the contributions to the log-likelihood from each of the
-#'   observations.
 #'
-#' **Score** (`gevScore`).  If `sum = TRUE` the value
-#'  of the score, a vector of length 3 containing the derivative of the
-#'  log-likelihood evaluated at the input parameter values.
-#'  If `sum = FALSE` the values of the contributions to the score
-#'  from each of the observations, a
-#'   `length(x)`\eqn{ \times 3} matrix.
-#'   The columns are named `sigma[u]` and `xi`.
+#'   The functions `gevdloc`, `gevdscale` and `gevdshape` are used in
+#'   `gevScore` to calculate the first derivatives of the GEV log-likelihood
+#'   with respect to \eqn{\mu}, \eqn{\sigma} and \eqn{\xi}. The input vectors
+#'   `x`, `loc`, `scale` and `shape` must have the same lengths and satisfy the
+#'   parameter constraints \eqn{\sigma > 0} and
+#'   \eqn{1 + \xi(x - \mu) / \sigma > 0}. These conditions are not checked
+#'   in `gevdloc`, `gevdscale` and `gevdshape`, so the user must take care when
+#'   calling these functions.
+#' @return
+#'   For `gevLoglik` and `gevScore` the number `n`, say, of combinations of the
+#'   input parameters `x`, `loc`, `scale` and `shape` in the returned object is
+#'   the maximum of the lengths of these arguments, with these arguments being
+#'   recycled as necessary.
+#'
+#'   **Log-likelihood** (`gevLoglik`). If `sum = FALSE` a vector of length `n`
+#'   containing individual log-likelihood contributions. If `sum = TRUE` a
+#'   scalar, the value of sum of these contributions.
+#'
+#'   **Score** (`gevScore`). If `sum = FALSE` the values of the contributions
+#'   to the score, an `n`\eqn{ \times 3} matrix. The columns are named
+#'   `loc`, `scale` and `shape`. If `sum = TRUE`, a vector of length 3
+#'   containing the column sums of the matrix returned if `sum = FALSE`.
 #'
 #' **Observed information** (`gevInfo`).  The observed information: a
 #'   \eqn{2 \times 2} matrix with row and column names
@@ -91,33 +100,6 @@ gevLoglik <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
 
 #' @rdname gevLikelihood
 #' @export
-gevdloc <- function(x, loc, scale, shape) {
-  w <- x - loc
-  zw <- shape * w / scale
-  val <- (shape + 1) / (1 + zw) - exp(-(shape + 1) * w * log1pdx(zw) / scale)
-  return(val / scale)
-}
-
-#' @rdname gevLikelihood
-#' @export
-gevdscale <- function(x, loc, scale, shape) {
-  w <- x - loc
-  val <- w * gevdloc(x, loc, scale, shape) - 1
-  return(val / scale)
-}
-
-#' @rdname gevLikelihood
-#' @export
-gevdshape <- function(x, loc, scale, shape) {
-  w <- x - loc
-  zw <- shape * w / scale
-  val <- w ^ 2 * log1pdx2(zw) * (1 - exp(-w * log1pdx(zw) / scale)) /
-    scale ^ 2 - w / (scale * (1 + zw))
-  return(val)
-}
-
-#' @rdname gevLikelihood
-#' @export
 gevScore <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
   # Recycle the vector input x, loc, scale and shape, if necessary
   maxLen <- max(length(x), length(loc), length(scale), length(shape))
@@ -148,9 +130,36 @@ gevScore <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
     # Derivative of the log-likelihood with respect to shape = xi
     scoreMat[pos, 3] <- gevdshape(x[pos], loc[pos], scale[pos], shape[pos])
   }
+  colnames(scoreMat) <- c("loc", "scale", "shape")
   if (sum) {
     scoreMat <- colSums(scoreMat)
   }
-  colnames(scoreMat) <- c("loc", "scale", "shape")
   return(scoreMat)
+}
+
+#' @rdname gevLikelihood
+#' @export
+gevdloc <- function(x, loc, scale, shape) {
+  w <- x - loc
+  zw <- shape * w / scale
+  val <- (shape + 1) / (1 + zw) - exp(-(shape + 1) * w * log1pdx(zw) / scale)
+  return(val / scale)
+}
+
+#' @rdname gevLikelihood
+#' @export
+gevdscale <- function(x, loc, scale, shape) {
+  w <- x - loc
+  val <- w * gevdloc(x, loc, scale, shape) - 1
+  return(val / scale)
+}
+
+#' @rdname gevLikelihood
+#' @export
+gevdshape <- function(x, loc, scale, shape) {
+  w <- x - loc
+  zw <- shape * w / scale
+  val <- w ^ 2 * log1pdx2(zw) * (1 - exp(-w * log1pdx(zw) / scale)) /
+    scale ^ 2 - w / (scale * (1 + zw))
+  return(val)
 }
