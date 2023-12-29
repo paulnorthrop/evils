@@ -3,13 +3,13 @@
 
 set.seed(28122023)
 x <- rGEV(10)
-mu <- 0
-sigma <- 1
+mu <- -1:8
+sigma <- c(1, 2.5)
 xi <- 0
+res1 <- gevScore(x, loc = mu, scale = sigma, shape = xi)
+
 w <- x - mu
 ws <- w / sigma
-res1 <- gevScore(x, shape = xi)
-
 scoreLoc <- (1 - exp(-ws)) / sigma
 scoreScale <- (w * scoreLoc - 1) / sigma
 scoreShape <- ws ^ 2 * (1 - exp(-ws)) / 2 - ws
