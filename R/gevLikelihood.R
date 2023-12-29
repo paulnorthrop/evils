@@ -79,7 +79,6 @@ NULL
 #' x <- rGEV(10)
 #' gevScore(x)
 #' gevScore(x, sum = TRUE)
-#' nieve::dGEV(x, log = TRUE, deriv = TRUE)
 #' @rdname gevLikelihood
 #' @export
 gevLoglik <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {

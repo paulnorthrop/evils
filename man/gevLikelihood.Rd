@@ -93,5 +93,4 @@ set.seed(28122023)
 x <- rGEV(10)
 gevScore(x)
 gevScore(x, sum = TRUE)
-nieve::dGEV(x, log = TRUE, deriv = TRUE)
 }
