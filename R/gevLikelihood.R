@@ -91,6 +91,33 @@ gevLoglik <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
 
 #' @rdname gevLikelihood
 #' @export
+gevdloc <- function(x, loc, scale, shape) {
+  w <- x - loc
+  zw <- shape * w / scale
+  val <- (shape + 1) / (1 + zw) - exp(-(shape + 1) * w * log1pdx(zw) / scale)
+  return(val / scale)
+}
+
+#' @rdname gevLikelihood
+#' @export
+gevdscale <- function(x, loc, scale, shape) {
+  w <- x - loc
+  val <- w * gevdloc(x, loc, scale, shape) - 1
+  return(val / scale)
+}
+
+#' @rdname gevLikelihood
+#' @export
+gevdshape <- function(x, loc, scale, shape) {
+  w <- x - loc
+  zw <- shape * w / scale
+  val <- w ^ 2 * log1pdx2(zw) * (1 - exp(-w * log1pdx(zw) / scale)) /
+    scale ^ 2 - w / (scale * (1 + zw))
+  return(val)
+}
+
+#' @rdname gevLikelihood
+#' @export
 gevScore <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
   # Recycle the vector input x, loc, scale and shape, if necessary
   maxLen <- max(length(x), length(loc), length(scale), length(shape))
@@ -113,17 +140,13 @@ gevScore <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
     scoreMat[zerod] <- 0
   }
   # Otherwise, the density is positive
-  if (any(posd <- !zerod & !invalidScale)) {
+  if (any(pos <- !zerod & !invalidScale)) {
     # Derivative of the log-likelihood with respect to loc = mu
-    scoreMat[posd, 1] <- ((shape[posd] + 1) / (1 + zw[posd]) -
-                         exp(-(shape[posd] + 1) * w[posd] * log1pdx(zw[posd]) /
-                               scale[posd])) / scale[posd]
+    scoreMat[pos, 1] <- gevdloc(x[pos], loc[pos], scale[pos], shape[pos])
     # Derivative of the log-likelihood with respect to scale = sigma
-    scoreMat[posd, 2] <- (w[posd] * scoreMat[posd, 1] - 1) / scale[posd]
+    scoreMat[pos, 2] <- gevdscale(x[pos], loc[pos], scale[pos], shape[pos])
     # Derivative of the log-likelihood with respect to shape = xi
-    scoreMat[posd, 3] <- w[posd] ^ 2 * log1pdx2(zw[posd]) *
-      (1 - exp(-w[posd] * log1pdx(zw[posd]) / scale[posd])) /
-      scale[posd] ^ 2 - w[posd] / (scale[posd] * (1 + zw[posd]))
+    scoreMat[pos, 3] <- gevdshape(x[pos], loc[pos], scale[pos], shape[pos])
   }
   if (sum) {
     scoreMat <- colSums(scoreMat)

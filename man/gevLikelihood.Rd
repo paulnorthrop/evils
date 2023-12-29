@@ -3,10 +3,19 @@
 \name{gevLikelihood}
 \alias{gevLikelihood}
 \alias{gevLoglik}
+\alias{gevdloc}
+\alias{gevdscale}
+\alias{gevdshape}
 \alias{gevScore}
 \title{Generalised Extreme Value functions}
 \usage{
 gevLoglik(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
+
+gevdloc(x, loc, scale, shape)
+
+gevdscale(x, loc, scale, shape)
+
+gevdshape(x, loc, scale, shape)
 
 gevScore(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 }
