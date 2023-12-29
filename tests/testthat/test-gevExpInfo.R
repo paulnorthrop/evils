@@ -2,9 +2,11 @@
 # distribution agrees with mev::gev.infomat()
 
 sigma <- 1
-mevMat <- cbind(c(1/sigma^2, -0.422784335098467/sigma^2, 0.41184033042644/sigma),
-                c(-0.422784335098467/sigma^2, 1.82368066085288/sigma^2, 0.332484907160274/sigma),
-                c(0.41184033042644/sigma, 0.332484907160274/sigma, 2.42360605517703))
+mevMat <- cbind(
+c(1/sigma^2, -0.422784335098467/sigma^2, 0.41184033042644/sigma),
+c(-0.422784335098467/sigma^2, 1.82368066085288/sigma^2, 0.332484907160274/sigma),
+c(0.41184033042644/sigma, 0.332484907160274/sigma, 2.42360605517703)
+)
 
 # Based on the constants
 evilsMat1 <- cbind(c(imm(1, 0), ims0Constant, imx0Constant),
