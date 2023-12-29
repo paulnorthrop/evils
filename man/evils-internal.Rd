@@ -30,7 +30,6 @@
 \alias{rGenPareto}
 \alias{qGenPareto}
 \alias{BC}
-\alias{BC2}
 \alias{BoxCoxVec}
 \alias{rGenExtremeValue}
 \alias{qGenExtremeValue}
@@ -104,8 +103,6 @@ rGenPareto(n, loc = 0, scale = 1, shape = 0)
 qGenPareto(p, loc = 0, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE)
 
 BC(x, lambda, eps = 1e-06)
-
-BC2(x, lambda, eps = 1e-06)
 
 BoxCoxVec(x, lambda = 1, lambda_tol = 1e-06)
 
