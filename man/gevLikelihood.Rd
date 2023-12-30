@@ -7,6 +7,11 @@
 \alias{gevdloc}
 \alias{gevdscale}
 \alias{gevdshape}
+\alias{gevdloc2}
+\alias{gevdlocdscale}
+\alias{gevdscale2}
+\alias{gevdlocdshape}
+\alias{gevdscaledshape}
 \title{Generalised Extreme Value functions}
 \usage{
 gevLoglik(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
@@ -18,6 +23,16 @@ gevdloc(x, loc, scale, shape)
 gevdscale(x, loc, scale, shape)
 
 gevdshape(x, loc, scale, shape)
+
+gevdloc2(x, loc, scale, shape)
+
+gevdlocdscale(x, loc, scale, shape)
+
+gevdscale2(x, loc, scale, shape)
+
+gevdlocdshape(x, loc, scale, shape)
+
+gevdscaledshape(x, loc, scale, shape)
 }
 \arguments{
 \item{x}{A numeric vector of observations. Typically, these are
