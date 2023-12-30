@@ -2,8 +2,8 @@
 % Please edit documentation in R/log1pdx.R
 \name{log1pdx}
 \alias{log1pdx}
-\alias{log1pdx2}
-\alias{log1pdx3}
+\alias{dlog1pdx}
+\alias{d2log1pdx}
 \title{Accurate \code{log(1+x)/x} computation (and similar)}
 \usage{
 log1pdx(
@@ -15,7 +15,7 @@ log1pdx(
   logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.
 )
 
-log1pdx2(
+dlog1pdx(
   x,
   minL1 = -0.79149064,
   eps2 = 0.01,
@@ -24,7 +24,7 @@ log1pdx2(
   logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.
 )
 
-log1pdx3(
+d2log1pdx(
   x,
   minL1 = -0.79149064,
   eps2 = 0.01,
@@ -84,10 +84,10 @@ For \code{log1pdx}:
 \eqn{\frac{2}{2+x}} \code{\link{logcf}}\eqn{(y, 1, 2)}.
 }
 
-For \code{log1pdx2}:
+For \code{dlog1pdx}:
 \itemize{
 \item \eqn{x < m_l} or \eqn{x > 1}:
-\verb{log1pdx2(x):= 1/(x*(1 + x)) - } \code{\link{log1p}} \verb{/x^2};
+\verb{dlog1pdx(x):= 1/(x*(1 + x)) - } \code{\link{log1p}} \verb{/x^2};
 \item \eqn{|x| \leq \epsilon_2}:
 \eqn{-\frac{1}{(2+x)^2}} \eqn{\left(\frac{2+x}{1+x} + 2 t
    ((((\frac{1}{11}y+\frac19)y+\frac17)y+\frac15)y+\frac13\right)};
@@ -96,10 +96,10 @@ For \code{log1pdx2}:
 \code{\link{logcf}}\eqn{(y, 3, 2)\Big)}.
 }
 
-For \code{log1pdx3}:
+For \code{d2log1pdx}:
 \itemize{
 \item \eqn{x < m_l} or \eqn{x > 1}:
-\code{log1pdx2(x):= 2} \code{\link{log1p}} \verb{/x^3 - 2/(x^2*(1+x)) - 1/(x*(1 + x)^2)};
+\code{dlog1pdx(x):= 2} \code{\link{log1p}} \verb{/x^3 - 2/(x^2*(1+x)) - 1/(x*(1 + x)^2)};
 \item \eqn{|x| \leq \epsilon_2}:
 \eqn{\frac{4}{(2+x)^3}} \eqn{\left(\frac{(2+x)^2}{4(1+x)^2} +
    ((((\frac{1}{11}y+\frac19)y+\frac17)y+\frac15)y+\frac13\right)};
@@ -121,25 +121,25 @@ y <- cbind(y1, y2)
 matplot(x, y, type = "l")
 
 # In the limit as x tends to 0, 1/(x*(1+x)) - log(1+x)/x^2 tends to -1/2
-log1pdx2(0)
+dlog1pdx(0)
 
 # 1 / (x * (1 + x)) - log1p(x) / x ^ 2 is fine unless x is 0 (NaN returned)
 # or extremely close to 0, e.g. 1e-15 returns 0.625, 1e-16 returns 0
 # when it returns NaN
 x <- seq(from = -1, to = 2, by = 0.01)
-y1 <- log1pdx2(x)
+y1 <- dlog1pdx(x)
 y2 <- 1 / (x * (1 + x)) - log1p(x) / x ^ 2
 y <- cbind(y1, y2)
 matplot(x, y, type = "l")
 
 # In the limit as x tends to 0, 2log(1+x)/x^3-2/(x^2*(1+x))-1/(x(1+x)^2)
 # tends to 2/3
-log1pdx3(0)
+d2log1pdx(0)
 
 # 2log(1+x)/x^3-2/(x^2*(1+x))1/(x(1+x)^2) becomes unstable for
 # abs(x) < 1e-6
 x <- seq(from = -1, to = 2, by = 0.01)
-y1 <- log1pdx3(x)
+y1 <- d2log1pdx(x)
 y2 <- 2 * log1p(x) / x ^ 3 - 2 / (x ^ 2 * (1 + x)) - 1 / (x * (1 + x) ^ 2)
 y <- cbind(y1, y2)
 matplot(x, y, type = "l")

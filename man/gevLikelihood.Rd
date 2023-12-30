@@ -52,7 +52,7 @@ observations in \code{x } and parameter values in \code{loc}, \code{scale} and \
 is calculated.  If \code{sum = FALSE} then these individual contributions are
 summed to produce the result.}
 
-\item{...}{Further arguments to be passed to \code{\link{log1pdx}} or \code{\link{log1pdx2}}.
+\item{...}{Further arguments to be passed to \code{\link{log1pdx}} or \code{\link{dlog1pdx}}.
 See \strong{Details}.}
 }
 \value{
@@ -92,7 +92,7 @@ respect to \eqn{\mu} and \eqn{\sigma} both involve \eqn{\log(1+z)/z},
 calculated using \code{\link{log1pdx}}. The first derivative of the log-likelihood
 with respect to \eqn{\xi} involves \eqn{\log(1+z)/z} and also
 \eqn{\log(1+z)/z^2 - z^{-1}(1+z)^{-1}}. The latter is calculated using
-\code{\link{log1pdx2}}.
+\code{\link{dlog1pdx}}.
 
 The functions \code{gevdloc}, \code{gevdscale} and \code{gevdshape} are used in
 \code{gevScore} to calculate the first derivatives of the GEV log-likelihood

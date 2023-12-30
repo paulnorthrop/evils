@@ -16,7 +16,7 @@
 #'   observations in `x ` and parameter values in `loc`, `scale` and `shape`
 #'   is calculated.  If `sum = FALSE` then these individual contributions are
 #'   summed to produce the result.
-#' @param ... Further arguments to be passed to [`log1pdx`] or [`log1pdx2`].
+#' @param ... Further arguments to be passed to [`log1pdx`] or [`dlog1pdx`].
 #'   See **Details**.
 #' @details
 #'   **Log-likelihood** (`gevLoglik`). The two problematic
@@ -31,7 +31,7 @@
 #'   calculated using [`log1pdx`]. The first derivative of the log-likelihood
 #'   with respect to \eqn{\xi} involves \eqn{\log(1+z)/z} and also
 #'   \eqn{\log(1+z)/z^2 - z^{-1}(1+z)^{-1}}. The latter is calculated using
-#'   [`log1pdx2`].
+#'   [`dlog1pdx`].
 #'
 #'   The functions `gevdloc`, `gevdscale` and `gevdshape` are used in
 #'   `gevScore` to calculate the first derivatives of the GEV log-likelihood
@@ -159,7 +159,7 @@ gevdscale <- function(x, loc, scale, shape) {
 gevdshape <- function(x, loc, scale, shape) {
   w <- x - loc
   zw <- shape * w / scale
-  val <- -w ^ 2 * log1pdx2(zw) * (1 - exp(-w * log1pdx(zw) / scale)) /
+  val <- -w ^ 2 * dlog1pdx(zw) * (1 - exp(-w * log1pdx(zw) / scale)) /
     scale ^ 2 - w / (scale * (1 + zw))
   return(val)
 }
@@ -198,7 +198,7 @@ gevdlocdshape <- function(x, loc, scale, shape) {
   z <- shape / scale
   zw <- shape * w / scale
   hzw <- log1pdx(zw)
-  hdashzw <- log1pdx2(zw)
+  hdashzw <- dlog1pdx(zw)
   zwr <- 1 / (1 + zw)
   term1 <- scale * zwr - w * (1 + scale * z) * zwr ^2
   term2 <- w * hzw + (1 + scale * z) * w ^ 2 * hdashzw / scale
