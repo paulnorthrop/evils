@@ -159,7 +159,58 @@ gevdscale <- function(x, loc, scale, shape) {
 gevdshape <- function(x, loc, scale, shape) {
   w <- x - loc
   zw <- shape * w / scale
-  val <- w ^ 2 * log1pdx2(zw) * (1 - exp(-w * log1pdx(zw) / scale)) /
+  val <- -w ^ 2 * log1pdx2(zw) * (1 - exp(-w * log1pdx(zw) / scale)) /
     scale ^ 2 - w / (scale * (1 + zw))
   return(val)
+}
+
+#' @rdname gevLikelihood
+#' @export
+gevdloc2 <- function(x, loc, scale, shape) {
+  w <- x - loc
+  zw <- shape * w / scale
+  val <- (shape + 1) * (shape / (1 + zw) ^ 2 -
+                          exp(-(2 * shape + 1) * w * log1pdx(zw) / scale))
+  return(val / scale ^ 2)
+}
+
+#' @rdname gevLikelihood
+#' @export
+gevdlocdscale <- function(x, loc, scale, shape) {
+  w <- x - loc
+  val <- w * gevdloc2(x, loc, scale, shape) - gevdloc(x, loc, scale, shape)
+  return(val / scale)
+}
+
+#' @rdname gevLikelihood
+#' @export
+gevdscale2 <- function(x, loc, scale, shape) {
+  w <- x - loc
+  val <- (1 - w * gevdloc(x, loc, scale, shape)) / scale +
+    w * gevdlocdscale(x, loc, scale, shape)
+  return(val / scale)
+}
+
+#' @rdname gevLikelihood
+#' @export
+gevdlocdshape <- function(x, loc, scale, shape) {
+  w <- x - loc
+  z <- shape / scale
+  zw <- shape * w / scale
+  hzw <- log1pdx(zw)
+  hdashzw <- log1pdx2(zw)
+  zwr <- 1 / (1 + zw)
+  term1 <- scale * zwr - w * (1 + scale * z) * zwr ^2
+  term2 <- w * hzw + (1 + scale * z) * w ^ 2 * hdashzw / scale
+  term3 <- exp(-w * (1 + scale * z) * hzw / scale)
+  val <- term1 + term2 * term3
+  return(val / scale ^ 2)
+}
+
+#' @rdname gevLikelihood
+#' @export
+gevdscaledshape <- function(x, loc, scale, shape) {
+  w <- x - loc
+  val <- w * gevdlocdshape(x, loc, scale, shape)
+  return(val / scale)
 }
