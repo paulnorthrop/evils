@@ -41,6 +41,9 @@
 #'   \eqn{1 + \xi(x - \mu) / \sigma > 0}. These conditions are not checked
 #'   in `gevdloc`, `gevdscale` and `gevdshape`, so the user must take care when
 #'   calling these functions.
+#'
+#'   Add documentation for `gevInfo` and associated functions.
+#'   Perhaps split log-likelihood, score and information into separate files.
 #' @return
 #'   For `gevLoglik` and `gevScore` the number `n`, say, of combinations of the
 #'   input parameters `x`, `loc`, `scale` and `shape` in the returned object is
@@ -162,6 +165,50 @@ gevdshape <- function(x, loc, scale, shape) {
   val <- -w ^ 2 * dlog1pdx(zw) * (1 - exp(-w * log1pdx(zw) / scale)) /
     scale ^ 2 - w / (scale * (1 + zw))
   return(val)
+}
+
+#' @rdname gevLikelihood
+#' @export
+gevInfo <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
+  # Recycle the vector input x, loc, scale and shape, if necessary
+  maxLen <- max(length(x), length(loc), length(scale), length(shape))
+  x <- rep_len(x, maxLen)
+  loc <- rep_len(loc, maxLen)
+  scale <- rep_len(scale, maxLen)
+  shape <- rep_len(shape, maxLen)
+  # Create an array to store the results
+  infoArray <- array(NA, dim = c(length(x), 3, 3))
+  # The density, and, hence the information, is undefined if scale <= 0
+  if (any(invalidScale <- scale <= 0)) {
+    infoArray[invalidScale, ] <- NaN
+  }
+  w <- x - loc
+  zw <- shape * w / scale
+  # The density is 0 if 1 + shape * (x - loc) / scale <= 0
+  # Set the score to 0 for these cases
+  zw <- shape * (x - loc) / scale
+  if (any(zerod <- 1 + zw <= 0 & !invalidScale)) {
+    infoArray[zerod] <- 0
+  }
+  # Otherwise, the density is positive
+  if (any(pos <- !zerod & !invalidScale)) {
+    infoArray[pos, 1, 1] <-
+      gevdloc2(x[pos], loc[pos], scale[pos], shape[pos])
+    infoArray[pos, 1, 2] <- infoArray[pos, 2, 1] <-
+      gevdlocdscale(x[pos], loc[pos], scale[pos], shape[pos])
+    infoArray[pos, 1, 3] <- infoArray[pos, 3, 1] <-
+      gevdlocdshape(x[pos], loc[pos], scale[pos], shape[pos])
+    infoArray[pos, 2, 2] <-
+      gevdscale2(x[pos], loc[pos], scale[pos], shape[pos])
+    infoArray[pos, 2, 3] <- infoArray[pos, 3, 2] <-
+      gevdscaledshape(x[pos], loc[pos], scale[pos], shape[pos])
+  }
+  parNames <- c("loc", "scale", "shape")
+  dimnames(infoArray) <- list(NULL, parNames, parNames)
+  if (sum) {
+    infoArray <- colSums(infoArray)
+  }
+  return(infoArray)
 }
 
 #' @rdname gevLikelihood

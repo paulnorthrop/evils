@@ -7,6 +7,7 @@
 \alias{gevdloc}
 \alias{gevdscale}
 \alias{gevdshape}
+\alias{gevInfo}
 \alias{gevdloc2}
 \alias{gevdlocdscale}
 \alias{gevdscale2}
@@ -23,6 +24,8 @@ gevdloc(x, loc, scale, shape)
 gevdscale(x, loc, scale, shape)
 
 gevdshape(x, loc, scale, shape)
+
+gevInfo(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 
 gevdloc2(x, loc, scale, shape)
 
@@ -102,6 +105,9 @@ parameter constraints \eqn{\sigma > 0} and
 \eqn{1 + \xi(x - \mu) / \sigma > 0}. These conditions are not checked
 in \code{gevdloc}, \code{gevdscale} and \code{gevdshape}, so the user must take care when
 calling these functions.
+
+Add documentation for \code{gevInfo} and associated functions.
+Perhaps split log-likelihood, score and information into separate files.
 }
 \examples{
 ### Simulate some data
