@@ -6,11 +6,11 @@ xvals <- c(-1.1, -1, "minL1" = -0.79149064, "-eps" = 0.01,
 # Check all values in one call
 res1 <- suppressWarnings(log1pdx2(xvals))
 res2 <- suppressWarnings(
-  log1p(xvals) / xvals ^ 2 - 1 / (xvals * (1 + xvals))
+  1 / (xvals * (1 + xvals)) - log1p(xvals) / xvals ^ 2
   )
-# x = 0. In the limit as x becomes 0, log2pdx() = 1/2
-res2[names(xvals) == "zero"] <- 1 / 2
-test_that("log1pdx2() and log1p(x)/x^2-1/(x*(1 + x)) agree for various x", {
+# x = 0. In the limit as x becomes 0, log2pdx() = -1/2
+res2[names(xvals) == "zero"] <- -1 / 2
+test_that("log1pdx2() and 1/(x*(1 + x)) - log1p(x)/x^2 agree for various x", {
   testthat::expect_equal(res1, res2)
 })
 
@@ -18,30 +18,30 @@ test_that("log1pdx2() and log1p(x)/x^2-1/(x*(1 + x)) agree for various x", {
 
 # x = -(the default value of) eps
 # res1 uses the explicit 5-term approximation and res2 uses DPQ::logcf()
-# res3 uses log1px(x) / x ^ 2 - 1 / (x * (1 + x))
+# res3 uses 1 / (x * (1 + x)) - log1px(x) / x ^ 2
 # The returned values should be very close, but not identical
 x <- -0.01
 res1 <- log1pdx2(x)
 res2 <- log1pdx2(x - .Machine$double.neg.eps)
-res3 <- log1p(x) / x ^ 2 - 1 / (x * (1 + x))
+res3 <- 1 / (x * (1 + x)) - log1p(x) / x ^ 2
 test_that(paste("log1pdx2() and log1pdx2(x) using logcf() agree for x = ", x), {
   testthat::expect_equal(res1, res2)
 })
-test_that(paste("log1pdx2() and log1p(x)/x^2-1/(x*(1 + x)) agree for x = ", x), {
+test_that(paste("log1pdx2() and 1/(x*(1 + x))-log1p(x)/x^2 agree for x = ", x), {
   testthat::expect_equal(res1, res3)
 })
 
 # x = (the default value of) eps
 # res1 uses the explicit 5-term approximation and res2 uses DPQ::logcf()
-# res3 uses log1p(x) / x ^ 2 - 1 / (x * (1 + x))
+# res3 uses 1 / (x * (1 + x)) - log1p(x) / x ^ 2
 # The returned values should be very close, but not identical
 x <- 0.01
 res1 <- log1pdx2(x)
 res2 <- log1pdx2(x + .Machine$double.neg.eps)
-res3 <- log1p(x) / x ^ 2 - 1 / (x * (1 + x))
+res3 <- 1 / (x * (1 + x)) - log1p(x) / x ^ 2
 test_that(paste("log1pdx2() and log1pdx2(x) using logcf() agree for x = ", x), {
   testthat::expect_equal(res1, res2)
 })
-test_that(paste("log1pdx2() and log1p(x)/x^2-1/(x*(1 + x)) agree for x = ", x), {
+test_that(paste("log1pdx2() and 1/(x*(1 + x))-log1p(x)/x^2 agree for x = ", x), {
   testthat::expect_equal(res1, res3)
 })
