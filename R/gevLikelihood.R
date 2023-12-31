@@ -33,17 +33,37 @@
 #'   \eqn{\log(1+z)/z^2 - z^{-1}(1+z)^{-1}}. The latter is calculated using
 #'   [`dlog1pdx`].
 #'
-#'   The functions `gevdloc`, `gevdscale` and `gevdshape` are used in
+#'   The functions `gev1`, `gev2` and `gev3` are used in
 #'   `gevScore` to calculate the first derivatives of the GEV log-likelihood
-#'   with respect to \eqn{\mu}, \eqn{\sigma} and \eqn{\xi}. The input vectors
+#'   \eqn{\ell} with respect to \eqn{\mu}, \eqn{\sigma} and \eqn{\xi}. `gevi` provides
+#'   \eqn{\partial \ell / \partial \theta_i}, where
+#'   \eqn{\theta = (\mu, \sigma, \xi)}. The input vectors
 #'   `x`, `loc`, `scale` and `shape` must have the same lengths and satisfy the
 #'   parameter constraints \eqn{\sigma > 0} and
 #'   \eqn{1 + \xi(x - \mu) / \sigma > 0}. These conditions are not checked
-#'   in `gevdloc`, `gevdscale` and `gevdshape`, so the user must take care when
+#'   in `gev1`, `gev2` and `gev3`, so the user must take care when
 #'   calling these functions.
 #'
-#'   Add documentation for `gevInfo` and associated functions.
-#'   Perhaps split log-likelihood, score and information into separate files.
+#'   **Observed information** (`gevObsInfo`). All the second derivatives of the
+#'   log-likelihood involve \eqn{\log(1+z)/z}, calculated using [`log1pdx`].
+#'   Any second derivative made with respect to \eqn{\xi} also involves
+#'   \eqn{\log(1+z)/z^2 - z^{-1}(1+z)^{-1}}, which is calculated using
+#'   [`dlog1pdx`]. Differentiating the log-likelihood twice with respect to
+#'   \eqn{\xi} produces the function
+#'   \eqn{2 \log(1+z)/z^3 - 2 z^{-2}(1+z)^{-1} - z^{-1}(1+z)^{-2}}, which is
+#'   calculated using [`d2log1pdx`].
+#'
+#'   The functions `gev11`, `gev12`, `gev13`, `gev22`, `gev23` and `gev33` are
+#'   used in `gevObsInfo` to calculate the second derivatives of the GEV
+#'   log-likelihood \eqn{\ell} with respect to \eqn{\mu}, \eqn{\sigma} and
+#'   \eqn{\xi}. `gevij` provides
+#'   \eqn{\partial^2 \ell / \partial \theta_i \theta_j}, where
+#'   \eqn{\theta = (\mu, \sigma, \xi)}. The input vectors `x`, `loc`, `scale`
+#'   and `shape` must have the same lengths and satisfy the parameter
+#'   constraints \eqn{\sigma > 0} and \eqn{1 + \xi(x - \mu) / \sigma > 0}.
+#'   These conditions are not checked in `gev11`, `gev12`, `gev13`, `gev22`,
+#'   `gev23` and `gev33`, so the user must take care when calling these
+#'   functions.
 #' @return
 #'   For `gevLoglik` and `gevScore` the number `n`, say, of combinations of the
 #'   input parameters `x`, `loc`, `scale` and `shape` in the returned object is
@@ -59,9 +79,12 @@
 #'   `loc`, `scale` and `shape`. If `sum = TRUE`, a vector of length 3
 #'   containing the column sums of the matrix returned if `sum = FALSE`.
 #'
-#' **Observed information** (`gevInfo`).  The observed information: a
-#'   \eqn{2 \times 2} matrix with row and column names
-#'   `c(sigma[u], xi)`.
+#'   **Observed information** (`gevInfo`).  If `sum = FALSE` the values of the
+#'   contributions to the observed information, an `n` \eqn{ \times 3 \times 3}
+#'   array. The second and third dimensions are named columns are named
+#'   `loc`, `scale` and `shape`. If `sum = TRUE`, a \eqn{3 \times 3} matrix
+#'   giving the observed information matrix, obtained by applying
+#'   [`colsums`] to the array returned if `sum = FALSE`.
 #' @name gevLikelihood
 NULL
 ## NULL
@@ -127,11 +150,11 @@ gevScore <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
   # Otherwise, the density is positive
   if (any(pos <- !zerod & !invalidScale)) {
     # Derivative of the log-likelihood with respect to loc = mu
-    scoreMat[pos, 1] <- gevdloc(x[pos], loc[pos], scale[pos], shape[pos])
+    scoreMat[pos, 1] <- gev1(x[pos], loc[pos], scale[pos], shape[pos])
     # Derivative of the log-likelihood with respect to scale = sigma
-    scoreMat[pos, 2] <- gevdscale(x[pos], loc[pos], scale[pos], shape[pos])
+    scoreMat[pos, 2] <- gev2(x[pos], loc[pos], scale[pos], shape[pos])
     # Derivative of the log-likelihood with respect to shape = xi
-    scoreMat[pos, 3] <- gevdshape(x[pos], loc[pos], scale[pos], shape[pos])
+    scoreMat[pos, 3] <- gev3(x[pos], loc[pos], scale[pos], shape[pos])
   }
   colnames(scoreMat) <- c("loc", "scale", "shape")
   if (sum) {
@@ -142,7 +165,7 @@ gevScore <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
 
 #' @rdname gevLikelihood
 #' @export
-gevdloc <- function(x, loc, scale, shape) {
+gev1 <- function(x, loc, scale, shape) {
   w <- x - loc
   zw <- shape * w / scale
   val <- (shape + 1) / (1 + zw) - exp(-(shape + 1) * w * log1pdx(zw) / scale)
@@ -151,15 +174,15 @@ gevdloc <- function(x, loc, scale, shape) {
 
 #' @rdname gevLikelihood
 #' @export
-gevdscale <- function(x, loc, scale, shape) {
+gev2 <- function(x, loc, scale, shape) {
   w <- x - loc
-  val <- w * gevdloc(x, loc, scale, shape) - 1
+  val <- w * gev1(x, loc, scale, shape) - 1
   return(val / scale)
 }
 
 #' @rdname gevLikelihood
 #' @export
-gevdshape <- function(x, loc, scale, shape) {
+gev3 <- function(x, loc, scale, shape) {
   w <- x - loc
   zw <- shape * w / scale
   val <- w ^ 2 * dlog1pdx(zw) * (exp(-w * log1pdx(zw) / scale) - 1) /
@@ -193,17 +216,17 @@ gevInfo <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
   # Otherwise, the density is positive
   if (any(pos <- !zerod & !invalidScale)) {
     infoArray[pos, 1, 1] <-
-      gevdloc2(x[pos], loc[pos], scale[pos], shape[pos])
+      gev11(x[pos], loc[pos], scale[pos], shape[pos])
     infoArray[pos, 1, 2] <- infoArray[pos, 2, 1] <-
-      gevdlocdscale(x[pos], loc[pos], scale[pos], shape[pos])
+      gev12(x[pos], loc[pos], scale[pos], shape[pos])
     infoArray[pos, 1, 3] <- infoArray[pos, 3, 1] <-
-      gevdlocdshape(x[pos], loc[pos], scale[pos], shape[pos])
+      gev13(x[pos], loc[pos], scale[pos], shape[pos])
     infoArray[pos, 2, 2] <-
-      gevdscale2(x[pos], loc[pos], scale[pos], shape[pos])
+      gev22(x[pos], loc[pos], scale[pos], shape[pos])
     infoArray[pos, 2, 3] <- infoArray[pos, 3, 2] <-
-      gevdscaledshape(x[pos], loc[pos], scale[pos], shape[pos])
+      gev23(x[pos], loc[pos], scale[pos], shape[pos])
     infoArray[pos, 3, 3] <-
-      gevdshape2(x[pos], loc[pos], scale[pos], shape[pos])
+      gev33(x[pos], loc[pos], scale[pos], shape[pos])
   }
   parNames <- c("loc", "scale", "shape")
   dimnames(infoArray) <- list(NULL, parNames, parNames)
@@ -215,7 +238,7 @@ gevInfo <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
 
 #' @rdname gevLikelihood
 #' @export
-gevdloc2 <- function(x, loc, scale, shape) {
+gev11 <- function(x, loc, scale, shape) {
   w <- x - loc
   zw <- shape * w / scale
   val <- (shape + 1) * (shape / (1 + zw) ^ 2 -
@@ -225,24 +248,24 @@ gevdloc2 <- function(x, loc, scale, shape) {
 
 #' @rdname gevLikelihood
 #' @export
-gevdlocdscale <- function(x, loc, scale, shape) {
+gev12 <- function(x, loc, scale, shape) {
   w <- x - loc
-  val <- w * gevdloc2(x, loc, scale, shape) - gevdloc(x, loc, scale, shape)
+  val <- w * gev11(x, loc, scale, shape) - gev1(x, loc, scale, shape)
   return(val / scale)
 }
 
 #' @rdname gevLikelihood
 #' @export
-gevdscale2 <- function(x, loc, scale, shape) {
+gev22 <- function(x, loc, scale, shape) {
   w <- x - loc
-  val <- (1 - w * gevdloc(x, loc, scale, shape)) / scale +
-    w * gevdlocdscale(x, loc, scale, shape)
+  val <- (1 - w * gev1(x, loc, scale, shape)) / scale +
+    w * gev12(x, loc, scale, shape)
   return(val / scale)
 }
 
 #' @rdname gevLikelihood
 #' @export
-gevdlocdshape <- function(x, loc, scale, shape) {
+gev13 <- function(x, loc, scale, shape) {
   w <- x - loc
   z <- shape / scale
   zw <- shape * w / scale
@@ -258,15 +281,15 @@ gevdlocdshape <- function(x, loc, scale, shape) {
 
 #' @rdname gevLikelihood
 #' @export
-gevdscaledshape <- function(x, loc, scale, shape) {
+gev23 <- function(x, loc, scale, shape) {
   w <- x - loc
-  val <- w * gevdlocdshape(x, loc, scale, shape)
+  val <- w * gev13(x, loc, scale, shape)
   return(val / scale)
 }
 
 #' @rdname gevLikelihood
 #' @export
-gevdshape2 <- function(x, loc, scale, shape) {
+gev33 <- function(x, loc, scale, shape) {
   w <- x - loc
   zw <- shape * w / scale
   hzw <- log1pdx(zw)

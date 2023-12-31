@@ -4,41 +4,41 @@
 \alias{gevLikelihood}
 \alias{gevLoglik}
 \alias{gevScore}
-\alias{gevdloc}
-\alias{gevdscale}
-\alias{gevdshape}
+\alias{gev1}
+\alias{gev2}
+\alias{gev3}
 \alias{gevInfo}
-\alias{gevdloc2}
-\alias{gevdlocdscale}
-\alias{gevdscale2}
-\alias{gevdlocdshape}
-\alias{gevdscaledshape}
-\alias{gevdshape2}
+\alias{gev11}
+\alias{gev12}
+\alias{gev22}
+\alias{gev13}
+\alias{gev23}
+\alias{gev33}
 \title{Generalised Extreme Value functions}
 \usage{
 gevLoglik(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 
 gevScore(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 
-gevdloc(x, loc, scale, shape)
+gev1(x, loc, scale, shape)
 
-gevdscale(x, loc, scale, shape)
+gev2(x, loc, scale, shape)
 
-gevdshape(x, loc, scale, shape)
+gev3(x, loc, scale, shape)
 
 gevInfo(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 
-gevdloc2(x, loc, scale, shape)
+gev11(x, loc, scale, shape)
 
-gevdlocdscale(x, loc, scale, shape)
+gev12(x, loc, scale, shape)
 
-gevdscale2(x, loc, scale, shape)
+gev22(x, loc, scale, shape)
 
-gevdlocdshape(x, loc, scale, shape)
+gev13(x, loc, scale, shape)
 
-gevdscaledshape(x, loc, scale, shape)
+gev23(x, loc, scale, shape)
 
-gevdshape2(x, loc, scale, shape)
+gev33(x, loc, scale, shape)
 }
 \arguments{
 \item{x}{A numeric vector of observations. Typically, these are
@@ -76,9 +76,12 @@ to the score, an \code{n}\eqn{ \times 3} matrix. The columns are named
 \code{loc}, \code{scale} and \code{shape}. If \code{sum = TRUE}, a vector of length 3
 containing the column sums of the matrix returned if \code{sum = FALSE}.
 
-\strong{Observed information} (\code{gevInfo}).  The observed information: a
-\eqn{2 \times 2} matrix with row and column names
-\code{c(sigma[u], xi)}.
+\strong{Observed information} (\code{gevInfo}).  If \code{sum = FALSE} the values of the
+contributions to the observed information, an \code{n} \eqn{ \times 3 \times 3}
+array. The second and third dimensions are named columns are named
+\code{loc}, \code{scale} and \code{shape}. If \code{sum = TRUE}, a \eqn{3 \times 3} matrix
+giving the observed information matrix, obtained by applying
+\code{\link{colsums}} to the array returned if \code{sum = FALSE}.
 }
 \description{
 Calculate the log-likelihood, score and observed information for
@@ -100,17 +103,37 @@ with respect to \eqn{\xi} involves \eqn{\log(1+z)/z} and also
 \eqn{\log(1+z)/z^2 - z^{-1}(1+z)^{-1}}. The latter is calculated using
 \code{\link{dlog1pdx}}.
 
-The functions \code{gevdloc}, \code{gevdscale} and \code{gevdshape} are used in
+The functions \code{gev1}, \code{gev2} and \code{gev3} are used in
 \code{gevScore} to calculate the first derivatives of the GEV log-likelihood
-with respect to \eqn{\mu}, \eqn{\sigma} and \eqn{\xi}. The input vectors
+\eqn{\ell} with respect to \eqn{\mu}, \eqn{\sigma} and \eqn{\xi}. \code{gevi} provides
+\eqn{\partial \ell / \partial \theta_i}, where
+\eqn{\theta = (\mu, \sigma, \xi)}. The input vectors
 \code{x}, \code{loc}, \code{scale} and \code{shape} must have the same lengths and satisfy the
 parameter constraints \eqn{\sigma > 0} and
 \eqn{1 + \xi(x - \mu) / \sigma > 0}. These conditions are not checked
-in \code{gevdloc}, \code{gevdscale} and \code{gevdshape}, so the user must take care when
+in \code{gev1}, \code{gev2} and \code{gev3}, so the user must take care when
 calling these functions.
 
-Add documentation for \code{gevInfo} and associated functions.
-Perhaps split log-likelihood, score and information into separate files.
+\strong{Observed information} (\code{gevObsInfo}). All the second derivatives of the
+log-likelihood involve \eqn{\log(1+z)/z}, calculated using \code{\link{log1pdx}}.
+Any second derivative made with respect to \eqn{\xi} also involves
+\eqn{\log(1+z)/z^2 - z^{-1}(1+z)^{-1}}, which is calculated using
+\code{\link{dlog1pdx}}. Differentiating the log-likelihood twice with respect to
+\eqn{\xi} produces the function
+\eqn{2 \log(1+z)/z^3 - 2 z^{-2}(1+z)^{-1} - z^{-1}(1+z)^{-2}}, which is
+calculated using \code{\link{d2log1pdx}}.
+
+The functions \code{gev11}, \code{gev12}, \code{gev13}, \code{gev22}, \code{gev23} and \code{gev33} are
+used in \code{gevObsInfo} to calculate the second derivatives of the GEV
+log-likelihood \eqn{\ell} with respect to \eqn{\mu}, \eqn{\sigma} and
+\eqn{\xi}. \code{gevij} provides
+\eqn{\partial^2 \ell / \partial \theta_i \theta_j}, where
+\eqn{\theta = (\mu, \sigma, \xi)}. The input vectors \code{x}, \code{loc}, \code{scale}
+and \code{shape} must have the same lengths and satisfy the parameter
+constraints \eqn{\sigma > 0} and \eqn{1 + \xi(x - \mu) / \sigma > 0}.
+These conditions are not checked in \code{gev11}, \code{gev12}, \code{gev13}, \code{gev22},
+\code{gev23} and \code{gev33}, so the user must take care when calling these
+functions.
 }
 \examples{
 ### Simulate some data
