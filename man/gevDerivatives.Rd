@@ -97,7 +97,7 @@ calculated using \code{\link{d2log1pdx}}.
 \examples{
 ### Simulate some data
 set.seed(28122023)
-x <- rGEV(10)
+x <- rGEV(5)
 
 # First derivatives
 gev1(x)
