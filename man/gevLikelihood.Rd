@@ -4,41 +4,14 @@
 \alias{gevLikelihood}
 \alias{gevLoglik}
 \alias{gevScore}
-\alias{gev1}
-\alias{gev2}
-\alias{gev3}
 \alias{gevInfo}
-\alias{gev11}
-\alias{gev12}
-\alias{gev22}
-\alias{gev13}
-\alias{gev23}
-\alias{gev33}
 \title{Generalised Extreme Value functions}
 \usage{
 gevLoglik(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 
 gevScore(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 
-gev1(x, loc, scale, shape)
-
-gev2(x, loc, scale, shape)
-
-gev3(x, loc, scale, shape)
-
 gevInfo(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
-
-gev11(x, loc, scale, shape)
-
-gev12(x, loc, scale, shape)
-
-gev22(x, loc, scale, shape)
-
-gev13(x, loc, scale, shape)
-
-gev23(x, loc, scale, shape)
-
-gev33(x, loc, scale, shape)
 }
 \arguments{
 \item{x}{A numeric vector of observations. Typically, these are
@@ -58,8 +31,8 @@ observations in \code{x } and parameter values in \code{loc}, \code{scale} and \
 is calculated.  If \code{sum = FALSE} then these individual contributions are
 summed to produce the result.}
 
-\item{...}{Further arguments to be passed to \code{\link{log1pdx}} or \code{\link{dlog1pdx}}.
-See \strong{Details}.}
+\item{...}{Further arguments to be passed to \code{\link{log1pdx}}, \code{\link{dlog1pdx}} or
+\code{\link{d2log1pdx}}. See \code{\link{gevDerivatives}}.}
 }
 \value{
 For \code{gevLoglik} and \code{gevScore} the number \code{n}, say, of combinations of the
@@ -105,14 +78,8 @@ with respect to \eqn{\xi} involves \eqn{\log(1+z)/z} and also
 
 The functions \code{gev1}, \code{gev2} and \code{gev3} are used in
 \code{gevScore} to calculate the first derivatives of the GEV log-likelihood
-\eqn{\ell} with respect to \eqn{\mu}, \eqn{\sigma} and \eqn{\xi}. \code{gevi} provides
-\eqn{\partial \ell / \partial \theta_i}, where
-\eqn{\theta = (\mu, \sigma, \xi)}. The input vectors
-\code{x}, \code{loc}, \code{scale} and \code{shape} must have the same lengths and satisfy the
-parameter constraints \eqn{\sigma > 0} and
-\eqn{1 + \xi(x - \mu) / \sigma > 0}. These conditions are not checked
-in \code{gev1}, \code{gev2} and \code{gev3}, so the user must take care when
-calling these functions.
+\eqn{\ell} with respect to \eqn{\mu}, \eqn{\sigma} and \eqn{\xi}.
+See \code{\link{gevDerivatives}}.
 
 \strong{Observed information} (\code{gevObsInfo}). All the second derivatives of the
 log-likelihood involve \eqn{\log(1+z)/z}, calculated using \code{\link{log1pdx}}.
@@ -128,12 +95,8 @@ used in \code{gevObsInfo} to calculate the second derivatives of the GEV
 log-likelihood \eqn{\ell} with respect to \eqn{\mu}, \eqn{\sigma} and
 \eqn{\xi}. \code{gevij} provides
 \eqn{\partial^2 \ell / \partial \theta_i \theta_j}, where
-\eqn{\theta = (\mu, \sigma, \xi)}. The input vectors \code{x}, \code{loc}, \code{scale}
-and \code{shape} must have the same lengths and satisfy the parameter
-constraints \eqn{\sigma > 0} and \eqn{1 + \xi(x - \mu) / \sigma > 0}.
-These conditions are not checked in \code{gev11}, \code{gev12}, \code{gev13}, \code{gev22},
-\code{gev23} and \code{gev33}, so the user must take care when calling these
-functions.
+\eqn{\theta = (\mu, \sigma, \xi)}.
+See \code{\link{gevDerivatives}}.
 }
 \examples{
 ### Simulate some data
