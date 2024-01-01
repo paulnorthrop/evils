@@ -80,7 +80,8 @@ NULL
 gev1 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
   w <- x - loc
   zw <- shape * w / scale
-  val <- (shape + 1) / (1 + zw) - exp(-(shape + 1) * w * log1pdx(zw) / scale)
+  val <- (shape + 1) / (1 + zw) - exp(-(shape + 1) * w * log1pdx(zw, ...) /
+                                        scale)
   return(val / scale)
 }
 
@@ -88,7 +89,7 @@ gev1 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
 #' @export
 gev2 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
   w <- x - loc
-  val <- w * gev1(x, loc, scale, shape) - 1
+  val <- w * gev1(x, loc, scale, shape, ...) - 1
   return(val / scale)
 }
 
@@ -97,7 +98,7 @@ gev2 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
 gev3 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
   w <- x - loc
   zw <- shape * w / scale
-  val <- w ^ 2 * dlog1pdx(zw) * (exp(-w * log1pdx(zw) / scale) - 1) /
+  val <- w ^ 2 * dlog1pdx(zw, ...) * (exp(-w * log1pdx(zw, ...) / scale) - 1) /
     scale ^ 2 - w / (scale * (1 + zw))
   return(val)
 }
@@ -108,7 +109,7 @@ gev11 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
   w <- x - loc
   zw <- shape * w / scale
   val <- (shape + 1) * (shape / (1 + zw) ^ 2 -
-                          exp(-(2 * shape + 1) * w * log1pdx(zw) / scale))
+                          exp(-(2 * shape + 1) * w * log1pdx(zw, ...) / scale))
   return(val / scale ^ 2)
 }
 
@@ -116,7 +117,7 @@ gev11 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
 #' @export
 gev12 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
   w <- x - loc
-  val <- w * gev11(x, loc, scale, shape) - gev1(x, loc, scale, shape)
+  val <- w * gev11(x, loc, scale, shape, ...) - gev1(x, loc, scale, shape, ...)
   return(val / scale)
 }
 
@@ -124,8 +125,8 @@ gev12 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
 #' @export
 gev22 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
   w <- x - loc
-  val <- (1 - w * gev1(x, loc, scale, shape)) / scale +
-    w * gev12(x, loc, scale, shape)
+  val <- (1 - w * gev1(x, loc, scale, shape, ...)) / scale +
+    w * gev12(x, loc, scale, shape, ...)
   return(val / scale)
 }
 
@@ -134,8 +135,8 @@ gev22 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
 gev13 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
   w <- x - loc
   zw <- shape * w / scale
-  hzw <- log1pdx(zw)
-  hdashzw <- dlog1pdx(zw)
+  hzw <- log1pdx(zw, ...)
+  hdashzw <- dlog1pdx(zw, ...)
   zwr <- 1 / (1 + zw)
   term1 <- scale * zwr - w * (1 + shape) * zwr ^ 2
   term2 <- w * hzw + (1 + shape) * w ^ 2 * hdashzw / scale
@@ -148,7 +149,7 @@ gev13 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
 #' @export
 gev23 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
   w <- x - loc
-  val <- w * gev13(x, loc, scale, shape)
+  val <- w * gev13(x, loc, scale, shape, ...)
   return(val / scale)
 }
 
@@ -157,9 +158,9 @@ gev23 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
 gev33 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
   w <- x - loc
   zw <- shape * w / scale
-  hzw <- log1pdx(zw)
-  hdashzw <- dlog1pdx(zw)
-  hdash2zw <- d2log1pdx(zw)
+  hzw <- log1pdx(zw, ...)
+  hdashzw <- dlog1pdx(zw, ...)
+  hdash2zw <- d2log1pdx(zw, ...)
   zwr <- 1 / (1 + zw)
   term1 <- hdash2zw * (exp(-w * hzw / scale) - 1)
   term2 <- w * hdashzw ^ 2 * exp(-w * hzw / scale) / scale
