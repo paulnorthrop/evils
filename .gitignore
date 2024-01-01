@@ -8,4 +8,4 @@ checks
 /Meta/
 tests/testthat/test-gevExpInfoLocally.R
 tests/testthat/test-gevScoreLocally.R
-tests/testthat/test-gevInfoLocally.R
+tests/testthat/test-gevObsInfoLocally.R
