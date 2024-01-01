@@ -11,49 +11,49 @@
 #' @param excesses A numeric vector containing positive observations.
 #'   Typically, these are threshold excesses, that is, amounts by which
 #'   exceedances of a threshold exceed that threshold.
-#' @param individual A logical scalar. Relevant to \code{gpLoglik} and
-#'   \code{gpScore}. If \code{individual = FALSE} then only the sum of
-#'   contributions from all observations in \code{excesses} is calculated.  If
-#'   \code{individual = TRUE} then individual contributions from each
-#'   observation in \code{excesses} are calculated.
+#' @param individual A logical scalar. Relevant to `gpLoglik` and
+#'   `gpScore`. If `individual = FALSE` then only the sum of
+#'   contributions from all observations in `excesses` is calculated.  If
+#'   `individual = TRUE` then individual contributions from each
+#'   observation in `excesses` are calculated.
 #' @param tol A positive numeric scalar.  Tolerance used to determine whether
 #'   to perform a calculation directly or via a series expansion approximation.
-#'   See \strong{Details}.
+#'   See **Details**.
 #' @param epsilon The desired error margin when an approximation is used.
 #' @details
-#'   \strong{Log-likelihood} (\code{gpLoglik}). The problematic part of
+#'   **Log-likelihood** (`gpLoglik`). The problematic part of
 #'   the log-likelihood is \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}},
 #'   where \ifelse{html}{z=\eqn{\xi}\eqn{y} / \eqn{\sigma}\out{<sub>u</sub>}}{
 #'   \eqn{z} = \eqn{\xi}\eqn{y} / \eqn{\sigma_u}} and where \eqn{y} is a
 #'   sample threshold excess.
-#'   If \eqn{|z| \geq}{|z| >=} \code{tol} then this is calculated directly,
-#'   using \code{log1p(z)/z}.
-#'   If \eqn{|z| <} \code{tol} then we use \code{\link[sumR]{infiniteSum}}
+#'   If \eqn{|z| \geq}{|z| >=} `tol` then this is calculated directly,
+#'   using `log1p(z)/z`.
+#'   If \eqn{|z| <} `tol` then we use [sumR::infiniteSum()]
 #'   to approximate the series \ifelse{html}{log(1+z)/z}{\eqn{\log(1+z)/z}}
 #'   \ifelse{html}{= 1 - z/2 + z\out{<sup>2</sup>}/3 - z\out{<sup>3</sup>}/4 +
 #'   ...}{\eqn{= 1 - z/2 + z^2/3 - z^3/4 + \cdots}}. Before the call to
-#'   \code{\link[sumR]{infiniteSum}} the input value of \code{epsilon}
+#'   [sumR::infiniteSum()] the input value of `epsilon`
 #'   is adjusted to achieve the desired error margin for the approximation of
-#'   the log-likelihood. If \code{z = 0} then
+#'   the log-likelihood. If `z = 0` then
 #'   \ifelse{html}{log(1+z)/z = 1}{\eqn{\log(1+z)/z} = 1}.
 #' @return
-#'   \strong{Log-likelihood} (\code{gpLoglik}). If
-#'   \code{individual = FALSE} the value of the log-likelihood. If
-#'   \code{individual = TRUE} a vector of length \code{length{excesses}}
+#'   **Log-likelihood** (`gpLoglik`). If
+#'   `individual = FALSE` the value of the log-likelihood. If
+#'   `individual = TRUE` a vector of length \code{length{excesses}}
 #'   containing the contributions to the log-likelihood from each of the
 #'   observations.
 #'
-#' \strong{Score} (\code{gpScore}).  If \code{individual = FALSE} the value
+#' **Score** (`gpScore`).  If `individual = FALSE` the value
 #'  of the score, a vector of length 2 containing the derivative of the
 #'  log-likelihood evaluated at the input parameter values.
-#'  If \code{individual = TRUE} the values of the contributions to the score
+#'  If `individual = TRUE` the values of the contributions to the score
 #'  from each of the observations, a
-#'   \code{length(excesses)}\eqn{ \times 2}{ x 2} matrix.
-#'   The columns are named \code{sigma[u]} and \code{xi}.
+#'   `length(excesses)`\eqn{ \times 2}{ x 2} matrix.
+#'   The columns are named `sigma[u]` and `xi`.
 #'
-#' \strong{Observed information} (\code{gpInfo}).  The observed information: a
+#' **Observed information** (`gpInfo`).  The observed information: a
 #'   \eqn{2 \times 2}{2 x 2} matrix with row and column names
-#'   \code{c(sigma[u], xi)}.
+#'   `c(sigma[u], xi)`.
 #' @name gp
 NULL
 ## NULL
