@@ -27,12 +27,7 @@
 \alias{gpLoglikDirect}
 \alias{gevLoglikDirect}
 \alias{nhppLoglikDirect}
-\alias{rGenPareto}
-\alias{qGenPareto}
 \alias{BC}
-\alias{BoxCoxVec}
-\alias{rGenExtremeValue}
-\alias{qGenExtremeValue}
 \title{Internal evils functions}
 \format{
 An object of class \code{numeric} of length 1.
@@ -98,24 +93,7 @@ gevLoglikDirect(pars, maxima, individual = FALSE)
 
 nhppLoglikDirect(pars, data, u, b = 1, nb = 365, individual = FALSE)
 
-rGenPareto(n, loc = 0, scale = 1, shape = 0)
-
-qGenPareto(p, loc = 0, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE)
-
 BC(x, lambda, eps = 1e-06)
-
-BoxCoxVec(x, lambda = 1, lambda_tol = 1e-06)
-
-rGenExtremeValue(n, loc = 0, scale = 1, shape = 0)
-
-qGenExtremeValue(
-  p,
-  loc = 0,
-  scale = 1,
-  shape = 0,
-  lower.tail = TRUE,
-  log.p = FALSE
-)
 }
 \description{
 Internal evils functions
