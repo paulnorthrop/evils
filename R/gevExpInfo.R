@@ -26,10 +26,10 @@
 #'   with respect to \eqn{\xi}, so that, for example, `gev23e` calculates the
 #'   expectation \eqn{i_{\sigma\xi}} of the negated GEV log-density after one
 #'   taking one derivative with respect to \eqn{\sigma} and one derivative with
-#'   respect to \eqn{\xi}. Note that \eqn{i_{\xi\xi}} depends only on
-#'   \eqn{\xi}.
+#'   respect to \eqn{\xi}. Note that \eqn{i_{\xi\xi}}, calculated using
+#'   `gev33e`, depends only on \eqn{\xi}.
 #'
-#'   The expectation in `gev11e` can be calculated in a directly way for all
+#'   The expectation in `gev11e` can be calculated in a direct way for all
 #'   \eqn{\xi > -0.5}. For the other components, direct calculation of the
 #'   expectation is unstable when \eqn{\xi} is close to 0. Instead, we use
 #'   a quadratic approximation over `(-eps, eps)`, from a Lagrangian
