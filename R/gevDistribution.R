@@ -42,7 +42,7 @@
 #'  `-Inf` or `Inf` in some cases.  Similarly, but reversed,
 #'  if `lower.tail = FALSE`.
 #'
-#'  In `dGEV` and `pGEV`, calculations are performed on the log-scale, which
+#'  In `dGEV` and `pGEV`, calculations are performed on a log-scale, which
 #'  involves the evaluation of \eqn{\log(1+z)/z}, where
 #'  \eqn{z = \xi (x - \mu) / \sigma}. Direct naive calculation using
 #'  `log(1+z)/z` is unstable for `z` close to `0`. Use of [`log1p(z)`]`/z`
@@ -139,8 +139,7 @@ pGEV <- function(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
   # Otherwise, the cdf is in (0, 1)
   if (any(cdfp <- !cdf01 & !invalidScale)) {
     m2 <- (q[cdfp] - loc[cdfp]) / scale[cdfp]
-    logterm <- log1pdx(zw[cdfp], ...)
-    q[cdfp] <- -exp(-m2 * logterm)
+    q[cdfp] <- -exp(-m2 * log1pdx(zw[cdfp], ...))
   }
   if (lower.tail) {
     if (!log.p) {

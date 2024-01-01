@@ -93,7 +93,7 @@ the lower (upper) limit of the distribution is returned, which is
 \code{-Inf} or \code{Inf} in some cases.  Similarly, but reversed,
 if \code{lower.tail = FALSE}.
 
-In \code{dGEV} and \code{pGEV}, calculations are performed on the log-scale, which
+In \code{dGEV} and \code{pGEV}, calculations are performed on a log-scale, which
 involves the evaluation of \eqn{\log(1+z)/z}, where
 \eqn{z = \xi (x - \mu) / \sigma}. Direct naive calculation using
 \code{log(1+z)/z} is unstable for \code{z} close to \code{0}. Use of \code{\link{log1p(z)}}\verb{/z}
