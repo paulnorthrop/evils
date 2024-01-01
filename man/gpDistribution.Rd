@@ -8,26 +8,16 @@
 \alias{rGP}
 \title{The Generalised Pareto distribution}
 \usage{
-dGP(x, loc = 0, scale = 1, shape = 0, log = FALSE, ...)
+dGP(x, scale = 1, shape = 0, log = FALSE, ...)
 
-pGP(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE, ...)
+pGP(q, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE, ...)
 
-qGP(
-  p,
-  loc = 0,
-  scale = 1,
-  shape = 0,
-  lower.tail = TRUE,
-  log.p = FALSE,
-  eps = 1e-06
-)
+qGP(p, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE, eps = 1e-06)
 
-rGP(n, loc = 0, scale = 1, shape = 0, eps = 1e-06)
+rGP(n, scale = 1, shape = 0, eps = 1e-06)
 }
 \arguments{
 \item{x, q}{A numeric vector of quantiles.}
-
-\item{loc}{A numeric vector. Values of the GP location parameter \eqn{\mu}.}
 
 \item{scale}{A numeric vector of \strong{positive} values. Values of the
 GP scale parameter \eqn{\sigma}.}
@@ -69,23 +59,20 @@ If any element of \code{scale} is non-positive then an error is thrown.
 }
 \description{
 Density, distribution function, quantile function and random generation for
-the Generalised Pareto (GP) distribution. Care is taken to avoid the
-numerical problems that can occur when the shape parameter is very close to
-zero.
+the 2-parameter Generalised Pareto (GP) distribution. Care is taken to avoid
+the numerical problems that can occur when the shape parameter is very close
+to zero.
 }
 \details{
 The distribution function of a GP distribution with parameters
-\code{loc} = \eqn{\mu}, \code{scale} = \eqn{\sigma (> 0)} and
-\code{shape} = \eqn{\xi} is
-\deqn{F(x) = P(X \leq x) = 1 - \left[ 1+\xi\left(\frac{x-\mu}{\sigma}\right)
-  \right]_+^{-1/\xi},}
+\code{scale} = \eqn{\sigma (> 0)} and \code{shape} = \eqn{\xi} is
+\deqn{F(x) = P(X \leq x) = 1 - \left[ 1+\xi x / \sigma \right]_+^{-1/\xi},}
 where \eqn{x_+ = \max(x, 0)}. If \eqn{\xi = 0} the distribution function is
 defined as the limit as \eqn{\xi} tends to zero.
 The support of the distribution depends on \eqn{\xi}: it is
-\eqn{x \geq \mu}{x >= \mu} for \eqn{\xi \geq 0}{\xi >= 0}; and
-\eqn{\mu \leq x \leq \mu - \sigma / \xi}{\mu <= x <= \mu - \sigma / \xi}
+\eqn{x \geq 0} for \eqn{\xi \geq 0}; and \eqn{0 \leq x \leq -\sigma / \xi}
 for \eqn{\xi < 0}.  Note that if \eqn{\xi < -1} the GP density function
-becomes infinite as \eqn{x} approaches \eqn{\mu - \sigma/\xi}.
+becomes infinite as \eqn{x} approaches \eqn{-\sigma/\xi}.
 
 If \code{lower.tail = TRUE} then if \code{p = 0} (\code{p = 1}) then
 the lower (upper) limit of the distribution is returned.
@@ -94,16 +81,16 @@ Similarly, but reversed, if \code{lower.tail = FALSE}.
 
 In \code{dGP} and \code{pGP}, calculations are performed on a log-scale, which
 involves the evaluation of \eqn{\log(1+z)/z}, where
-\eqn{z = \xi (x - \mu) / \sigma}. Direct naive calculation using
+\eqn{z = \xi x / \sigma}. Direct naive calculation using
 \code{log(1+z)/z} is unstable for \code{z} close to \code{0}. Use of \code{\link{log1p(z)}}\verb{/z}
 is much better, but cannot handle the cases where \code{x} is equal to \code{0} or is
 extremely close to \code{0}. \code{dGP} and \code{pGP} avoid these issues using a series
 approximation, implemented by \code{\link{log1pdx}}.
 
-The GP quantile function is \eqn{\mu - \sigma BC(-\log p, -\xi)}, where
+The GP quantile function is \eqn{-\sigma BC(-\log p, -\xi)}, where
 \eqn{BC(x, \lambda) = (x^\lambda - 1)/\lambda} and \eqn{p} is the
-probability of the required quantile. If \eqn{\lambda \in} \verb{(-eps,eps)} then
-\eqn{BC(x, \lambda)} is approximated by
+probability of the required quantile. If \eqn{\lambda \in} \verb{(-eps,eps)}
+then \eqn{BC(x, \lambda)} is approximated by
 \eqn{\log x (1+\lambda \log x / 2 + (\lambda \log x)^2 / 6)}.
 }
 \examples{
