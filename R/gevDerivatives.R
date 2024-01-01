@@ -133,14 +133,13 @@ gev22 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
 #' @export
 gev13 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
   w <- x - loc
-  z <- shape / scale
   zw <- shape * w / scale
   hzw <- log1pdx(zw)
   hdashzw <- dlog1pdx(zw)
   zwr <- 1 / (1 + zw)
-  term1 <- scale * zwr - w * (1 + scale * z) * zwr ^2
-  term2 <- w * hzw + (1 + scale * z) * w ^ 2 * hdashzw / scale
-  term3 <- exp(-w * (1 + scale * z) * hzw / scale)
+  term1 <- scale * zwr - w * (1 + shape) * zwr ^ 2
+  term2 <- w * hzw + (1 + shape) * w ^ 2 * hdashzw / scale
+  term3 <- exp(-w * (1 + shape) * hzw / scale)
   val <- term1 + term2 * term3
   return(val / scale ^ 2)
 }
