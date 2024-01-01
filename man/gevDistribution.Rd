@@ -82,8 +82,8 @@ The distribution function of a GEV distribution with parameters
 where \eqn{x_+ = \max(x, 0)}. If \eqn{\xi = 0} the distribution function is
 defined as the limit as \eqn{\xi} tends to zero. The support of the
 distribution depends on \eqn{\xi}: it is
-\eqn{x \leq \mu - \sigma / \xi}{x <= \mu - \sigma / \xi} for \eqn{\xi < 0};
-\eqn{x \geq \mu - \sigma / \xi}{x >= \mu - \sigma / \xi} for \eqn{\xi > 0};
+\eqn{x \leq \mu - \sigma / \xi} for \eqn{\xi < 0};
+\eqn{x \geq \mu - \sigma / \xi} for \eqn{\xi > 0};
 and \eqn{x} is unbounded for \eqn{\xi = 0}.
 Note that if \eqn{\xi < -1} the GEV density function becomes infinite
 as \eqn{x} approaches \eqn{\mu -\sigma / \xi} from below.
