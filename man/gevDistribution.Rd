@@ -38,8 +38,8 @@ GEV scale parameter \eqn{\sigma}.}
 probability density values, are given as \eqn{\log(p)}.}
 
 \item{...}{Further arguments to be passed to \code{\link{log1pdx}}, which evaluates
-terms of the form \eqn{\log(1+x)/x} in the GEV density and distribution
-functions.}
+terms of the form \eqn{\log(1+x)/x} in the GEV log-density and
+log-distribution functions.}
 
 \item{lower.tail}{A logical scalar. If \code{TRUE}, probabilities are
 \eqn{P(X \leq x)}, otherwise, \eqn{P(X > x)}.}
@@ -94,9 +94,9 @@ the lower (upper) limit of the distribution is returned, which is
 if \code{lower.tail = FALSE}.
 
 In \code{dGEV} and \code{pGEV}, calculations are performed on the log-scale, which
-involves the evaluation of \eqn{\log(1+x)/x}, where
-\eqn{x = \xi (x - \mu) / \sigma}. Direct naive calculation using
-\code{log(1+x)/x} is unstable for \code{x} close to \code{0}. Use of \code{\link{log1p(x)}}\verb{/x}
+involves the evaluation of \eqn{\log(1+z)/z}, where
+\eqn{z = \xi (x - \mu) / \sigma}. Direct naive calculation using
+\code{log(1+z)/z} is unstable for \code{z} close to \code{0}. Use of \code{\link{log1p(z)}}\verb{/z}
 is much better, but cannot handle the cases where \code{x} is equal to \code{0} or is
 extremely close to \code{0}. \code{dGEV} and \code{pGEV} avoid these issues using a series
 approximation, implemented by \code{\link{log1pdx}}.

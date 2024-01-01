@@ -18,8 +18,8 @@
 #' @param lower.tail A logical scalar. If `TRUE`, probabilities are
 #'   \eqn{P(X \leq x)}, otherwise, \eqn{P(X > x)}.
 #' @param ... Further arguments to be passed to [`log1pdx`], which evaluates
-#'   terms of the form \eqn{\log(1+x)/x} in the GEV density and distribution
-#'   functions.
+#'   terms of the form \eqn{\log(1+x)/x} in the GEV log-density and
+#'   log-distribution functions.
 #' @param eps A numeric scalar. For values of \eqn{\xi} in `shape` that lie in
 #'   `(-eps, eps)` an approximation to the GEV quantile function is used
 #'   instead of a direct calculation. See **Details**.
@@ -43,9 +43,9 @@
 #'  if `lower.tail = FALSE`.
 #'
 #'  In `dGEV` and `pGEV`, calculations are performed on the log-scale, which
-#'  involves the evaluation of \eqn{\log(1+x)/x}, where
-#'  \eqn{x = \xi (x - \mu) / \sigma}. Direct naive calculation using
-#'  `log(1+x)/x` is unstable for `x` close to `0`. Use of [`log1p(x)`]`/x`
+#'  involves the evaluation of \eqn{\log(1+z)/z}, where
+#'  \eqn{z = \xi (x - \mu) / \sigma}. Direct naive calculation using
+#'  `log(1+z)/z` is unstable for `z` close to `0`. Use of [`log1p(z)`]`/z`
 #'  is much better, but cannot handle the cases where `x` is equal to `0` or is
 #'  extremely close to `0`. `dGEV` and `pGEV` avoid these issues using a series
 #'  approximation, implemented by [`log1pdx`].
