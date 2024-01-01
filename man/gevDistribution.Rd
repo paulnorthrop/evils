@@ -70,8 +70,7 @@ If any element of \code{scale} is non-positive then an error is thrown.
 \description{
 Density, distribution function, quantile function and random generation for
 the Generalised Extreme Value (GEV) distribution. Care is taken to avoid the
-numerical problems that can occur when the shape parameter is very close to
-zero.
+numerical problems that can occur when the shape parameter is very close to zero.
 }
 \details{
 The distribution function of a GEV distribution with parameters

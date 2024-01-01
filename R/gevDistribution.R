@@ -2,8 +2,7 @@
 #'
 #' Density, distribution function, quantile function and random generation for
 #' the Generalised Extreme Value (GEV) distribution. Care is taken to avoid the
-#' numerical problems that can occur when the shape parameter is very close to
-#' zero.
+#' numerical problems that can occur when the shape parameter is very close to zero.
 #'
 #' @param x,q A numeric vector of quantiles.
 #' @param p A numeric vector of probabilities.
