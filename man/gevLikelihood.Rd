@@ -4,14 +4,14 @@
 \alias{gevLikelihood}
 \alias{gevLoglik}
 \alias{gevScore}
-\alias{gevInfo}
+\alias{gevObsInfo}
 \title{Generalised Extreme Value functions}
 \usage{
 gevLoglik(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 
 gevScore(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 
-gevInfo(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
+gevObsInfo(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...)
 }
 \arguments{
 \item{x}{A numeric vector of observations. Typically, these are
@@ -35,10 +35,9 @@ summed to produce the result.}
 \code{\link{d2log1pdx}}. See \code{\link{gevDerivatives}}.}
 }
 \value{
-For \code{gevLoglik} and \code{gevScore} the number \code{n}, say, of combinations of the
-input parameters \code{x}, \code{loc}, \code{scale} and \code{shape} in the returned object is
-the maximum of the lengths of these arguments, with these arguments being
-recycled as necessary.
+The number \code{n}, say, of combinations of the input parameters \code{x}, \code{loc},
+\code{scale} and \code{shape} in the returned object is the maximum of the lengths
+of these arguments, with these arguments being recycled as necessary.
 
 \strong{Log-likelihood} (\code{gevLoglik}). If \code{sum = FALSE} a vector of length \code{n}
 containing individual log-likelihood contributions. If \code{sum = TRUE} a
@@ -49,12 +48,12 @@ to the score, an \code{n}\eqn{ \times 3} matrix. The columns are named
 \code{loc}, \code{scale} and \code{shape}. If \code{sum = TRUE}, a vector of length 3
 containing the column sums of the matrix returned if \code{sum = FALSE}.
 
-\strong{Observed information} (\code{gevInfo}).  If \code{sum = FALSE} the values of the
-contributions to the observed information, an \code{n} \eqn{ \times 3 \times 3}
-array. The second and third dimensions are named columns are named
-\code{loc}, \code{scale} and \code{shape}. If \code{sum = TRUE}, a \eqn{3 \times 3} matrix
-giving the observed information matrix, obtained by applying
-\code{\link{colsums}} to the array returned if \code{sum = FALSE}.
+\strong{Observed information} (\code{gevObsInfo}).  If \code{sum = FALSE} the values of
+the contributions to the observed information, an
+\code{n} \eqn{ \times 3 \times 3} array. The second and third dimensions are
+named columns are named \code{loc}, \code{scale} and \code{shape}. If \code{sum = TRUE}, a
+\eqn{3 \times 3} matrix giving the observed information matrix, obtained
+by applying \code{\link{colsums}} to the array returned if \code{sum = FALSE}.
 }
 \description{
 Calculate the log-likelihood, score and observed information for

@@ -55,10 +55,9 @@
 #'   \eqn{\theta = (\mu, \sigma, \xi)}.
 #'   See [`gevDerivatives`].
 #' @return
-#'   For `gevLoglik` and `gevScore` the number `n`, say, of combinations of the
-#'   input parameters `x`, `loc`, `scale` and `shape` in the returned object is
-#'   the maximum of the lengths of these arguments, with these arguments being
-#'   recycled as necessary.
+#'   The number `n`, say, of combinations of the input parameters `x`, `loc`,
+#'   `scale` and `shape` in the returned object is the maximum of the lengths
+#'   of these arguments, with these arguments being recycled as necessary.
 #'
 #'   **Log-likelihood** (`gevLoglik`). If `sum = FALSE` a vector of length `n`
 #'   containing individual log-likelihood contributions. If `sum = TRUE` a
@@ -69,12 +68,12 @@
 #'   `loc`, `scale` and `shape`. If `sum = TRUE`, a vector of length 3
 #'   containing the column sums of the matrix returned if `sum = FALSE`.
 #'
-#'   **Observed information** (`gevInfo`).  If `sum = FALSE` the values of the
-#'   contributions to the observed information, an `n` \eqn{ \times 3 \times 3}
-#'   array. The second and third dimensions are named columns are named
-#'   `loc`, `scale` and `shape`. If `sum = TRUE`, a \eqn{3 \times 3} matrix
-#'   giving the observed information matrix, obtained by applying
-#'   [`colsums`] to the array returned if `sum = FALSE`.
+#'   **Observed information** (`gevObsInfo`).  If `sum = FALSE` the values of
+#'   the contributions to the observed information, an
+#'   `n` \eqn{ \times 3 \times 3} array. The second and third dimensions are
+#'   named columns are named `loc`, `scale` and `shape`. If `sum = TRUE`, a
+#'   \eqn{3 \times 3} matrix giving the observed information matrix, obtained
+#'   by applying [`colsums`] to the array returned if `sum = FALSE`.
 #' @name gevLikelihood
 NULL
 ## NULL
@@ -155,7 +154,7 @@ gevScore <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
 
 #' @rdname gevLikelihood
 #' @export
-gevInfo <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
+gevObsInfo <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
   # Recycle the vector input x, loc, scale and shape, if necessary
   maxLen <- max(length(x), length(loc), length(scale), length(shape))
   x <- rep_len(x, maxLen)
@@ -196,5 +195,5 @@ gevInfo <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
   if (sum) {
     infoArray <- colSums(infoArray)
   }
-  return(infoArray)
+  return(-infoArray)
 }
