@@ -52,8 +52,8 @@
 #'
 #'  The GEV quantile function is \eqn{\mu - \sigma BC(-\log p, -\xi)}, where
 #'  \eqn{BC(x, \lambda) = (x^\lambda - 1)/\lambda} and \eqn{p} is the
-#'  probability of the required quantile. If \eqn{\lambda \in} `(-eps,eps)` then
-#'  \eqn{BC(x, \lambda)} is approximated by
+#'  probability of the required quantile. If \eqn{\lambda \in} `(-eps,eps)`
+#'  then \eqn{BC(x, \lambda)} is approximated by
 #'  \eqn{\log x (1+\lambda \log x / 2 + (\lambda \log x)^2 / 6)}.
 #' @return `dGEV` gives the density function, `pGEV` gives the
 #'   distribution function, `qGEV` gives the quantile function,

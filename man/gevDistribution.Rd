@@ -103,8 +103,8 @@ approximation, implemented by \code{\link{log1pdx}}.
 
 The GEV quantile function is \eqn{\mu - \sigma BC(-\log p, -\xi)}, where
 \eqn{BC(x, \lambda) = (x^\lambda - 1)/\lambda} and \eqn{p} is the
-probability of the required quantile. If \eqn{\lambda \in} \verb{(-eps,eps)} then
-\eqn{BC(x, \lambda)} is approximated by
+probability of the required quantile. If \eqn{\lambda \in} \verb{(-eps,eps)}
+then \eqn{BC(x, \lambda)} is approximated by
 \eqn{\log x (1+\lambda \log x / 2 + (\lambda \log x)^2 / 6)}.
 }
 \examples{
