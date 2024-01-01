@@ -118,7 +118,7 @@ pGEV <- function(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
   if (any(scale <= 0)) {
     stop("Invalid scale: scale must be positive.")
   }
-  if (length(pq) == 0) {
+  if (length(q) == 0) {
     return(numeric(0))
   }
   # Recycle the vector input q, loc, scale and shape, if necessary
