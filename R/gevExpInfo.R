@@ -51,63 +51,68 @@
 #' gevExpInfo(1, 0.1)
 #'
 #' # The individual components of the latter matrix
-#' imm(1, 0.1)
-#' ims(1, 0.1)
-#' imx(1, 0.1)
-#' iss(1, 0.1)
-#' isx(1, 0.1)
-#' ixx(0.1)
+#' gev11e(1, 0.1)
+#' gev12e(1, 0.1)
+#' gev13e(1, 0.1)
+#' gev22e(1, 0.1)
+#' gev23e(1, 0.1)
+#' gev33e(0.1)
 #' @name gevExpInfo
 NULL
 ## NULL
 
 #' @rdname gevExpInfo
 #' @export
-imm <- function(sigma, xi) {
+gev11e <- function(sigma, xi) {
   m <- max(length(sigma), length(xi))
   return(rep_len(pxi(xi), m) / rep_len(sigma ^ 2, m))
 }
 
 #' @rdname gevExpInfo
 #' @export
-iss <- function(sigma, xi, eps = 3e-3) {
+gev22e <- function(sigma, xi, eps = 3e-3) {
   eps <- eps[1]
-  val <- gevExpInfoComp(fun = issFn, fun0 = iss0Constant, xi = xi, eps = eps)
+  val <- gevExpInfoComp(fun = gev22eFn, fun0 = gev22e0Constant, xi = xi,
+                        eps = eps)
   m <- max(length(sigma), length(xi))
   return(rep_len(val, m) / rep_len(sigma ^ 2, m))
 }
 
 #' @rdname gevExpInfo
 #' @export
-ixx <- function(xi, eps = 3e-3) {
+gev33e <- function(xi, eps = 3e-3) {
   eps <- eps[1]
-  val <- gevExpInfoComp(fun = ixxFn, fun0 = ixx0Constant, xi = xi, eps = eps)
+  val <- gevExpInfoComp(fun = gev33eFn, fun0 = gev33e0Constant, xi = xi,
+                        eps = eps)
   return(val)
 }
 
 #' @rdname gevExpInfo
 #' @export
-ims <- function(sigma, xi, eps = 3e-3) {
+gev12e <- function(sigma, xi, eps = 3e-3) {
   eps <- eps[1]
-  val <- gevExpInfoComp(fun = imsFn, fun0 = ims0Constant, xi = xi, eps = eps)
+  val <- gevExpInfoComp(fun = gev12eFn, fun0 = gev12e0Constant, xi = xi,
+                        eps = eps)
   m <- max(length(sigma), length(xi))
   return(rep_len(val, m) / rep_len(sigma ^ 2, m))
 }
 
 #' @rdname gevExpInfo
 #' @export
-imx <- function(sigma, xi, eps = 3e-3) {
+gev13e <- function(sigma, xi, eps = 3e-3) {
   eps <- eps[1]
-  val <- gevExpInfoComp(fun = imxFn, fun0 = imx0Constant, xi = xi, eps = eps)
+  val <- gevExpInfoComp(fun = gev13eFn, fun0 = gev13e0Constant, xi = xi,
+                        eps = eps)
   m <- max(length(sigma), length(xi))
   return(rep_len(val, m) / rep_len(sigma, m))
 }
 
 #' @rdname gevExpInfo
 #' @export
-isx <- function(sigma, xi, eps = 3e-3) {
+gev23e <- function(sigma, xi, eps = 3e-3) {
   eps <- eps[1]
-  val <- gevExpInfoComp(fun = isxFn, fun0 = isx0Constant, xi = xi, eps = eps)
+  val <- gevExpInfoComp(fun = gev23eFn, fun0 = gev23e0Constant, xi = xi,
+                        eps = eps)
   m <- max(length(sigma), length(xi))
   return(rep_len(val, m) / rep_len(sigma, m))
 }
@@ -120,12 +125,12 @@ gevExpInfo <- function(sigma, xi, eps = 3e-3) {
   }
   # The expected information does not depend on mu
   val <- matrix(NA, 3, 3)
-  val[1, 1] <- imm(sigma, xi)
-  val[2, 2] <- iss(sigma, xi, eps)
-  val[3, 3] <- ixx(xi, eps)
-  val[2, 1] <- val[1, 2] <- ims(sigma, xi, eps)
-  val[3, 1] <- val[1, 3] <- imx(sigma, xi, eps)
-  val[3, 2] <- val[2, 3] <- isx(sigma, xi, eps)
+  val[1, 1] <- gev11e(sigma, xi)
+  val[2, 2] <- gev22e(sigma, xi, eps)
+  val[3, 3] <- gev33e(xi, eps)
+  val[2, 1] <- val[1, 2] <- gev12e(sigma, xi, eps)
+  val[3, 1] <- val[1, 3] <- gev13e(sigma, xi, eps)
+  val[3, 2] <- val[2, 3] <- gev23e(sigma, xi, eps)
   dimnames(val) <- list(c("mu", "sigma", "xi"), c("mu", "sigma", "xi"))
   return(val)
 }

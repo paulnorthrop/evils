@@ -35,17 +35,17 @@ qxi <- function(xi) {
 
 #' @keywords internal
 #' @rdname evils-internal
-iss0Fn <- function() {
+gev22e0Fn <- function() {
   return(pi ^ 2 / 6 + (1 - EulersConstant) ^ 2)
 }
 
 #' @keywords internal
 #' @rdname evils-internal
-iss0Constant <- iss0Fn()
+gev22e0Constant <- gev22e0Fn()
 
 #' @keywords internal
 #' @rdname evils-internal
-issFn <- function(xi) {
+gev22eFn <- function(xi) {
   return((1 - 2 * gamma(2 + xi) + pxi(xi)) / (xi ^ 2))
 }
 
@@ -53,7 +53,7 @@ issFn <- function(xi) {
 
 #' @keywords internal
 #' @rdname evils-internal
-ixx0Fn <- function() {
+gev33e0Fn <- function() {
   val <- pi ^ 2 / 6 - pi ^ 2 * EulersConstant / 2 + EulersConstant ^ 2 -
     EulersConstant ^ 3 - 2 * AperysConstant +
     2 * EulersConstant * AperysConstant + pi ^ 2 * EulersConstant ^ 2 / 4 +
@@ -63,11 +63,11 @@ ixx0Fn <- function() {
 
 #' @keywords internal
 #' @rdname evils-internal
-ixx0Constant <- ixx0Fn()
+gev33e0Constant <- gev33e0Fn()
 
 #' @keywords internal
 #' @rdname evils-internal
-ixxFn <- function(xi) {
+gev33eFn <- function(xi) {
   val <- (pi ^ 2 / 6 + (1 - EulersConstant + 1 / xi) ^ 2 - 2 * qxi(xi) / xi +
             pxi(xi) / xi ^ 2) / (xi ^ 2)
   return(val)
@@ -77,17 +77,17 @@ ixxFn <- function(xi) {
 
 #' @keywords internal
 #' @rdname evils-internal
-ims0Fn <- function() {
+gev12e0Fn <- function() {
   return(EulersConstant - 1)
 }
 
 #' @keywords internal
 #' @rdname evils-internal
-ims0Constant <- ims0Fn()
+gev12e0Constant <- gev12e0Fn()
 
 #' @keywords internal
 #' @rdname evils-internal
-imsFn <- function(xi) {
+gev12eFn <- function(xi) {
   val <- (gamma(2 + xi) - pxi(xi)) / xi
   return(val)
 }
@@ -96,17 +96,17 @@ imsFn <- function(xi) {
 
 #' @keywords internal
 #' @rdname evils-internal
-imx0Fn <- function() {
+gev13e0Fn <- function() {
   return((pi ^ 2 / 6 + EulersConstant ^ 2 - 2 * EulersConstant) / 2)
 }
 
 #' @keywords internal
 #' @rdname evils-internal
-imx0Constant <- imx0Fn()
+gev13e0Constant <- gev13e0Fn()
 
 #' @keywords internal
 #' @rdname evils-internal
-imxFn <- function(xi) {
+gev13eFn <- function(xi) {
   val <- (pxi(xi) / xi - qxi(xi)) / xi
   return(val)
 }
@@ -115,7 +115,7 @@ imxFn <- function(xi) {
 
 #' @keywords internal
 #' @rdname evils-internal
-isx0Fn <- function() {
+gev23e0Fn <- function() {
   val <- (4 * EulersConstant + 4 * AperysConstant + pi ^ 2 * EulersConstant +
      2 * EulersConstant ^ 3 - pi ^ 2 - 6 * EulersConstant ^ 2) / 4
   return(val)
@@ -123,11 +123,11 @@ isx0Fn <- function() {
 
 #' @keywords internal
 #' @rdname evils-internal
-isx0Constant <- isx0Fn()
+gev23e0Constant <- gev23e0Fn()
 
 #' @keywords internal
 #' @rdname evils-internal
-isxFn <- function(xi) {
+gev23eFn <- function(xi) {
   val <- -(1 - EulersConstant + (1 - gamma(2 + xi)) / xi - qxi(xi) +
              pxi(xi) / xi) / (xi ^ 2)
   return(val)

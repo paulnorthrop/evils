@@ -2,25 +2,25 @@
 % Please edit documentation in R/gevExpInfo.R
 \name{gevExpInfo}
 \alias{gevExpInfo}
-\alias{imm}
-\alias{iss}
-\alias{ixx}
-\alias{ims}
-\alias{imx}
-\alias{isx}
+\alias{gev11e}
+\alias{gev22e}
+\alias{gev33e}
+\alias{gev12e}
+\alias{gev13e}
+\alias{gev23e}
 \title{GEV Distribution Expected Information}
 \usage{
-imm(sigma, xi)
+gev11e(sigma, xi)
 
-iss(sigma, xi, eps = 0.003)
+gev22e(sigma, xi, eps = 0.003)
 
-ixx(xi, eps = 0.003)
+gev33e(xi, eps = 0.003)
 
-ims(sigma, xi, eps = 0.003)
+gev12e(sigma, xi, eps = 0.003)
 
-imx(sigma, xi, eps = 0.003)
+gev13e(sigma, xi, eps = 0.003)
 
-isx(sigma, xi, eps = 0.003)
+gev23e(sigma, xi, eps = 0.003)
 
 gevExpInfo(sigma, xi, eps = 0.003)
 }
@@ -83,10 +83,10 @@ gevExpInfo(3, 0)
 gevExpInfo(1, 0.1)
 
 # The individual components of the latter matrix
-imm(1, 0.1)
-ims(1, 0.1)
-imx(1, 0.1)
-iss(1, 0.1)
-isx(1, 0.1)
-ixx(0.1)
+gev11e(1, 0.1)
+gev12e(1, 0.1)
+gev13e(1, 0.1)
+gev22e(1, 0.1)
+gev23e(1, 0.1)
+gev33e(0.1)
 }

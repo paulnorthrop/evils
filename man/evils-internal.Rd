@@ -7,21 +7,21 @@
 \alias{AperysConstant}
 \alias{pxi}
 \alias{qxi}
-\alias{iss0Fn}
-\alias{iss0Constant}
-\alias{issFn}
-\alias{ixx0Fn}
-\alias{ixx0Constant}
-\alias{ixxFn}
-\alias{ims0Fn}
-\alias{ims0Constant}
-\alias{imsFn}
-\alias{imx0Fn}
-\alias{imx0Constant}
-\alias{imxFn}
-\alias{isx0Fn}
-\alias{isx0Constant}
-\alias{isxFn}
+\alias{gev22e0Fn}
+\alias{gev22e0Constant}
+\alias{gev22eFn}
+\alias{gev33e0Fn}
+\alias{gev33e0Constant}
+\alias{gev33eFn}
+\alias{gev12e0Fn}
+\alias{gev12e0Constant}
+\alias{gev12eFn}
+\alias{gev13e0Fn}
+\alias{gev13e0Constant}
+\alias{gev13eFn}
+\alias{gev23e0Fn}
+\alias{gev23e0Constant}
+\alias{gev23eFn}
 \alias{gevExpInfoComp}
 \alias{lagrangianInterpolation}
 \alias{gpLoglikDirect}
@@ -53,35 +53,35 @@ pxi(xi)
 
 qxi(xi)
 
-iss0Fn()
+gev22e0Fn()
 
-iss0Constant
+gev22e0Constant
 
-issFn(xi)
+gev22eFn(xi)
 
-ixx0Fn()
+gev33e0Fn()
 
-ixx0Constant
+gev33e0Constant
 
-ixxFn(xi)
+gev33eFn(xi)
 
-ims0Fn()
+gev12e0Fn()
 
-ims0Constant
+gev12e0Constant
 
-imsFn(xi)
+gev12eFn(xi)
 
-imx0Fn()
+gev13e0Fn()
 
-imx0Constant
+gev13e0Constant
 
-imxFn(xi)
+gev13eFn(xi)
 
-isx0Fn()
+gev23e0Fn()
 
-isx0Constant
+gev23e0Constant
 
-isxFn(xi)
+gev23eFn(xi)
 
 gevExpInfoComp(fun, fun0, xi, eps = 0.003)
 
