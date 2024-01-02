@@ -90,25 +90,28 @@ See \code{\link{gpDerivatives}}.
 }
 \examples{
 ### Simulate some data
-
-set.seed(17042022)
-y <- rGenExtremeValue(100, 0, 1, 0)
+set.seed(28122023)
+x <- rGP(5)
 
 ### Log-likelihood
 
 # Calculation using log1pdx()
-gpLoglik(y, 0, 1, 1e-8, )
-gpLoglik(y, 0, 1, -1e-8)
-gpLoglik(y, 0, 1, 0)
+gpLoglik(x, 1, 1e-8)
+gpLoglik(x, 1, -1e-8)
+gpLoglik(x, 1, 0)
 
-# Direct calculation, involving (1 / xi) * log1p(xi * (y - mu) / sigma)
+# Direct calculation, involving (1 / xi) * log1p(xi * (x - mu) / sigma)
 # Mostly fine, but breaks down eventually
-gpLoglikDirect(pars = c(0, 1, 1e-309), maxima = y)
-gpLoglikDirect(pars = c(0, 1, -1e-309), maxima = y)
+gpLoglikDirect(pars = c(1, 1e-309), excesses = x)
+gpLoglikDirect(pars = c(1, -1e-309), excesses = x)
 
 # Score
-set.seed(28122023)
-x <- rGP(10)
+
 gpScore(x)
 gpScore(x, sum = TRUE)
+
+# Information
+
+gpObsInfo(x)
+gpObsInfo(x, sum = TRUE)
 }

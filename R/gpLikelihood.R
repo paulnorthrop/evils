@@ -66,35 +66,36 @@
 #'   named columns are named `scale` and `shape`. If `sum = TRUE`, a
 #'   \eqn{2 \times 2} matrix giving the observed information matrix, obtained
 #'   by applying [`colsums`] to the array returned if `sum = FALSE`.
-#' @name gpLikelihood
-NULL
-## NULL
-
-#' Generalised Extreme Value Log-likelihood
-#'
 #' @examples
 #' ### Simulate some data
-#'
-#' set.seed(17042022)
-#' y <- rGenExtremeValue(100, 0, 1, 0)
+#' set.seed(28122023)
+#' x <- rGP(5)
 #'
 #' ### Log-likelihood
 #'
 #' # Calculation using log1pdx()
-#' gpLoglik(y, 0, 1, 1e-8, )
-#' gpLoglik(y, 0, 1, -1e-8)
-#' gpLoglik(y, 0, 1, 0)
+#' gpLoglik(x, 1, 1e-8)
+#' gpLoglik(x, 1, -1e-8)
+#' gpLoglik(x, 1, 0)
 #'
-#' # Direct calculation, involving (1 / xi) * log1p(xi * (y - mu) / sigma)
+#' # Direct calculation, involving (1 / xi) * log1p(xi * (x - mu) / sigma)
 #' # Mostly fine, but breaks down eventually
-#' gpLoglikDirect(pars = c(0, 1, 1e-309), maxima = y)
-#' gpLoglikDirect(pars = c(0, 1, -1e-309), maxima = y)
+#' gpLoglikDirect(pars = c(1, 1e-309), excesses = x)
+#' gpLoglikDirect(pars = c(1, -1e-309), excesses = x)
 #'
 #' # Score
-#' set.seed(28122023)
-#' x <- rGP(10)
+#'
 #' gpScore(x)
 #' gpScore(x, sum = TRUE)
+#'
+#' # Information
+#'
+#' gpObsInfo(x)
+#' gpObsInfo(x, sum = TRUE)
+#' @name gpLikelihood
+NULL
+## NULL
+
 #' @rdname gpLikelihood
 #' @export
 gpLoglik <- function(x, scale = 1, shape = 0, sum = FALSE, ...) {
@@ -128,9 +129,9 @@ gpScore <- function(x, scale = 1, shape = 0, sum = FALSE, ...) {
   # Otherwise, the density is positive
   if (any(pos <- !zerod & !invalidScale)) {
     # Derivative of the log-likelihood with respect to scale = sigma
-    scoreMat[pos, 1] <- gp2(x[pos], scale[pos], shape[pos], ...)
+    scoreMat[pos, 1] <- gp1(x[pos], scale[pos], shape[pos], ...)
     # Derivative of the log-likelihood with respect to shape = xi
-    scoreMat[pos, 2] <- gp3(x[pos], scale[pos], shape[pos], ...)
+    scoreMat[pos, 2] <- gp2(x[pos], scale[pos], shape[pos], ...)
   }
   colnames(scoreMat) <- c("scale", "shape")
   if (sum) {
