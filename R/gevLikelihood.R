@@ -128,8 +128,6 @@ gevScore <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
   if (any(invalidScale <- scale <= 0)) {
     scoreMat[invalidScale, ] <- NaN
   }
-  w <- x - loc
-  zw <- shape * w / scale
   # The density is 0 if 1 + shape * (x - loc) / scale <= 0
   # Set the score to 0 for these cases
   zw <- shape * (x - loc) / scale
@@ -167,8 +165,6 @@ gevObsInfo <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
   if (any(invalidScale <- scale <= 0)) {
     infoArray[invalidScale, ] <- NaN
   }
-  w <- x - loc
-  zw <- shape * w / scale
   # The density is 0 if 1 + shape * (x - loc) / scale <= 0
   # Set the score to 0 for these cases
   zw <- shape * (x - loc) / scale
