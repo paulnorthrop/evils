@@ -123,27 +123,28 @@ pGP <- function(q, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE,
   if (any(invalidScale <- scale <= 0)) {
     q[invalidScale] <- NaN
   }
-  # The cdf is 0 if q < mu and 1 if shape < 0 and 1+shape*q/scale <= 0
-  if (any(cdf0 <- q < mu & !invalidScale)) {
-    q[cdf0] <- -Inf
+  # The cdf is 0 if q <= 0 and is 1 if shape < 0 and 1+shape*q/scale <= 0
+  if (any(cdf0 <- q <= 0 & !invalidScale)) {
+    q[cdf0] <- 0
   }
   zw <- shape * q / scale
   if (any(cdf1 <- 1 + zw <= 0 & shape < 0 & !invalidScale & !cdf0)) {
-    q[cdf1] <- 0
+    q[cdf1] <- -Inf
   }
   # Otherwise, the cdf is in (0, 1)
   if (any(cdfp <- !cdf0 & !cdf1 & !invalidScale)) {
     m2 <- q[cdfp] / scale[cdfp]
-    q[cdfp] <- 1 - exp(-m2 * log1pdx(zw[cdfp], ...))
+    q[cdfp] <- -m2 * log1pdx(zw[cdfp], ...)
   }
   if (lower.tail) {
-    if (!log.p) {
-      p <- exp(q)
+    if (log.p) {
+      p <- DPQ::log1mexp(-q)
+    } else {
+      p <- 1 - exp(q)
     }
   } else {
-    p <- -expm1(q)
-    if (log.p) {
-      p <- log(p)
+    if (!log.p) {
+      p <- exp(q)
     }
   }
   return(p)
