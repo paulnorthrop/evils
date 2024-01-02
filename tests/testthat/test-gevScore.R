@@ -15,7 +15,7 @@ scoreScale <- (w * scoreLoc - 1) / sigma
 scoreShape <- ws ^ 2 * (1 - exp(-ws)) / 2 - ws
 res2 <- cbind("loc" = scoreLoc, "scale" = scoreScale, "shape" = scoreShape)
 
-test_that("gevScore() agrees with the theoretical expression", {
+test_that("gevScore(shape = 0) agrees with the theoretical expression", {
   testthat::expect_equal(res1, res2, ignore_attr = TRUE)
 })
 
