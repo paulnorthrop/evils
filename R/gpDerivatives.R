@@ -104,7 +104,7 @@ gp12 <- function(x, scale = 1, shape = 0) {
 
 #' @rdname gpDerivatives
 #' @export
-gp22 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
+gp22 <- function(x, scale = 1, shape = 0, ...) {
   zx <- shape * x / scale
   val <- x ^ 2 / ((1 + zx) ^ 2) - x ^ 3 * d2log1pdx(zx, ...) / scale
   return(val / scale ^ 2)
