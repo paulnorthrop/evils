@@ -72,40 +72,40 @@ NULL
 #' @rdname gpDerivatives
 #' @export
 gp1 <- function(x, scale = 1, shape = 0) {
-  zw <- shape * x / scale
-  val <- x * (shape + 1) / ((1 + zw) * scale) - 1
+  zx <- shape * x / scale
+  val <- x * (shape + 1) / ((1 + zx) * scale) - 1
   return(val / scale)
 }
 
 #' @rdname gpDerivatives
 #' @export
 gp2 <- function(x, scale = 1, shape = 0, ...) {
-  zw <- shape * x / scale
-  val <- -x ^ 2 * dlog1pdx(zw, ...) / scale - x / (1 + zw)
+  zx <- shape * x / scale
+  val <- -x ^ 2 * dlog1pdx(zx, ...) / scale - x / (1 + zx)
   return(val / scale)
 }
 
 #' @rdname gpDerivatives
 #' @export
 gp11 <- function(x, scale = 1, shape = 0) {
-  zw <- shape * x / scale
-  val <- 1 + 2 * x * (shape + 1) / ((1 + zw) * scale) -
-    x ^ 2 * shape * (shape  + 1) / ((1 + zw) ^ 2 * scale ^ 2)
+  zx <- shape * x / scale
+  val <- 1 + 2 * x * (shape + 1) / ((1 + zx) * scale) -
+    x ^ 2 * shape * (shape  + 1) / ((1 + zx) ^ 2 * scale ^ 2)
   return(val / scale ^ 2)
 }
 
 #' @rdname gpDerivatives
 #' @export
 gp12 <- function(x, scale = 1, shape = 0) {
-  zw <- shape * x / scale
-  val <- x * (1 / (1 + zw) - x * (shape + 1) / ((1 + zw) ^ 2 * scale))
+  zx <- shape * x / scale
+  val <- x * (1 / (1 + zx) - x * (shape + 1) / ((1 + zx) ^ 2 * scale))
   return(val / scale ^ 2)
 }
 
 #' @rdname gpDerivatives
 #' @export
 gp22 <- function(x, loc = 0, scale = 1, shape = 0, ...) {
-  zw <- shape * x / scale
-  val <- x ^ 2 / ((1 + zw) ^ 2) - x ^ 3 * d2log1pdx(zw, ...) / scale
+  zx <- shape * x / scale
+  val <- x ^ 2 / ((1 + zx) ^ 2) - x ^ 3 * d2log1pdx(zx, ...) / scale
   return(val / scale ^ 2)
 }
