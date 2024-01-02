@@ -89,7 +89,7 @@ gp2 <- function(x, scale = 1, shape = 0, ...) {
 #' @export
 gp11 <- function(x, scale = 1, shape = 0) {
   zx <- shape * x / scale
-  val <- 1 + 2 * x * (shape + 1) / ((1 + zx) * scale) -
+  val <- 1 - 2 * x * (shape + 1) / ((1 + zx) * scale) +
     x ^ 2 * shape * (shape  + 1) / ((1 + zx) ^ 2 * scale ^ 2)
   return(val / scale ^ 2)
 }
