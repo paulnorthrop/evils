@@ -99,25 +99,28 @@ See \code{\link{gevDerivatives}}.
 }
 \examples{
 ### Simulate some data
-
-set.seed(17042022)
-y <- rGenExtremeValue(100, 0, 1, 0)
+set.seed(28122023)
+x <- rGEV(10)
 
 ### Log-likelihood
 
 # Calculation using log1pdx()
-gevLoglik(y, 0, 1, 1e-8, )
-gevLoglik(y, 0, 1, -1e-8)
-gevLoglik(y, 0, 1, 0)
+gevLoglik(x, 0, 1, 1e-8)
+gevLoglik(x, 0, 1, -1e-8)
+gevLoglik(x, 0, 1, 0)
 
-# Direct calculation, involving (1 / xi) * log1p(xi * (y - mu) / sigma)
+# Direct calculation, involving (1 / xi) * log1p(xi * (x - mu) / sigma)
 # Mostly fine, but breaks down eventually
-gevLoglikDirect(pars = c(0, 1, 1e-309), maxima = y)
-gevLoglikDirect(pars = c(0, 1, -1e-309), maxima = y)
+gevLoglikDirect(pars = c(0, 1, 1e-309), maxima = x)
+gevLoglikDirect(pars = c(0, 1, -1e-309), maxima = x)
 
 # Score
-set.seed(28122023)
-x <- rGEV(10)
+
 gevScore(x)
 gevScore(x, sum = TRUE)
+
+# Information
+
+gpObsInfo(x)
+gpObsInfo(x, sum = TRUE)
 }
