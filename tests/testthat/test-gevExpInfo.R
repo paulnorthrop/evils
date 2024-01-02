@@ -25,3 +25,12 @@ test_that("Expected Information constants agree with mev::gev.infomat()", {
 test_that("Expected Information constants agree with mev::gev.infomat()", {
   testthat::expect_equal(mevMat, evilsMat2)
 })
+
+# Check that gevExpInfo() throws an error when shape <= -0.5
+
+test_that("gevExpInfo() errors for shape = -1/2", {
+  testthat::expect_error(gevExpInfo(shape = -1/2))
+})
+test_that("gevExpInfo() errors for shape = -1", {
+  testthat::expect_error(gevExpInfo(shape = -1))
+})
