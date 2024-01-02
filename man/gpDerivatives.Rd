@@ -17,7 +17,7 @@ gp11(x, scale = 1, shape = 0)
 
 gp12(x, scale = 1, shape = 0)
 
-gp22(x, loc = 0, scale = 1, shape = 0, ...)
+gp22(x, scale = 1, shape = 0, ...)
 }
 \arguments{
 \item{x}{A numeric vector of observations. Typically, these are
