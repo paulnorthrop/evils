@@ -9,4 +9,5 @@ checks
 tests/testthat/test-gevExpInfoLocally.R
 tests/testthat/test-gevScoreLocally.R
 tests/testthat/test-gevObsInfoLocally.R
+tests/testthat/test-gpExpInfoLocally.R
 tests/testthat/test-gpScoreLocally.R
