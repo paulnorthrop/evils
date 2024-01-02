@@ -2,7 +2,7 @@
 # the theoretical expression
 
 set.seed(28122023)
-x <- rGEV(10)
+x <- rGP(10)
 sigma <- c(1, 2.5)
 xi <- 0
 res1 <- gpScore(x, scale = sigma, shape = xi)
