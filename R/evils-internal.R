@@ -293,13 +293,17 @@ BC <- function(x, lambda, eps = 1e-6) {
   if (any(nas <- is.na(x) | is.na(lambda))) {
     x[nas] <- NA
   }
+  # If lambda = 0 then use log(x)
+  if (any(lambdaEq0 <- lambda == 0 & !nas)) {
+    x[lambdaEq0] <- log(x[lambdaEq0])
+  }
   # If abs(lambda) > eps or lambda = NA then use the usual formula
-  if (any(large <- !nas & abs(lambda) >= eps)) {
+  if (any(large <- !nas & abs(lambda) >= eps & !lambdaEq0)) {
     x[large] <- (x[large] ^ lambda[large] - 1) / lambda[large]
   }
-  # Indicator of lambda < 0
-  neg <- !large & !nas & lambda < 0
-  nonNeg <- !large & !nas & lambda >= 0
+  # Indicators of lambda < 0 and lambda > 0
+  neg <- !lambdaEq0 & !large & !nas & lambda < 0
+  pos <- !lambdaEq0 & !large & !nas & lambda > 0
   # Indicators of being Inf or 0
   xInf <- is.infinite(x)
   xZero <- x == 0
@@ -307,17 +311,17 @@ BC <- function(x, lambda, eps = 1e-6) {
   if (any(xInfNeg <- xInf & neg)) {
     x[xInfNeg] <- -1 / lambda[xInfNeg]
   }
-  if (any(xInfNonNeg <- xInf & nonNeg)) {
-    x[xInfNonNeg] <- Inf
+  if (any(xInfPos <- xInf & pos)) {
+    x[xInfPos] <- Inf
   }
   if (any(xZeroNeg <- xZero & neg)) {
     x[xZeroNeg] <- -Inf
   }
-  if (any(xZeroNonNeg <- xZero & nonNeg)) {
-    x[xZeroNonNeg] <- -1 / lambda[xZeroNonNeg]
+  if (any(xZeroPos <- xZero & pos)) {
+    x[xZeroPos] <- -1 / lambda[xZeroPos]
   }
   # Use Taylor series expansion for other cases
-  if (any(rest <- !large & !xInf & !xZero & !nas)) {
+  if (any(rest <-  !lambdaEq0 & !large & !xInf & !xZero & !nas)) {
     logxlam <- log(x[rest]) * lambda[rest]
     x[rest] <- log(x[rest]) * (1 + logxlam / 2 + logxlam ^ 2 / 6)
   }
