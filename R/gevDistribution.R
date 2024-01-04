@@ -92,13 +92,19 @@ dGEV <- function(x, loc = 0, scale = 1, shape = 0, log = FALSE, ...) {
   if (any(invalidScale <- scale <= 0)) {
     x[invalidScale] <- NaN
   }
-  # The density is 0 if 1 + shape * (x - loc) / scale <= 0
+  # Return NA if x is NA
+  if (any(xIsNA <- is.na(x) & !invalidScale)) {
+    x[xIsNA] <- NA
+  }
+  # The density is 0 if 1 + shape * (x - loc) / scale <= 0 or if x is
+  # +/- infinity
   zw <- shape * (x - loc) / scale
-  if (any(zerod <- 1 + zw <= 0 & !invalidScale)) {
+  outOfBounds <- 1 + zw <= 0 | is.infinite(x)
+  if (any(zerod <- outOfBounds & !invalidScale & !xIsNA)) {
     x[zerod] <- -Inf
   }
   # Otherwise, the density is positive
-  if (any(posd <- !zerod & !invalidScale)) {
+  if (any(posd <- !zerod & !invalidScale & !xIsNA)) {
     m1 <- (shape[posd] + 1) * (x[posd] - loc[posd]) / scale[posd]
     m2 <- (x[posd] - loc[posd]) / scale[posd]
     logterm <- log1pdx(zw[posd], ...)
@@ -130,13 +136,21 @@ pGEV <- function(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
   if (any(invalidScale <- scale <= 0)) {
     q[invalidScale] <- NaN
   }
+  # Return NA if q is NA
+  if (any(qIsNA <- is.na(q) & !invalidScale)) {
+    q[qIsNA] <- NA
+  }
+  # Return 0 if q is -infinity and 1 if q is +infinity
+  if (any(qIsInf <- is.infinite(q) & !invalidScale)) {
+    q[qIsInf] <- log((1 + sign(q[qIsInf])) / 2)
+  }
   # The cdf is 0 (shape > 0) or 1 (shape < 0) if 1+shape*(q-loc)/scale <= 0
   zw <- shape * (q - loc) / scale
-  if (any(cdf01 <- 1 + zw <= 0 & !invalidScale)) {
+  if (any(cdf01 <- 1 + zw <= 0 & !invalidScale & !qIsInf & !qIsNA)) {
     q[cdf01] <- log(shape[cdf01] < 0)
   }
   # Otherwise, the cdf is in (0, 1)
-  if (any(cdfp <- !cdf01 & !invalidScale)) {
+  if (any(cdfp <- !cdf01 & !invalidScale & !qIsInf & !qIsNA)) {
     m2 <- (q[cdfp] - loc[cdfp]) / scale[cdfp]
     q[cdfp] <- -exp(-m2 * log1pdx(zw[cdfp], ...))
   }
