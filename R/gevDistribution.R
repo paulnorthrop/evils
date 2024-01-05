@@ -94,10 +94,6 @@ dGEV <- function(x, loc = 0, scale = 1, shape = 0, log = FALSE, ...) {
   if (any(invalidScale <- scale <= 0 & !xIsNA)) {
     x[invalidScale] <- NaN
   }
-  # Return NA if x, loc, scale or shape is NA
-  if (any(xIsNA <- !complete.cases(x, loc, scale, shape) & !invalidScale)) {
-    x[xIsNA] <- NA
-  }
   # The density is 0 if 1 + shape * (x - loc) / scale <= 0 or if x is
   # +/- infinity
   zw <- shape * (x - loc) / scale
