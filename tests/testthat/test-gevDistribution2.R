@@ -103,3 +103,20 @@ test_that("pGEV and qGEV are consistent", {
   expect_equal(pGEV(qGEV(pvec, shape = xi2), shape = xi2), pvec)
   expect_equal(pGEV(qGEV(pvec, shape = xi3), shape = xi3), pvec)
 })
+
+# Check that NA parameter values result in an NA return
+
+test_that("dGEV: NA parameters produce an NA return", {
+  expect_equal(dGEV(0, loc = c(NA, 0, 0), scale = c(1, NA, 1),
+                  shape = c(0, 0, NA)), as.numeric(c(NA, NA, NA)))
+})
+
+test_that("pGEV: NA parameters produce an NA return", {
+  expect_equal(pGEV(0, loc = c(NA, 0, 0), scale = c(1, NA, 1),
+                    shape = c(0, 0, NA)), as.numeric(c(NA, NA, NA)))
+})
+
+test_that("qGEV: NA parameters produce an NA return", {
+  expect_equal(qGEV(0, loc = c(NA, 0, 0), scale = c(1, NA, 1),
+                    shape = c(0, 0, NA)), as.numeric(c(NA, NA, NA)))
+})
