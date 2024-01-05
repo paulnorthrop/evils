@@ -1,8 +1,5 @@
 # We check the functions pGEV, qGEV and rGEV.
 
-# Set a tolerance for the comparison of the simulated values
-my_tol <- 1e-5
-
 # 1. Check that calling qGEV with probabilities p and then calling pGEV with
 #    the results gets us back to the initial probabilities.
 
@@ -17,7 +14,7 @@ pqgev_test_fn <- function(x, p) {
 
 test_function <- function(x, test_string) {
   testthat::test_that(test_string, {
-    testthat::expect_equal(x$p, x$ps, tolerance = my_tol)
+    testthat::expect_equal(x$p, x$ps)
   })
 }
 
@@ -53,7 +50,7 @@ rqgev_test_fn <- function(x) {
 
 test_function <- function(x, test_string) {
   testthat::test_that(test_string, {
-    testthat::expect_equal(x$us, x$ps, tolerance = my_tol)
+    testthat::expect_equal(x$us, x$ps)
   })
 }
 
