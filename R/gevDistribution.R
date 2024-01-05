@@ -92,8 +92,8 @@ dGEV <- function(x, loc = 0, scale = 1, shape = 0, log = FALSE, ...) {
   if (any(invalidScale <- scale <= 0)) {
     x[invalidScale] <- NaN
   }
-  # Return NA if x is NA
-  if (any(xIsNA <- is.na(x) & !invalidScale)) {
+  # Return NA if x, loc, scale or shape is NA
+  if (any(xIsNA <- !complete.cases(x, loc, scale, shape) & !invalidScale)) {
     x[xIsNA] <- NA
   }
   # The density is 0 if 1 + shape * (x - loc) / scale <= 0 or if x is
@@ -136,8 +136,8 @@ pGEV <- function(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
   if (any(invalidScale <- scale <= 0)) {
     q[invalidScale] <- NaN
   }
-  # Return NA if q is NA
-  if (any(qIsNA <- is.na(q) & !invalidScale)) {
+  # Return NA if q, loc, scale or shape is NA
+  if (any(qIsNA <- !complete.cases(q, loc, scale, shape) & !invalidScale)) {
     q[qIsNA] <- NA
   }
   # Return 0 if q is -infinity and 1 if q is +infinity
