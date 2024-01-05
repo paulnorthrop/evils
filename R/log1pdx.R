@@ -118,18 +118,25 @@ log1pdx <- function(x, minL1 = -0.79149064, eps2 = 0.01, tol_logcf = 1e-14,
 
   # Create return vector of the correct length
   r <- x
-  # There are 3 cases:
+  # Deal with cases NA and Inf
+  if (any(xIsNA <- is.na(x))) {
+    r[xIsNA] <- NA
+  }
+  if (any(xIsInf <- is.infinite(x) & x > 0)) {
+    r[xIsInf] <- 0
+  }
+  # Otherwise, there are 3 cases:
   #
   # 1. x > 1 or x < minL1
   # 2. -eps2 <= x <= eps2
   # 3. x in [minL1, -eps2) or x in (eps2, 1]
   #
   # 1.
-  if (any(c1 <- (x > 1 | x < minL1))) {
+  if (any(c1 <- (x > 1 | x < minL1) & !xIsNA & !xIsInf)) {
     r[c1] <- log1p(x[c1]) / x[c1]
   }
   # Not 1.
-  if (any(c2 <- !c1)) {
+  if (any(c2 <- !c1 & !xIsNA & !xIsInf)) {
     x <- x[c2]
     term <- x / (2 + x)
     term2 <- 2 / (2 + x)
