@@ -65,7 +65,8 @@ other functions.
 The numerical arguments other than \code{n} are recycled to the length
 of the result.
 
-If any element of \code{scale} is non-positive then an error is thrown.
+For \code{rGEV}, if any element of \code{scale} is non-positive then an error is
+thrown.
 }
 \description{
 Density, distribution function, quantile function and random generation for

@@ -65,7 +65,8 @@
 #'   The numerical arguments other than `n` are recycled to the length
 #'   of the result.
 #'
-#'   If any element of `scale` is non-positive then an error is thrown.
+#'   For `rGEV`, if any element of `scale` is non-positive then an error is
+#'   thrown.
 #' @examples
 #' # example code
 #'
@@ -76,9 +77,6 @@ NULL
 #' @rdname gevDistribution
 #' @export
 dGEV <- function(x, loc = 0, scale = 1, shape = 0, log = FALSE, ...) {
-  if (any(scale <= 0)) {
-    stop("Invalid scale: scale must be positive.")
-  }
   if (length(x) == 0) {
     return(numeric(0))
   }
@@ -88,8 +86,12 @@ dGEV <- function(x, loc = 0, scale = 1, shape = 0, log = FALSE, ...) {
   loc <- rep_len(loc, maxLen)
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
+  # Return NA if x, loc, scale or shape is NA
+  if (any(xIsNA <- !complete.cases(x, loc, scale, shape))) {
+    x[xIsNA] <- NA
+  }
   # The density is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0)) {
+  if (any(invalidScale <- scale <= 0 & !xIsNA)) {
     x[invalidScale] <- NaN
   }
   # Return NA if x, loc, scale or shape is NA
@@ -120,9 +122,6 @@ dGEV <- function(x, loc = 0, scale = 1, shape = 0, log = FALSE, ...) {
 #' @export
 pGEV <- function(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
                  log.p = FALSE, ...) {
-  if (any(scale <= 0)) {
-    stop("Invalid scale: scale must be positive.")
-  }
   if (length(q) == 0) {
     return(numeric(0))
   }
@@ -132,13 +131,13 @@ pGEV <- function(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
   loc <- rep_len(loc, maxLen)
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
-  # The cdf is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0)) {
-    q[invalidScale] <- NaN
-  }
   # Return NA if q, loc, scale or shape is NA
-  if (any(qIsNA <- !complete.cases(q, loc, scale, shape) & !invalidScale)) {
+  if (any(qIsNA <- !complete.cases(q, loc, scale, shape))) {
     q[qIsNA] <- NA
+  }
+  # The cdf is undefined if scale <= 0
+  if (any(invalidScale <- scale <= 0 & !qIsNA)) {
+    q[invalidScale] <- NaN
   }
   # Return 0 if q is -infinity and 1 if q is +infinity
   if (any(qIsInf <- is.infinite(q) & !invalidScale)) {
@@ -171,9 +170,6 @@ pGEV <- function(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
 #' @export
 qGEV <- function(p, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
                  log.p = FALSE, eps = 1e-6) {
-  if (any(scale <= 0)) {
-    stop("Invalid scale: scale must be positive.")
-  }
   if (length(p) == 0) {
     return(numeric(0))
   }
@@ -192,10 +188,15 @@ qGEV <- function(p, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
   loc <- rep_len(loc, maxLen)
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
+  # The quantile is undefined if scale <= 0
+  if (any(invalidScale <- scale <= 0 & !is.na(scale))) {
+    p[invalidScale] <- NaN
+  }
   # Quantiles are loc + scale [(-log(p))^(-shape) - 1] / shape
   #      which is loc - scale BoxCox(-log(p), -shape)
-  mult <- BC(x = -log(p), lambda = -shape, eps = eps)
-  return(loc - scale * mult)
+  p[!invalidScale] <- loc[!invalidScale] - scale[!invalidScale] *
+    BC(x = -log(p[!invalidScale]), lambda = -shape[!invalidScale], eps = eps)
+  return(p)
 }
 
 #' @rdname gevDistribution
