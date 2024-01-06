@@ -2,7 +2,7 @@
 
 # Values of x to check:
 xvals <- c(-1.1, -1, "minL1" = -0.79149064, "-eps" = 0.01,
-           "zero" = 0, "eps" = 0.01, 1, 1.1)
+           "zero" = 0, "eps" = 0.01, 1, 1.1, "NA" = NA, "Inf" = Inf)
 # Check all values in one call
 res1 <- suppressWarnings(dlog1pdx(xvals))
 res2 <- suppressWarnings(
@@ -10,6 +10,8 @@ res2 <- suppressWarnings(
   )
 # x = 0. In the limit as x becomes 0, log2pdx() = -1/2
 res2[names(xvals) == "zero"] <- -1 / 2
+# x = Inf. In the limit as x becomes Inf, dlog1pdx(x) = 0
+res2[names(xvals) == "Inf"] <- 0
 test_that("dlog1pdx() and 1/(x*(1 + x)) - log1p(x)/x^2 agree for various x", {
   testthat::expect_equal(res1, res2)
 })

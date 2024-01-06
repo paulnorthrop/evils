@@ -2,7 +2,7 @@
 
 # Values of x to check:
 xvals <- c(-1.1, -1, "minL1" = -0.79149064, "-eps" = 0.01,
-           "zero" = 0, "eps" = 0.01, 1, 1.1)
+           "zero" = 0, "eps" = 0.01, 1, 1.1, "NA" = NA, "Inf" = Inf)
 # Check all values in one call
 res1 <- suppressWarnings(d2log1pdx(xvals))
 res2 <- suppressWarnings(
@@ -11,6 +11,8 @@ res2 <- suppressWarnings(
   )
 # x = 0. In the limit as x becomes 0, log3pdx() = 2/3
 res2[names(xvals) == "zero"] <- 2 / 3
+# x = Inf. In the limit as x becomes Inf, dlog1pdx(x) = 0
+res2[names(xvals) == "Inf"] <- 0
 test_that("d2log1pdx() and direct calculation agree for various x", {
   testthat::expect_equal(res1, res2)
 })
