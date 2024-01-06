@@ -65,8 +65,8 @@
 #'   The numerical arguments other than `n` are recycled to the length
 #'   of the result.
 #'
-#'   For `rGEV`, if any element of `scale` is non-positive then an error is
-#'   thrown.
+#'   `NaN` is returned for any component of `scale` that is non-positive, with
+#'   no warning given.
 #' @examples
 #' # example code
 #'
@@ -198,9 +198,6 @@ qGEV <- function(p, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
 #' @rdname gevDistribution
 #' @export
 rGEV <- function (n, loc = 0, scale = 1, shape = 0, eps = 1e-6) {
-  if (any(scale <= 0)) {
-    stop("Invalid scale: scale must be positive.")
-  }
   maxLen <- ifelse(length(n) > 1, length(n), n)
   loc <- rep_len(loc, maxLen)
   scale <- rep_len(scale, maxLen)
