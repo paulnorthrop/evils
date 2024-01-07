@@ -142,7 +142,7 @@ pGP <- function(q, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE,
   }
   zw <- shape * q / scale
   cdf1cond <- (1 + zw <= 0 & shape < 0) | (is.infinite(q) & q > 0)
-  if (any(cdf1 <- cdf1cond & !isNaN & !cdf0)) {
+  if (any(cdf1 <- cdf1cond & !isNaN & !qIsNA & !cdf0)) {
     q[cdf1] <- -Inf
   }
   # Otherwise, the cdf is in (0, 1)
