@@ -136,7 +136,7 @@ pGEV <- function(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
     q[invalidScale] <- NaN
   }
   # Return 0 if q is -infinity and 1 if q is +infinity
-  if (any(qIsInf <- is.infinite(q) & !invalidScale)) {
+  if (any(qIsInf <- is.infinite(q) & !invalidScale & !qIsNA)) {
     q[qIsInf] <- log((1 + sign(q[qIsInf])) / 2)
   }
   # The cdf is 0 (shape > 0) or 1 (shape < 0) if 1+shape*(q-loc)/scale <= 0
