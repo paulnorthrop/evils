@@ -152,3 +152,36 @@ test_that("log_pdf.GP works correctly", {
   expect_length(log_GP_pdf(g3, seq_len(10)), 10)
 })
 
+# Check that NA parameter values result in an NA return
+
+test_that("dGP: NA parameters produce an NA return", {
+  expect_equal(dGP(0, scale = c(1, NA, 1), shape = c(0, 0, NA)),
+               as.numeric(c(dGP(0), NA, NA)))
+})
+
+test_that("pGP: NA parameters produce an NA return", {
+  expect_equal(pGP(0, scale = c(1, NA, 1), shape = c(0, 0, NA)),
+               as.numeric(c(pGP(0), NA, NA)))
+})
+
+test_that("qGP: NA parameters produce an NA return", {
+  expect_equal(qGP(0, scale = c(1, NA, 1), shape = c(0, 0, NA)),
+               as.numeric(c(qGP(0), NA, NA)))
+})
+
+# Check that infinite parameter values result in an NaN return
+
+test_that("dGP: infinite parameters produce an NaN return", {
+  expect_equal(dGP(0, scale = c(1, NA, Inf, 1), shape = c(0, 0, 0, -Inf)),
+               as.numeric(c(dGP(0), NA, NaN, NaN)))
+})
+
+test_that("pGP: infinite parameters produce an NaN return", {
+  expect_equal(pGP(0, scale = c(1, NA, -Inf, 1), shape = c(0.1, 0, 0, Inf)),
+               as.numeric(c(pGP(0, shape = 0.1), NA, NaN, NaN)))
+})
+
+test_that("qGP: infinite parameters, or scale <= 0 produces an NaN return", {
+  expect_equal(qGP(0.6, scale = c(1, 0, Inf, 1), shape = c(-1e-6, 0, 0, Inf)),
+               as.numeric(c(qGP(0.6, shape = -1e-6), NaN, NaN, NaN)))
+})
