@@ -61,7 +61,8 @@
 #'   The numerical arguments other than `n` are recycled to the length
 #'   of the result.
 #'
-#'   If any element of `scale` is non-positive then an error is thrown.
+#'   `NaN` is returned for any component of `scale` that is non-positive, with
+#'   no warning given.
 #' @examples
 #' # example code
 #'
@@ -72,9 +73,6 @@ NULL
 #' @rdname gpDistribution
 #' @export
 dGP <- function(x, scale = 1, shape = 0, log = FALSE, ...) {
-  if (any(scale <= 0)) {
-    stop("Invalid scale: scale must be positive.")
-  }
   if (length(x) == 0) {
     return(numeric(0))
   }
@@ -83,17 +81,24 @@ dGP <- function(x, scale = 1, shape = 0, log = FALSE, ...) {
   x <- rep_len(x, maxLen)
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
+  # Return NA if x, scale or shape is NA
+  if (any(xIsNA <- !complete.cases(x, scale, shape))) {
+    x[xIsNA] <- NA
+  }
   # The density is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0)) {
+  if (any(invalidScale <- scale <= 0 & !xIsNA)) {
     x[invalidScale] <- NaN
   }
   # The density is 0 if 1 + shape * x / scale <= 0
+  # The density is 0 if 1 + shape * x / scale <= 0 and/or if x is
+  # +/- infinity
   zw <- shape * x / scale
-  if (any(zerod <- 1 + zw <= 0 & !invalidScale)) {
+  outOfBounds <- 1 + zw <= 0 | is.infinite(x)
+  if (any(zerod <- outOfBounds & !invalidScale & !xIsNA)) {
     x[zerod] <- -Inf
   }
   # Otherwise, the density is positive
-  if (any(posd <- !zerod & !invalidScale)) {
+  if (any(posd <- !zerod & !invalidScale & !xIsNA)) {
     m1 <- (shape[posd] + 1) * x[posd] / scale[posd]
     logterm <- log1pdx(zw[posd], ...)
     x[posd] <- -log(scale[posd]) - m1 * logterm
@@ -108,9 +113,6 @@ dGP <- function(x, scale = 1, shape = 0, log = FALSE, ...) {
 #' @export
 pGP <- function(q, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE,
                 ...) {
-  if (any(scale <= 0)) {
-    stop("Invalid scale: scale must be positive.")
-  }
   if (length(q) == 0) {
     return(numeric(0))
   }
@@ -119,20 +121,26 @@ pGP <- function(q, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE,
   q <- rep_len(q, maxLen)
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
+  # Return NA if q, scale or shape is NA
+  if (any(qIsNA <- !complete.cases(q, scale, shape))) {
+    q[qIsNA] <- NA
+  }
   # The cdf is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0)) {
+  if (any(invalidScale <- scale <= 0 & !qIsNA)) {
     q[invalidScale] <- NaN
   }
   # The cdf is 0 if q <= 0 and is 1 if shape < 0 and 1+shape*q/scale <= 0
-  if (any(cdf0 <- q <= 0 & !invalidScale)) {
+  # It is also 1 if q is +Inf
+  if (any(cdf0 <- q <= 0 & !invalidScale & !qIsNA)) {
     q[cdf0] <- 0
   }
   zw <- shape * q / scale
-  if (any(cdf1 <- 1 + zw <= 0 & shape < 0 & !invalidScale & !cdf0)) {
+  cdf1cond <- (1 + zw <= 0 & shape < 0) | (is.infinite(q) & q > 0)
+  if (any(cdf1 <- cdf1cond & !invalidScale & !cdf0)) {
     q[cdf1] <- -Inf
   }
   # Otherwise, the cdf is in (0, 1)
-  if (any(cdfp <- !cdf0 & !cdf1 & !invalidScale)) {
+  if (any(cdfp <- !cdf0 & !cdf1 & !invalidScale & !qIsNA)) {
     m2 <- q[cdfp] / scale[cdfp]
     q[cdfp] <- -m2 * log1pdx(zw[cdfp], ...)
   }
@@ -154,9 +162,7 @@ pGP <- function(q, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE,
 #' @export
 qGP <- function(p, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE,
                 eps = 1e-6) {
-  if (any(scale <= 0)) {
-    stop("Invalid scale: scale must be positive.")
-  }
+
   if (length(p) == 0) {
     return(numeric(0))
   }
@@ -174,18 +180,20 @@ qGP <- function(p, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE,
   p <- rep_len(p, maxLen)
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
+  # The quantile is undefined if scale <= 0
+  if (any(invalidScale <- scale <= 0 & !is.na(scale))) {
+    p[invalidScale] <- NaN
+  }
   # Quantiles are scale [(-log(p))^(-shape) - 1] / shape
   #      which is scale BoxCox(-log(p), -shape)
-  mult <- BC(x = 1 - p, lambda = -shape, eps = eps)
-  return(-scale * mult)
+  p[!invalidScale] <- -scale[!invalidScale] *
+    BC(x = 1 - p[!invalidScale], lambda = -shape[!invalidScale], eps = eps)
+  return(p)
 }
 
 #' @rdname gpDistribution
 #' @export
 rGP <- function (n, scale = 1, shape = 0, eps = 1e-6) {
-  if (any(scale <= 0)) {
-    stop("Invalid scale: scale must be positive.")
-  }
   maxLen <- ifelse(length(n) > 1, length(n), n)
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
