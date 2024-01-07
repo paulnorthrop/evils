@@ -61,8 +61,12 @@
 #'   The numerical arguments other than `n` are recycled to the length
 #'   of the result.
 #'
-#'   `NaN` is returned for any component of `scale` that is non-positive, with
-#'   no warning given.
+#'   `NA` is returned for any component of the inputs for which `x`, `q`, `p`,
+#'   `scale` or `shape` is `NA`.
+#'
+#'   `NaN` is returned for any component of `scale` that is non-positive and
+#'   for any component for which scale` and/or `shape` are either `Inf` or
+#'   `-Inf`, with no warning given.
 #' @examples
 #' # example code
 #'
@@ -85,20 +89,21 @@ dGP <- function(x, scale = 1, shape = 0, log = FALSE, ...) {
   if (any(xIsNA <- !complete.cases(x, scale, shape))) {
     x[xIsNA] <- NA
   }
-  # The density is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0 & !xIsNA)) {
-    x[invalidScale] <- NaN
+  # Density is undefined if scale <= 0 or any of the parameters are infinite
+  isNaN <- scale <= 0 | is.infinite(scale) | is.infinite(shape)
+  if (any(isNaN <- isNaN & !xIsNA)) {
+    x[isNaN] <- NaN
   }
   # The density is 0 if 1 + shape * x / scale <= 0
   # The density is 0 if 1 + shape * x / scale <= 0 and/or if x is
   # +/- infinity
   zw <- shape * x / scale
   outOfBounds <- 1 + zw <= 0 | is.infinite(x)
-  if (any(zerod <- outOfBounds & !invalidScale & !xIsNA)) {
+  if (any(zerod <- outOfBounds & !isNaN & !xIsNA)) {
     x[zerod] <- -Inf
   }
   # Otherwise, the density is positive
-  if (any(posd <- !zerod & !invalidScale & !xIsNA)) {
+  if (any(posd <- !zerod & !isNaN & !xIsNA)) {
     m1 <- (shape[posd] + 1) * x[posd] / scale[posd]
     logterm <- log1pdx(zw[posd], ...)
     x[posd] <- -log(scale[posd]) - m1 * logterm
@@ -125,22 +130,23 @@ pGP <- function(q, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE,
   if (any(qIsNA <- !complete.cases(q, scale, shape))) {
     q[qIsNA] <- NA
   }
-  # The cdf is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0 & !qIsNA)) {
-    q[invalidScale] <- NaN
+  # The cdf is undefined if scale <= 0 or any of the parameters are infinite
+  isNaN <- scale <= 0 | is.infinite(scale) | is.infinite(shape)
+  if (any(isNaN <- isNaN & !qIsNA)) {
+    q[isNaN] <- NaN
   }
   # The cdf is 0 if q <= 0 and is 1 if shape < 0 and 1+shape*q/scale <= 0
   # It is also 1 if q is +Inf
-  if (any(cdf0 <- q <= 0 & !invalidScale & !qIsNA)) {
+  if (any(cdf0 <- q <= 0 & !isNaN & !qIsNA)) {
     q[cdf0] <- 0
   }
   zw <- shape * q / scale
   cdf1cond <- (1 + zw <= 0 & shape < 0) | (is.infinite(q) & q > 0)
-  if (any(cdf1 <- cdf1cond & !invalidScale & !cdf0)) {
+  if (any(cdf1 <- cdf1cond & !isNaN & !cdf0)) {
     q[cdf1] <- -Inf
   }
   # Otherwise, the cdf is in (0, 1)
-  if (any(cdfp <- !cdf0 & !cdf1 & !invalidScale & !qIsNA)) {
+  if (any(cdfp <- !cdf0 & !cdf1 & !isNaN & !qIsNA)) {
     m2 <- q[cdfp] / scale[cdfp]
     q[cdfp] <- -m2 * log1pdx(zw[cdfp], ...)
   }
@@ -180,14 +186,20 @@ qGP <- function(p, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE,
   p <- rep_len(p, maxLen)
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
-  # The quantile is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0 & !is.na(scale))) {
-    p[invalidScale] <- NaN
+  # Return NA if p, loc, scale or shape is NA
+  if (any(pIsNA <- !complete.cases(p, scale, shape))) {
+    p[pIsNA] <- NA
+  }
+  # Quantile is undefined if scale <= 0 or any of the parameters are infinite
+  isNaN <- scale <= 0 | is.infinite(scale) | is.infinite(shape)
+  if (any(isNaN <- isNaN & !pIsNA)) {
+    p[isNaN] <- NaN
   }
   # Quantiles are scale [(-log(p))^(-shape) - 1] / shape
   #      which is scale BoxCox(-log(p), -shape)
-  p[!invalidScale] <- -scale[!invalidScale] *
-    BC(x = 1 - p[!invalidScale], lambda = -shape[!invalidScale], eps = eps)
+  cond <- !isNaN & !pIsNA
+  p[cond] <- -scale[cond] *
+    BC(x = 1 - p[cond], lambda = -shape[cond], eps = eps)
   return(p)
 }
 

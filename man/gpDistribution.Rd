@@ -55,8 +55,11 @@ other functions.
 The numerical arguments other than \code{n} are recycled to the length
 of the result.
 
-\code{NaN} is returned for any component of \code{scale} that is non-positive, with
-no warning given.
+\code{NA} is returned for any component of the inputs for which \code{x}, \code{q}, \code{p},
+\code{scale} or \code{shape} is \code{NA}.
+
+\code{NaN} is returned for any component of \code{scale} that is non-positive and
+for any component for which scale\code{and/or}shape\verb{are either}Inf\code{or}-Inf`, with no warning given.
 }
 \description{
 Density, distribution function, quantile function and random generation for
