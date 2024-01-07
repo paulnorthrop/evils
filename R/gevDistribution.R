@@ -205,8 +205,9 @@ qGEV <- function(p, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
   # The quantile is undefined if scale <= 0
   # Quantiles are loc + scale [(-log(p))^(-shape) - 1] / shape
   #      which is loc - scale BoxCox(-log(p), -shape)
-  p[!isNaN] <- loc[!isNaN] - scale[!isNaN] *
-    BC(x = -log(p[!isNaN]), lambda = -shape[!isNaN], eps = eps)
+  cond <- !isNaN & !pIsNA
+  p[cond] <- loc[cond] - scale[cond] *
+    BC(x = -log(p[cond]), lambda = -shape[cond], eps = eps)
   return(p)
 }
 
