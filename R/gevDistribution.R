@@ -65,8 +65,12 @@
 #'   The numerical arguments other than `n` are recycled to the length
 #'   of the result.
 #'
-#'   `NaN` is returned for any component of `scale` that is non-positive, with
-#'   no warning given.
+#'   `NA` is returned for any component of the inputs for which `x`, `q`, `p`,
+#'   `loc`, `scale` or `shape` is `NA`.
+#'
+#'   `NaN` is returned for any component of `scale` that is non-positive and
+#'   for any component for which `loc`, `scale` and/or `shape` are either `Inf`
+#'   or `-Inf`, with no warning given.
 #' @examples
 #' # example code
 #'
@@ -90,19 +94,21 @@ dGEV <- function(x, loc = 0, scale = 1, shape = 0, log = FALSE, ...) {
   if (any(xIsNA <- !complete.cases(x, loc, scale, shape))) {
     x[xIsNA] <- NA
   }
-  # The density is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0 & !xIsNA)) {
-    x[invalidScale] <- NaN
+  # Density is undefined if scale <= 0 or any of the parameters are infinite
+  isNaN <- scale <= 0 | is.infinite(loc) | is.infinite(scale) |
+    is.infinite(shape)
+  if (any(isNaN <- isNaN & !xIsNA)) {
+    x[isNaN] <- NaN
   }
   # The density is 0 if 1 + shape * (x - loc) / scale <= 0 or if x is
   # +/- infinity
   zw <- shape * (x - loc) / scale
   outOfBounds <- 1 + zw <= 0 | is.infinite(x)
-  if (any(zerod <- outOfBounds & !invalidScale & !xIsNA)) {
+  if (any(zerod <- outOfBounds & !isNaN & !xIsNA)) {
     x[zerod] <- -Inf
   }
   # Otherwise, the density is positive
-  if (any(posd <- !zerod & !invalidScale & !xIsNA)) {
+  if (any(posd <- !zerod & !isNaN & !xIsNA)) {
     m1 <- (shape[posd] + 1) * (x[posd] - loc[posd]) / scale[posd]
     m2 <- (x[posd] - loc[posd]) / scale[posd]
     logterm <- log1pdx(zw[posd], ...)
@@ -131,21 +137,23 @@ pGEV <- function(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
   if (any(qIsNA <- !complete.cases(q, loc, scale, shape))) {
     q[qIsNA] <- NA
   }
-  # The cdf is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0 & !qIsNA)) {
-    q[invalidScale] <- NaN
+  # The cdf is undefined if scale <= 0 or any of the parameters are infinite
+  isNaN <- scale <= 0 | is.infinite(loc) | is.infinite(scale) |
+    is.infinite(shape)
+  if (any(isNaN <- isNaN & !qIsNA)) {
+    q[isNaN] <- NaN
   }
   # Return 0 if q is -infinity and 1 if q is +infinity
-  if (any(qIsInf <- is.infinite(q) & !invalidScale & !qIsNA)) {
+  if (any(qIsInf <- is.infinite(q) & !isNaN & !qIsNA)) {
     q[qIsInf] <- log((1 + sign(q[qIsInf])) / 2)
   }
   # The cdf is 0 (shape > 0) or 1 (shape < 0) if 1+shape*(q-loc)/scale <= 0
   zw <- shape * (q - loc) / scale
-  if (any(cdf01 <- 1 + zw <= 0 & !invalidScale & !qIsInf & !qIsNA)) {
+  if (any(cdf01 <- 1 + zw <= 0 & !isNaN & !qIsInf & !qIsNA)) {
     q[cdf01] <- log(shape[cdf01] < 0)
   }
   # Otherwise, the cdf is in (0, 1)
-  if (any(cdfp <- !cdf01 & !invalidScale & !qIsInf & !qIsNA)) {
+  if (any(cdfp <- !cdf01 & !isNaN & !qIsInf & !qIsNA)) {
     m2 <- (q[cdfp] - loc[cdfp]) / scale[cdfp]
     q[cdfp] <- -exp(-m2 * log1pdx(zw[cdfp], ...))
   }
@@ -184,14 +192,21 @@ qGEV <- function(p, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
   loc <- rep_len(loc, maxLen)
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
-  # The quantile is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0 & !is.na(scale))) {
-    p[invalidScale] <- NaN
+  # Return NA if p, loc, scale or shape is NA
+  if (any(pIsNA <- !complete.cases(p, loc, scale, shape))) {
+    p[pIsNA] <- NA
   }
+  # Quantile is undefined if scale <= 0 or any of the parameters are infinite
+  isNaN <- scale <= 0 | is.infinite(loc) | is.infinite(scale) |
+    is.infinite(shape)
+  if (any(isNaN <- isNaN & !pIsNA)) {
+    p[isNaN] <- NaN
+  }
+  # The quantile is undefined if scale <= 0
   # Quantiles are loc + scale [(-log(p))^(-shape) - 1] / shape
   #      which is loc - scale BoxCox(-log(p), -shape)
-  p[!invalidScale] <- loc[!invalidScale] - scale[!invalidScale] *
-    BC(x = -log(p[!invalidScale]), lambda = -shape[!invalidScale], eps = eps)
+  p[!isNaN] <- loc[!isNaN] - scale[!isNaN] *
+    BC(x = -log(p[!isNaN]), lambda = -shape[!isNaN], eps = eps)
   return(p)
 }
 
