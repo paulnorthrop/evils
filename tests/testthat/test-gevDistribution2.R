@@ -104,6 +104,23 @@ test_that("pGEV and qGEV are consistent", {
   expect_equal(pGEV(qGEV(pvec, shape = xi3), shape = xi3), pvec)
 })
 
+# Repeat the last tests for lower.tail = FALSE and/or log.p = TRUE
+
+test_that("pGEV, qGEV consistent, lower.tail = FALSE and/or log.p = TRUE", {
+  expect_equal(pGEV(
+    qGEV(pvec, shape = xi1, lower.tail = FALSE),
+    shape = xi1, lower.tail = FALSE),
+    pvec)
+  expect_equal(pGEV(
+    qGEV(log(pvec), shape = xi2, log.p = TRUE),
+    shape = xi2, log.p = TRUE),
+    log(pvec))
+  expect_equal(pGEV(
+    qGEV(log(pvec), shape = xi3, lower.tail = FALSE, log.p = TRUE),
+    shape = xi3, lower.tail = FALSE, log.p = TRUE),
+    log(pvec))
+})
+
 # Check that NA parameter values result in an NA return
 
 test_that("dGEV: NA parameters produce an NA return", {
@@ -140,3 +157,12 @@ test_that("qGEV: infinite parameters, o scale <= 0, produces an NaN return", {
                     shape = c(-1e-6, 0, 0, Inf)),
                as.numeric(c(qGEV(0.6, shape = -1e-6), NaN, NaN, NaN)))
 })
+
+# Check that qGEV throws an error if p < 0 or p > 1
+
+test_that("qGEV, error if p < 0 or p > 1", {
+  expect_error(qGEV(p = -0.1))
+  expect_error(qGEV(p = 1.1))
+})
+
+#

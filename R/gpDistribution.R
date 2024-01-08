@@ -152,16 +152,16 @@ pGP <- function(q, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE,
   }
   if (lower.tail) {
     if (log.p) {
-      p <- DPQ::log1mexp(-q)
+      q <- DPQ::log1mexp(-q)
     } else {
-      p <- 1 - exp(q)
+      q <- 1 - exp(q)
     }
   } else {
     if (!log.p) {
-      p <- exp(q)
+      q <- exp(q)
     }
   }
-  return(p)
+  return(q)
 }
 
 #' @rdname gpDistribution

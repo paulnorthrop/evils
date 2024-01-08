@@ -159,15 +159,15 @@ pGEV <- function(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
   }
   if (lower.tail) {
     if (!log.p) {
-      p <- exp(q)
+      q <- exp(q)
     }
   } else {
-    p <- -expm1(q)
+    q <- -expm1(q)
     if (log.p) {
-      p <- log(p)
+      q <- log(q)
     }
   }
-  return(p)
+  return(q)
 }
 
 #' @rdname gevDistribution

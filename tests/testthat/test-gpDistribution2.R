@@ -103,6 +103,23 @@ test_that("pGP and qGP are consistent", {
   expect_equal(pGP(qGP(pvec, shape = xi3), shape = xi3), pvec)
 })
 
+# Repeat the last tests for lower.tail = FALSE and/or log.p = TRUE
+
+test_that("pGP, qGP consistent, lower.tail = FALSE and/or log.p = TRUE", {
+  expect_equal(pGP(
+    qGP(pvec, shape = xi1, lower.tail = FALSE),
+    shape = xi1, lower.tail = FALSE),
+    pvec)
+  expect_equal(pGP(
+    qGP(log(pvec), shape = xi2, log.p = TRUE),
+    shape = xi2, log.p = TRUE),
+    log(pvec))
+  expect_equal(pGP(
+    qGP(log(pvec), shape = xi3, lower.tail = FALSE, log.p = TRUE),
+    shape = xi3, lower.tail = FALSE, log.p = TRUE),
+    log(pvec))
+})
+
 # Add the test that caused a problem in distributions3
 
 ## Example distributions
@@ -184,4 +201,11 @@ test_that("pGP: infinite parameters produce an NaN return", {
 test_that("qGP: infinite parameters, or scale <= 0 produces an NaN return", {
   expect_equal(qGP(0.6, scale = c(1, 0, Inf, 1), shape = c(-1e-6, 0, 0, Inf)),
                as.numeric(c(qGP(0.6, shape = -1e-6), NaN, NaN, NaN)))
+})
+
+# Check that qGP throws an error if p < 0 or p > 1
+
+test_that("qGP, error if p < 0 or p > 1", {
+  expect_error(qGP(p = -0.1))
+  expect_error(qGP(p = 1.1))
 })
