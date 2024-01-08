@@ -173,22 +173,18 @@ gpLoglikDirect <- function(pars, excesses, individual = FALSE) {
   y <- excesses
   # sigma_u
   s <- pars[1]
-  if (s <= 0) {
-    stop("The GP scale parameter must be positive")
-  }
   # xi
   x <- pars[2]
-  #
+  # Quantities involved in the log-likelihood
   z <- x / s
   zy <- z * y
   t0 <- 1 + zy
-  if (any(t0 <= 0)) {
-    stop("The likelihood is 0 for this combination of data and parameters")
-  }
+  cond <- t0 > 0 & s > 0
   if (x == 0) {
-    gploglik <- -log(s) - y / s
+    gploglik <- ifelse(cond, -log(s) - y / s, -Inf)
   } else {
-    gploglik <- -log(s) - (1 + 1 / x) * log1p(zy)
+    log1pzyx <- suppressWarnings(ifelse(cond, log1p(zy) / x, 1))
+    gploglik <- ifelse(cond, -log(s) - (x + 1) * log1pzyx, -Inf)
   }
   if (!individual) {
     gploglik <- sum(gploglik)
@@ -207,25 +203,21 @@ gevLoglikDirect <- function(pars, maxima, individual = FALSE) {
   m <- pars[1]
   # sigma
   s <- pars[2]
-  if (s <= 0) {
-    stop("The GEV scale parameter must be positive")
-  }
   # xi
   x <- pars[3]
-  #
+  # Quantities involved in the log-likelihood
   z <- x / s
   w <- y - m
   v <- w / s
   zw <- z * w
   t0 <- 1 + zw
-  if (any(t0 <= 0)) {
-    stop("The likelihood is 0 for this combination of data and parameters")
-  }
+  cond <- t0 > 0 & s > 0
   if (x == 0) {
-    gevloglik <- -log(s) - v - exp(-v)
+    gevloglik <- ifelse(cond, -log(s) - v - exp(-v), -Inf)
   } else {
-    log1pzwx <- log1p(zw) / x
-    gevloglik <- -log(s) - (x + 1) * log1pzwx - exp(-log1pzwx)
+    log1pzwx <- suppressWarnings(ifelse(cond, log1p(zw) / x, 1))
+    gevloglik <- ifelse(cond, -log(s) - (x + 1) * log1pzwx - exp(-log1pzwx),
+                        -Inf)
   }
   if (!individual) {
     gevloglik <- sum(gevloglik)
