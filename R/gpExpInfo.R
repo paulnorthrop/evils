@@ -2,7 +2,7 @@
 #'
 #' Calculates the expected information matrix for the GP distribution.
 #'
-#' @param sigma,xi Numeric vectors. Respective values of the GP parameters
+#' @param scale,shape Numeric vectors. Respective values of the GP parameters
 #'   \eqn{\sigma} and \eqn{\xi}. For `gpExpInfo`, `scale` and `shape` must have
 #'   length 1.
 #' @details `gpExpInfo` calculates, for single pair of values

@@ -53,7 +53,7 @@ the contributions to the observed information, an
 \code{n} \eqn{ \times 3 \times 3} array. The second and third dimensions are
 named columns are named \code{loc}, \code{scale} and \code{shape}. If \code{sum = TRUE}, a
 \eqn{3 \times 3} matrix giving the observed information matrix, obtained
-by applying \code{\link{colsums}} to the array returned if \code{sum = FALSE}.
+by applying \code{\link{colSums}} to the array returned if \code{sum = FALSE}.
 }
 \description{
 Calculate the log-likelihood, score and observed information for

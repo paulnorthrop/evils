@@ -100,7 +100,7 @@ if \code{lower.tail = FALSE}.
 In \code{dGEV} and \code{pGEV}, calculations are performed on a log-scale, which
 involves the evaluation of \eqn{\log(1+z)/z}, where
 \eqn{z = \xi (x - \mu) / \sigma}. Direct naive calculation using
-\code{log(1+z)/z} is unstable for \code{z} close to \code{0}. Use of \code{\link{log1p(z)}}\verb{/z}
+\code{log(1+z)/z} is unstable for \code{z} close to \code{0}. Use of \code{\link{log1p}}\code{(z)/z}
 is much better, but cannot handle the cases where \code{x} is equal to \code{0} or is
 extremely close to \code{0}. \code{dGEV} and \code{pGEV} avoid these issues using a series
 approximation, implemented by \code{\link{log1pdx}}.

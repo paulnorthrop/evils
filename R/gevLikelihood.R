@@ -73,7 +73,7 @@
 #'   `n` \eqn{ \times 3 \times 3} array. The second and third dimensions are
 #'   named columns are named `loc`, `scale` and `shape`. If `sum = TRUE`, a
 #'   \eqn{3 \times 3} matrix giving the observed information matrix, obtained
-#'   by applying [`colsums`] to the array returned if `sum = FALSE`.
+#'   by applying [`colSums`] to the array returned if `sum = FALSE`.
 #' @examples
 #' ### Simulate some data
 #' set.seed(28122023)

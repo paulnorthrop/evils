@@ -86,7 +86,7 @@ dGP <- function(x, scale = 1, shape = 0, log = FALSE, ...) {
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
   # Return NA if x, scale or shape is NA
-  if (any(xIsNA <- !complete.cases(x, scale, shape))) {
+  if (any(xIsNA <- !stats::complete.cases(x, scale, shape))) {
     x[xIsNA] <- NA
   }
   # Density is undefined if scale <= 0 or any of the parameters are infinite
@@ -127,7 +127,7 @@ pGP <- function(q, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE,
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
   # Return NA if q, scale or shape is NA
-  if (any(qIsNA <- !complete.cases(q, scale, shape))) {
+  if (any(qIsNA <- !stats::complete.cases(q, scale, shape))) {
     q[qIsNA] <- NA
   }
   # The cdf is undefined if scale <= 0 or any of the parameters are infinite
@@ -187,7 +187,7 @@ qGP <- function(p, scale = 1, shape = 0, lower.tail = TRUE, log.p = FALSE,
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
   # Return NA if p, loc, scale or shape is NA
-  if (any(pIsNA <- !complete.cases(p, scale, shape))) {
+  if (any(pIsNA <- !stats::complete.cases(p, scale, shape))) {
     p[pIsNA] <- NA
   }
   # Quantile is undefined if scale <= 0 or any of the parameters are infinite

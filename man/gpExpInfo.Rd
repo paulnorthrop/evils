@@ -16,7 +16,7 @@ gp12e(scale, shape)
 gpExpInfo(scale, shape)
 }
 \arguments{
-\item{sigma, xi}{Numeric vectors. Respective values of the GP parameters
+\item{scale, shape}{Numeric vectors. Respective values of the GP parameters
 \eqn{\sigma} and \eqn{\xi}. For \code{gpExpInfo}, \code{scale} and \code{shape} must have
 length 1.}
 }

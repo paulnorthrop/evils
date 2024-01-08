@@ -44,7 +44,7 @@
 #'  In `dGEV` and `pGEV`, calculations are performed on a log-scale, which
 #'  involves the evaluation of \eqn{\log(1+z)/z}, where
 #'  \eqn{z = \xi (x - \mu) / \sigma}. Direct naive calculation using
-#'  `log(1+z)/z` is unstable for `z` close to `0`. Use of [`log1p(z)`]`/z`
+#'  `log(1+z)/z` is unstable for `z` close to `0`. Use of [`log1p`]`(z)/z`
 #'  is much better, but cannot handle the cases where `x` is equal to `0` or is
 #'  extremely close to `0`. `dGEV` and `pGEV` avoid these issues using a series
 #'  approximation, implemented by [`log1pdx`].
@@ -91,7 +91,7 @@ dGEV <- function(x, loc = 0, scale = 1, shape = 0, log = FALSE, ...) {
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
   # Return NA if x, loc, scale or shape is NA
-  if (any(xIsNA <- !complete.cases(x, loc, scale, shape))) {
+  if (any(xIsNA <- !stats::complete.cases(x, loc, scale, shape))) {
     x[xIsNA] <- NA
   }
   # Density is undefined if scale <= 0 or any of the parameters are infinite
@@ -134,7 +134,7 @@ pGEV <- function(q, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
   # Return NA if q, loc, scale or shape is NA
-  if (any(qIsNA <- !complete.cases(q, loc, scale, shape))) {
+  if (any(qIsNA <- !stats::complete.cases(q, loc, scale, shape))) {
     q[qIsNA] <- NA
   }
   # The cdf is undefined if scale <= 0 or any of the parameters are infinite
@@ -193,7 +193,7 @@ qGEV <- function(p, loc = 0, scale = 1, shape = 0, lower.tail = TRUE,
   scale <- rep_len(scale, maxLen)
   shape <- rep_len(shape, maxLen)
   # Return NA if p, loc, scale or shape is NA
-  if (any(pIsNA <- !complete.cases(p, loc, scale, shape))) {
+  if (any(pIsNA <- !stats::complete.cases(p, loc, scale, shape))) {
     p[pIsNA] <- NA
   }
   # Quantile is undefined if scale <= 0 or any of the parameters are infinite
