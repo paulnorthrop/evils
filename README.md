@@ -3,64 +3,27 @@
 
 # evils
 
+[![AppVeyor Build
+Status](https://ci.appveyor.com/api/projects/status/github/paulnorthrop/evils?branch=main&svg=true)](https://ci.appveyor.com/project/paulnorthrop/evils)
+[![R-CMD-check](https://github.com/paulnorthrop/evils/workflows/R-CMD-check/badge.svg)](https://github.com/paulnorthrop/evils/actions)
+[![Coverage
+Status](https://codecov.io/github/paulnorthrop/evils/coverage.svg?branch=main)](https://app.codecov.io/github/paulnorthrop/evils?branch=main)
+
 ## Evaluate Extreme Value Likelihoods Safely
 
-The **evils** package provides functions to calculate the
-log-likelihood, score and observed information for extreme value models
-in cases where the shape parameter is very close to zero. In these
-cases, …
+Provides functions to calculate contributions to the log-likelihood
+function, score function and observed information matrix from
+individuals observations for the GEV and GP extreme value models. If the
+shape parameter is close enough to zero, direct evaluation of some of
+the quantities involved can be unreliable. In these cases, the
+problematic terms involve log(1+x)/x and/or the first and second
+derivatives of thisfunction. Functions are provided to evaluate these
+quantities reliably when x is close to 0.
 
 ### An example
 
-Consider a single observation $y$ sampled from a generalised Pareto (GP)
-distribution with scale parameter $\sigma$ and shape parameter $\xi$.
-Let $i_{22}$ be the contribution of this observation to the (2, 2)
-element of the observed information matrix, that is, the negated value
-of the second derivative of the log-likelihood with respect to $\xi$.
-
-$i_{22}$ is continuous at $\xi = 0$ and can, in principle, be evaluated
-for values of $\xi$ that are arbitrarily close to 0. However, direct
-evaluation of $i_{22}$ is unreliable if $\xi$ is very close to zero. To
-avoid this problem we express $i_{22}$ as a series expansion in $\xi$,
-whose value is approximated using the [sumR
-package](https://cran.r-project.org/package=sumR). This is illustrated
-using the following code, which simulates a random sample from a GP
-distribution.
-
-``` r
-library(evils)
-
-### Simulate some data
-set.seed(15042022)
-y <- rGenPareto(100, 0, 1, 0)
-
-# Approximation using sumR::infinitesum()
-gpInfo(pars = c(1, 1e-7), excesses = y)[2, 2]
-gpInfo(pars = c(1, -1e-7), excesses = y)[2, 2]
-gpInfo(pars = c(1, 0), excesses = y)[2, 2]
-
-# Direct calculation, starting the break down
-gpInfoDirect(pars = c(1, 1e-7), excesses = y)[2, 2]
-gpInfoDirect(pars = c(1, -1e-7), excesses = y)[2, 2]
-
-# Direct calculation, getting worse
-gpInfoDirect(pars = c(1, 1e-10), excesses = y)[2, 2]
-gpInfoDirect(pars = c(1, -1e-10), excesses = y)[2, 2]
-```
-
-Similar problems occur when evaluating the log-likelihood and score
-function in the generalised Pareto case and for other extreme value
-models.
+Add example
 
 ### Installation
 
-To get the current released version from CRAN:
-
-``` r
-install.packages("evils")
-```
-
 ### Vignette
-
-See `vignette("evils-vignette", package = "evils")` for an overview of
-the package.
