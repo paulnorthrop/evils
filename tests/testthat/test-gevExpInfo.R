@@ -13,6 +13,11 @@ evilsMat1 <- cbind(c(gev11e(1, 0), gev12e0Constant, gev13e0Constant),
                    c(gev12e0Constant, gev22e0Constant, gev23e0Constant),
                    c(gev13e0Constant, gev23e0Constant, gev33e0Constant))
 
+# Based on the functions that create the constants
+evilsMat1f <- cbind(c(gev11e(1, 0), gev12e0Fn(), gev13e0Fn()),
+                   c(gev12e0Fn(), gev22e0Fn(), gev23e0Fn()),
+                   c(gev13e0Fn(), gev23e0Fn(), gev33e0Fn()))
+
 # Based on calling the functions with xi = 0
 evilsMat2 <- cbind(c(gev11e(1, 0), gev12e(1, 0), gev13e(1, 0)),
                    c(gev12e(1, 0), gev22e(1, 0), gev23e(1, 0)),
@@ -20,6 +25,10 @@ evilsMat2 <- cbind(c(gev11e(1, 0), gev12e(1, 0), gev13e(1, 0)),
 
 test_that("Expected Information constants agree with mev::gev.infomat()", {
   testthat::expect_equal(mevMat, evilsMat1)
+})
+
+test_that("Expected Information constant funs agree with mev::gev.infomat()", {
+  testthat::expect_equal(mevMat, evilsMat1f)
 })
 
 test_that("Expected Information constants agree with mev::gev.infomat()", {
