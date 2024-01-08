@@ -12,14 +12,18 @@ test_that("BC(lambda = NA) returns NA", {
   expect_equal(BC(x = 2, lambda = c(0, NA)), c(log(2), NA))
 })
 
+# Tests for abs(lambda) < 1e-6, the default value of eps
+
+lambda <- -1e-7
+
 test_that("BC(x = Inf, lambda < 0) returns -1/lambda", {
-  expect_equal(BC(x = Inf, lambda = -2), 1 / 2)
+  expect_equal(BC(x = Inf, lambda = -1e-7), -1 / lambda)
 })
 
 test_that("BC(x = 0, lambda < 0) returns -Inf", {
-  expect_equal(BC(x = 0, lambda = -2), -Inf)
+  expect_equal(BC(x = 0, lambda = -1e-7), -Inf)
 })
 
 test_that("BC(x = (Inf, 0), lambda < 0) returns (1/2, -Inf)", {
-  expect_equal(BC(x = c(Inf, 0), lambda = -2), c(1 / 2, -Inf))
+  expect_equal(BC(x = c(Inf, 0), lambda = -1e-7), c(-1 / lambda, -Inf))
 })
