@@ -40,7 +40,7 @@
 #'  In `dGP` and `pGP`, calculations are performed on a log-scale, which
 #'  involves the evaluation of \eqn{\log(1+z)/z}, where
 #'  \eqn{z = \xi x / \sigma}. Direct naive calculation using
-#'  `log(1+z)/z` is unstable for `z` close to `0`. Use of [`log1p(z)`]`/z`
+#'  `log(1+z)/z` is unstable for `z` close to `0`. Use of [`log1p`]`(z)/z`
 #'  is much better, but cannot handle the cases where `x` is equal to `0` or is
 #'  extremely close to `0`. `dGP` and `pGP` avoid these issues using a series
 #'  approximation, implemented by [`log1pdx`].

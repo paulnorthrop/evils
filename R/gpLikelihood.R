@@ -65,7 +65,7 @@
 #'   `n` \eqn{ \times 2 \times 2} array. The second and third dimensions are
 #'   named columns are named `scale` and `shape`. If `sum = TRUE`, a
 #'   \eqn{2 \times 2} matrix giving the observed information matrix, obtained
-#'   by applying [`colsums`] to the array returned if `sum = FALSE`.
+#'   by applying [`colSums`] to the array returned if `sum = FALSE`.
 #' @examples
 #' ### Simulate some data
 #' set.seed(28122023)

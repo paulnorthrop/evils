@@ -51,7 +51,7 @@ the contributions to the observed information, an
 \code{n} \eqn{ \times 2 \times 2} array. The second and third dimensions are
 named columns are named \code{scale} and \code{shape}. If \code{sum = TRUE}, a
 \eqn{2 \times 2} matrix giving the observed information matrix, obtained
-by applying \code{\link{colsums}} to the array returned if \code{sum = FALSE}.
+by applying \code{\link{colSums}} to the array returned if \code{sum = FALSE}.
 }
 \description{
 Calculate the log-likelihood, score and observed information for
