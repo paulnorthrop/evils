@@ -26,7 +26,6 @@
 \alias{lagrangianInterpolation}
 \alias{gpLoglikDirect}
 \alias{gevLoglikDirect}
-\alias{nhppLoglikDirect}
 \alias{BC}
 \title{Internal evils functions}
 \format{
@@ -90,8 +89,6 @@ lagrangianInterpolation(x0, y0)
 gpLoglikDirect(pars, excesses, individual = FALSE)
 
 gevLoglikDirect(pars, maxima, individual = FALSE)
-
-nhppLoglikDirect(pars, data, u, b = 1, nb = 365, individual = FALSE)
 
 BC(x, lambda, eps = 1e-06)
 }
