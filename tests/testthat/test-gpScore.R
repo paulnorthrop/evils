@@ -27,6 +27,6 @@ res2[4, ] <- 0
 # 1 + xi (x - mu) / sigma < 0 in this case
 res2[5, ] <- 0
 
-test_that("gpScore() returns 0 when scale <= 0", {
+test_that("gpScore(): NaN when scale <= 0, 0 when x out of bounds", {
   testthat::expect_equal(res1, res2, ignore_attr = TRUE)
 })

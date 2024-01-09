@@ -19,7 +19,8 @@ test_that("gevScore(shape = 0) agrees with the theoretical expression", {
   testthat::expect_equal(res1, res2, ignore_attr = TRUE)
 })
 
-# Check that gevScore() returns 0 when scale <= 0
+# Check gevScore() returns NaN when scale <= 0 and 0 when x is out of bounds
+
 x <- 0:4
 sigma <- -1:3
 xi <- c(0.2, 0, -1e-6, -2/3, -1)
@@ -31,6 +32,6 @@ res2[4, ] <- 0
 # 1 + xi (x - mu) / sigma < 0 in this case
 res2[5, ] <- 0
 
-test_that("gevScore() returns 0 when scale <= 0", {
+test_that("gevScore(): NaN when scale <= 0, 0 when x out of bounds", {
   testthat::expect_equal(res1, res2, ignore_attr = TRUE)
 })
