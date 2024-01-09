@@ -164,13 +164,13 @@ gevObsInfo <- function(x, loc = 0, scale = 1, shape = 0, sum = FALSE, ...) {
   infoArray <- array(NA, dim = c(length(x), 3, 3))
   # The density, and, hence the information, is undefined if scale <= 0
   if (any(invalidScale <- scale <= 0)) {
-    infoArray[invalidScale, ] <- NaN
+    infoArray[invalidScale, , ] <- NaN
   }
   # The density is 0 if 1 + shape * (x - loc) / scale <= 0
   # Set the score to 0 for these cases
   zw <- shape * (x - loc) / scale
   if (any(zerod <- 1 + zw <= 0 & !invalidScale)) {
-    infoArray[zerod] <- 0
+    infoArray[zerod, , ] <- 0
   }
   # Otherwise, the density is positive
   if (any(pos <- !zerod & !invalidScale)) {

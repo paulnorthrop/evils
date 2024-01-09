@@ -152,13 +152,13 @@ gpObsInfo <- function(x, scale = 1, shape = 0, sum = FALSE, ...) {
   infoArray <- array(NA, dim = c(length(x), 2, 2))
   # The density, and, hence the information, is undefined if scale <= 0
   if (any(invalidScale <- scale <= 0)) {
-    infoArray[invalidScale, ] <- NaN
+    infoArray[invalidScale, , ] <- NaN
   }
   # The density is 0 if 1 + shape * (x - loc) / scale <= 0
   # Set the score to 0 for these cases
   zx <- shape * x / scale
   if (any(zerod <- 1 + zx <= 0 & !invalidScale)) {
-    infoArray[zerod] <- 0
+    infoArray[zerod, , ] <- 0
   }
   # Otherwise, the density is positive
   if (any(pos <- !zerod & !invalidScale)) {
