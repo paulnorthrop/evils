@@ -15,7 +15,16 @@ test_that("gpScore(shape = 0) agrees with the theoretical expression", {
   testthat::expect_equal(res1, res2, ignore_attr = TRUE)
 })
 
+# Likewise, for sum = TRUE
+
+res1 <- gpScore(x, scale = sigma, shape = xi, sum = TRUE)
+res2 <- colSums(res2)
+test_that("gpScore(shape = 0, sum = TRUE) = theoretical expression", {
+  testthat::expect_equal(res1, res2, ignore_attr = TRUE)
+})
+
 # Check that gpScore() returns 0 when scale <= 0
+
 x <- 0:4
 sigma <- -1:3
 xi <- c(0.2, 0, -1e-6, -2/3, -1)

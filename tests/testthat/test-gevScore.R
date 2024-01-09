@@ -6,6 +6,7 @@ x <- rGEV(10)
 mu <- -1:8
 sigma <- c(1, 2.5)
 xi <- 0
+
 res1 <- gevScore(x, loc = mu, scale = sigma, shape = xi)
 
 w <- x - mu
@@ -16,6 +17,14 @@ scoreShape <- ws ^ 2 * (1 - exp(-ws)) / 2 - ws
 res2 <- cbind("loc" = scoreLoc, "scale" = scoreScale, "shape" = scoreShape)
 
 test_that("gevScore(shape = 0) agrees with the theoretical expression", {
+  testthat::expect_equal(res1, res2, ignore_attr = TRUE)
+})
+
+# Likewise, for sum = TRUE
+
+res1 <- gevScore(x, loc = mu, scale = sigma, shape = xi, sum = TRUE)
+res2 <- colSums(res2)
+test_that("gevScore(shape = 0, sum = TRUE) = theoretical expression", {
   testthat::expect_equal(res1, res2, ignore_attr = TRUE)
 })
 
