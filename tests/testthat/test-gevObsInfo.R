@@ -20,7 +20,8 @@ testFunction <- function(i, x) {
     loc <- par[1]
     scale <- par[2]
     shape <- par[3]
-    val <- gevLoglik(x = data, loc = loc, scale = scale, shape = shape, sum = sum)
+    val <- gevLoglik(x = data, loc = loc, scale = scale, shape = shape,
+                     sum = sum)
     return(val)
   }
   res2 <- numDeriv::hessian(func = fn, x = c(loc, scale, shape), data = x,
@@ -28,7 +29,8 @@ testFunction <- function(i, x) {
 
   # Note: we need to negate res2 to obtain the observed information
   test_that(paste0("gevObsInfo() vs stats::numHess(), shape = ", shape), {
-    testthat::expect_equal(res1, -res2, ignore_attr = "dimnames", tolerance = myTol)
+    testthat::expect_equal(res1, -res2, ignore_attr = "dimnames",
+                           tolerance = myTol)
   })
   return(invisible())
 }
