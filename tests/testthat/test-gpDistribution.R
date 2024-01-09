@@ -1,7 +1,7 @@
 # We check the functions pGP, qGP and rGP.
 
 # Set a tolerance for the comparison of the simulated values
-my_tol <- 1e-5 # testthat_tolerance()
+my_tol <- 1e-5 # > testthat_tolerance()
 
 # 1. Check that calling qGP with probabilities p and then calling pGP with
 #    the results gets us back to the initial probabilities.
