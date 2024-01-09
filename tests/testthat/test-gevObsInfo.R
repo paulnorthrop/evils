@@ -1,5 +1,5 @@
 # Check that the calculation of the GEV observed information agrees with
-# numerical derviatives
+# numerical derivatives
 
 set.seed(28122023)
 x <- rGEV(2)
