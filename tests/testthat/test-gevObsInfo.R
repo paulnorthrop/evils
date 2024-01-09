@@ -36,3 +36,20 @@ testFunction <- function(i, x) {
 }
 
 lapply(1:length(xi), testFunction, x = x)
+
+# Check gevScore() returns NaN when scale <= 0 and 0 when x is out of bounds
+
+x <- 0:4
+sigma <- -1:3
+xi <- c(0.2, 0, -1e-6, -2/3, -1)
+res1 <- gevObsInfo(x, scale = sigma, shape = xi)
+res2 <- array(NaN, dim = c(length(x), 3, 3))
+res2[3, , ] <- gevObsInfo(x[3], scale = sigma[3], shape = xi[3])
+# 1 + xi (x - mu) / sigma = 0 in this case
+res2[4, , ] <- 0
+# 1 + xi (x - mu) / sigma < 0 in this case
+res2[5, , ] <- 0
+
+test_that("gevObsInfo(): NaN when scale <= 0, 0 when x out of bounds", {
+  testthat::expect_equal(res1, res2, ignore_attr = TRUE)
+})
