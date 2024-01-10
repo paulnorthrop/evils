@@ -60,3 +60,21 @@ res2[5, , ] <- 0
 test_that("gpObsInfo(): NaN when scale <= 0, 0 when x out of bounds", {
   testthat::expect_equal(res1, res2, ignore_attr = TRUE)
 })
+
+# Check that NA main argument or parameter values result in an NA return
+
+test_that("gpObsInfo: NA parameters produce an NA return", {
+  expect_equal(gevObsInfo(NA, scale = c(1, NA, 1), shape = c(0, 0, NA)),
+               array(as.numeric(NA), dim = c(3, 3, 3)),
+               ignore_attr = "dimnames")
+})
+
+# Check that infinite parameter values result in an NaN return
+
+res2 <- array(NaN, dim = c(4, 2, 2))
+res2[1, , ] <- gpObsInfo(0)
+res2[2, , ] <- NA
+test_that("gpObsInfo: infinite parameters produce an NaN return", {
+  expect_equal(gpObsInfo(0, scale = c(1, NA, Inf, 1), shape = c(0, 0, 0, -Inf)),
+               res2, ignore_attr = "dimnames")
+})

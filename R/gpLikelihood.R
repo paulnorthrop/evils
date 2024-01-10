@@ -66,6 +66,13 @@
 #'   named columns are named `scale` and `shape`. If `sum = TRUE`, a
 #'   \eqn{2 \times 2} matrix giving the observed information matrix, obtained
 #'   by applying [`colSums`] to the array returned if `sum = FALSE`.
+#'
+#'   `NA` is returned for any component of the inputs for which `x`, `loc`,
+#'   `scale` or `shape` is `NA`.
+#'
+#'   `NaN` is returned for any component of `scale` that is non-positive and
+#'   for any component for which `loc`, `scale` and/or `shape` are either `Inf`
+#'   or `-Inf`, with no warning given.
 #' @examples
 #' ### Simulate some data
 #' set.seed(28122023)
@@ -116,18 +123,23 @@ gpScore <- function(x, scale = 1, shape = 0, sum = FALSE, ...) {
   shape <- rep_len(shape, maxLen)
   # Create a 3-column matrix to store the results
   scoreMat <- matrix(NA, maxLen, 2)
-  # The density, and, hence the score, is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0)) {
-    scoreMat[invalidScale, ] <- NaN
+  # Return NA if x, loc, scale or shape is NA
+  if (any(isNA <- !stats::complete.cases(x, scale, shape))) {
+    scoreMat[isNA, ] <- NA
   }
-  # The density is 0 if 1 + shape * (x - loc) / scale <= 0
+  # The score is undefined if scale <= 0 or any of the parameters are infinite
+  isNaN <- scale <= 0 | is.infinite(scale) | is.infinite(shape)
+  if (any(isNaN <- isNaN & !isNA)) {
+    scoreMat[isNaN, ] <- NaN
+  }
+  # The density is 0 if 1 + shape * x / scale <= 0
   # Set the score to 0 for these cases
   zx <- shape * x / scale
-  if (any(zerod <- 1 + zx <= 0 & !invalidScale)) {
+  if (any(zerod <- 1 + zx <= 0 & !isNA & !isNaN)) {
     scoreMat[zerod] <- 0
   }
   # Otherwise, the density is positive
-  if (any(pos <- !zerod & !invalidScale)) {
+  if (any(pos <- !zerod & !isNA & !isNaN)) {
     # Derivative of the log-likelihood with respect to scale = sigma
     scoreMat[pos, 1] <- gp1(x[pos], scale[pos], shape[pos], ...)
     # Derivative of the log-likelihood with respect to shape = xi
@@ -150,18 +162,23 @@ gpObsInfo <- function(x, scale = 1, shape = 0, sum = FALSE, ...) {
   shape <- rep_len(shape, maxLen)
   # Create an array to store the results
   infoArray <- array(NA, dim = c(length(x), 2, 2))
-  # The density, and, hence the information, is undefined if scale <= 0
-  if (any(invalidScale <- scale <= 0)) {
-    infoArray[invalidScale, , ] <- NaN
+  # Return NA if x, loc, scale or shape is NA
+  if (any(isNA <- !stats::complete.cases(x, scale, shape))) {
+    infoArray[isNA, , ] <- NA
   }
-  # The density is 0 if 1 + shape * (x - loc) / scale <= 0
+  # The score is undefined if scale <= 0 or any of the parameters are infinite
+  isNaN <- scale <= 0 | is.infinite(scale) | is.infinite(shape)
+  if (any(isNaN <- isNaN & !isNA)) {
+    infoArray[isNaN, , ] <- NaN
+  }
+  # The density is 0 if 1 + shape * x / scale <= 0
   # Set the score to 0 for these cases
   zx <- shape * x / scale
-  if (any(zerod <- 1 + zx <= 0 & !invalidScale)) {
+  if (any(zerod <- 1 + zx <= 0 & !isNA & !isNaN)) {
     infoArray[zerod, , ] <- 0
   }
   # Otherwise, the density is positive
-  if (any(pos <- !zerod & !invalidScale)) {
+  if (any(pos <- !zerod & !isNA & !isNaN)) {
     infoArray[pos, 1, 1] <- gp11(x[pos], scale[pos], shape[pos], ...)
     infoArray[pos, 1, 2] <- infoArray[pos, 2, 1] <-
       gp12(x[pos], scale[pos], shape[pos], ...)

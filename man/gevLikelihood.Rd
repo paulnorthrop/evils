@@ -54,6 +54,13 @@ the contributions to the observed information, an
 named columns are named \code{loc}, \code{scale} and \code{shape}. If \code{sum = TRUE}, a
 \eqn{3 \times 3} matrix giving the observed information matrix, obtained
 by applying \code{\link{colSums}} to the array returned if \code{sum = FALSE}.
+
+\code{NA} is returned for any component of the inputs for which \code{x}, \code{loc},
+\code{scale} or \code{shape} is \code{NA}.
+
+\code{NaN} is returned for any component of \code{scale} that is non-positive and
+for any component for which \code{loc}, \code{scale} and/or \code{shape} are either \code{Inf}
+or \code{-Inf}, with no warning given.
 }
 \description{
 Calculate the log-likelihood, score and observed information for
