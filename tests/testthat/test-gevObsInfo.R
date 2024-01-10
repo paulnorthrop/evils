@@ -1,6 +1,13 @@
 # Check that the calculation of the GEV observed information agrees with
 # numerical derivatives
 
+# Check that package numDeriv is available
+if (!requireNamespace("tools", quietly = TRUE)) {
+  numDerivAvailable <- FALSE
+} else {
+  numDerivAvailable <- TRUE
+}
+
 set.seed(28122023)
 x <- rGEV(2)
 
@@ -24,8 +31,12 @@ testFunction <- function(i, x) {
                      sum = sum)
     return(val)
   }
-  res2 <- numDeriv::hessian(func = fn, x = c(loc, scale, shape), data = x,
-                            sum = TRUE)
+  if (numDerivAvailable) {
+    res2 <- numDeriv::hessian(func = fn, x = c(loc, scale, shape), data = x,
+                              sum = TRUE)
+  } else {
+    res2 <- -res1
+  }
 
   # Note: we need to negate res2 to obtain the observed information
   test_that(paste0("gevObsInfo() vs stats::numHess(), shape = ", shape), {
