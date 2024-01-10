@@ -143,7 +143,7 @@ test_that("qGEV: NA parameters produce an NA return", {
 test_that("dGEV: infinite parameters produce an NaN return", {
   expect_equal(dGEV(0, loc = c(-2, Inf, 0, 0), scale = c(1, 1, Inf, 1),
                     shape = c(0, 0, 0, -Inf)),
-               as.numeric(c(dGEV(loc = -2, 0), NaN, NaN, NaN)))
+               as.numeric(c(dGEV(0, loc = -2), NaN, NaN, NaN)))
 })
 
 test_that("pGEV: infinite parameters produce an NaN return", {
