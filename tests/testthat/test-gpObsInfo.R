@@ -44,7 +44,7 @@ testFunction <- function(i, x) {
 
 lapply(1:length(xi), testFunction, x = x)
 
-# Check gevScore() returns NaN when scale <= 0 and 0 when x is out of bounds
+# Check gpObsInfo() returns NaN when scale <= 0 and 0 when x is out of bounds
 
 x <- 0:4
 sigma <- -1:3
