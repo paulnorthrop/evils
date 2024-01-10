@@ -82,3 +82,16 @@ testFunction <- function(i, x) {
 
 lapply(1:length(xi), testFunction, x = x)
 
+# Check that NA parameter values result in an NA return
+
+test_that("gpScore: NA parameters produce an NA return", {
+  expect_equal(gpScore(0, scale = c(1, NA, 1), shape = c(0, 0, NA)),
+               rbind(gpScore(0), matrix(NA, 2, 2)), ignore_attr = "dimnames")
+})
+
+# Check that infinite parameter values result in an NaN return
+
+test_that("gpScore: infinite parameters produce an NaN return", {
+  expect_equal(gpScore(0, scale = c(1, NA, Inf, 1), shape = c(0, 0, 0, -Inf)),
+               rbind(gpScore(0), rep(NA, 2), matrix(NaN, 2, 2)))
+})
