@@ -39,3 +39,46 @@ res2[5, ] <- 0
 test_that("gpScore(): NaN when scale <= 0, 0 when x out of bounds", {
   testthat::expect_equal(res1, res2, ignore_attr = TRUE)
 })
+
+# Check that the calculation of the GP score agrees with numerical derivatives
+
+# Check that package numDeriv is available
+if (!requireNamespace("tools", quietly = TRUE)) {
+  numDerivAvailable <- FALSE
+} else {
+  numDerivAvailable <- TRUE
+}
+
+set.seed(28122023)
+x <- rGP(2)
+
+xi <- c(0, 0.01, -0.01, 0.5, -0.5)
+sigma <- c(0.5, 1, 1.5, 2, 2.5)
+
+testFunction <- function(i, x) {
+  shape <- xi[i]
+  scale <- sigma[i]
+
+  res1 <- gpScore(x, scale = scale, shape = shape, sum = TRUE)
+  fn <- function(par, data, sum) {
+    scale <- par[1]
+    shape <- par[2]
+    val <- gpLoglik(x = data, scale = scale, shape = shape, sum = sum)
+    return(val)
+  }
+  if (numDerivAvailable) {
+    res2 <- numDeriv::grad(func = fn, x = c(scale, shape), data = x,
+                           sum = TRUE)
+  } else {
+    res2 <- res1
+  }
+
+  # Note: we need to negate res2 to obtain the observed information
+  test_that(paste0("gpScore() vs stats::numHess(), shape = ", shape), {
+    testthat::expect_equal(res1, res2, ignore_attr = "names")
+  })
+  return(invisible())
+}
+
+lapply(1:length(xi), testFunction, x = x)
+
