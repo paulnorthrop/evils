@@ -10,5 +10,6 @@
 #' x is close to 0.
 #'
 #' @details Add details
+#' @importFrom stats predict
 #' @docType package
 "_PACKAGE"
