@@ -3,7 +3,7 @@
 ## f(x) = log(1 + x) / x
 
 # Orders of the Padé numerator and denominator.
-L <- M <- 1
+L <- M <- 3
 # Taylor series coefficients of expansion about x = 0, where f(0) = 1
 j <- seq_len(L + M + 1) - 1
 A <- (-1) ^ j / (j + 1)
