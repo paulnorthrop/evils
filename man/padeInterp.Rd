@@ -7,7 +7,7 @@
 \usage{
 padeInterp(L, M, A, f, xint)
 
-\method{predict}{pade}(object, x)
+\method{predict}{pade}(object, x, ...)
 }
 \arguments{
 \item{L}{An integer. Order of the Padé numerator.}
@@ -27,6 +27,8 @@ which interpolation is required.}
 
 \item{x}{A numeric vector. Values at which to evaluate a Padé approximation
 of \eqn{f(x)}.}
+
+\item{...}{Additional arguments. None are used by this function.}
 }
 \value{
 \code{padeInterp} returns an object (a list) a class \code{"pade"} with two

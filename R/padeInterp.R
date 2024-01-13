@@ -16,6 +16,7 @@
 #' @param object An object of class `"pade"` returned from `padeInterp`.
 #' @param x A numeric vector. Values at which to evaluate a Padé approximation
 #'   of \eqn{f(x)}.
+#' @param ... Additional arguments. None are used by this function.
 #' @details If `f` is missing then this function behaves in the same way as
 #'   the function `Pade` in the `Pade` package.
 #'
@@ -84,7 +85,7 @@ padeInterp <- function (L, M, A, f, xint) {
   if (missing(f)) {
     padeCoeff <- solve(PQ, -utils::head(A, matSize))
     numer <- utils::head(padeCoeff, lPlus1)
-    denom <- c(1, tail(padeCoeff, M))
+    denom <- c(1, utils::tail(padeCoeff, M))
   } else {
     mPlus1 <- M + 1L
     x1 <- xint[1]
@@ -109,7 +110,7 @@ padeInterp <- function (L, M, A, f, xint) {
 
 #' @rdname padeInterp
 #' @export
-predict.pade <- function(object, x) {
+predict.pade <- function(object, x, ...) {
   nP <- length(object$Px)
   num <- outer(x[1:length(x)], 0:(nP - 1), "^") %*% object$Px
   nQ <- length(object$Qx)
