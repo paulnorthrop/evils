@@ -14,7 +14,8 @@ Description: Provides functions to calculate contributions to the
   quantities reliably when x is close to 0.
 Imports: 
     DPQ,
-    stats
+    stats,
+    utils
 License: GPL (>= 2)
 Encoding: UTF-8
 Depends:

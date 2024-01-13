@@ -13,6 +13,7 @@
 #' @param f A function that returns the value of \eqn{f(x)}.
 #' @param xint A numeric vector of length 2. The values of \eqn{x} between
 #'   which interpolation is required.
+#' @param object An object of class `"pade"` returned from `padeInterp`.
 #' @param x A numeric vector. Values at which to evaluate a Padé approximation
 #'   of \eqn{f(x)}.
 #' @details If `f` is missing then this function behaves in the same way as
@@ -76,13 +77,13 @@ padeInterp <- function (L, M, A, f, xint) {
   PQ <- matrix(0, ncol = matSize, nrow = matSize)
   PQ[1:lPlus1, 1:lPlus1] <- -diag(lPlus1)
   for (i in seq_len(M)) {
-    PQ[, lPlus1 + i] <- c(rep.int(0, i), head(A, (matSize - i)))
+    PQ[, lPlus1 + i] <- c(rep.int(0, i), utils::head(A, (matSize - i)))
   }
   # If f is not supplied then use Pade::Pade()
   # Otherwise, extend PQ and calculate the extra pair of coefficients
   if (missing(f)) {
-    padeCoeff <- solve(PQ, -head(A, matSize))
-    numer <- head(padeCoeff, lPlus1)
+    padeCoeff <- solve(PQ, -utils::head(A, matSize))
+    numer <- utils::head(padeCoeff, lPlus1)
     denom <- c(1, tail(padeCoeff, M))
   } else {
     mPlus1 <- M + 1L
@@ -95,9 +96,9 @@ padeInterp <- function (L, M, A, f, xint) {
     coef1 <- c(x1 ^ lpow, -f1 * x1 ^ mpow, x1 ^ lPlus1, -f1 * x1 ^ mPlus1)
     coef2 <- c(x2 ^ lpow, -f2 * x2 ^ mpow, x2 ^ lPlus1, -f2 * x2 ^ mPlus1)
     PQ <- rbind(cbind(PQ, 0, 0), coef1, coef2)
-    headA <- c(head(A, matSize), -f1, -f2)
+    headA <- c(utils::head(A, matSize), -f1, -f2)
     padeCoeff <- solve(PQ, -headA)
-    numer <- c(head(padeCoeff, lPlus1), padeCoeff[lPlus1 + mPlus1])
+    numer <- c(utils::head(padeCoeff, lPlus1), padeCoeff[lPlus1 + mPlus1])
     Qcoefs <- c((lPlus1 + 1L):(lPlus1 + M), lPlus1 + mPlus1 + 1L)
     denom <- c(1, padeCoeff[Qcoefs])
   }

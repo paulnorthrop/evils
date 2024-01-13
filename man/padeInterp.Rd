@@ -23,6 +23,8 @@ series of a function \eqn{f(x)} about some point.}
 \item{xint}{A numeric vector of length 2. The values of \eqn{x} between
 which interpolation is required.}
 
+\item{object}{An object of class \code{"pade"} returned from \code{padeInterp}.}
+
 \item{x}{A numeric vector. Values at which to evaluate a Padé approximation
 of \eqn{f(x)}.}
 }
