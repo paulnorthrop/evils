@@ -86,8 +86,8 @@ padeInterp <- function (L, M, A, f, xint) {
     denom <- c(1, tail(padeCoeff, M))
   } else {
     mPlus1 <- M + 1L
-    x1 <- x[1]
-    x2 <- x[2]
+    x1 <- xint[1]
+    x2 <- xint[2]
     f1 <- f(x1)
     f2 <- f(x2)
     lpow <- seq_len(lPlus1) - 1
