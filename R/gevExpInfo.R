@@ -34,7 +34,7 @@
 #'   expectation is unstable when \eqn{\xi} is close to 0. Instead, we use
 #'   a quadratic approximation over `(-eps, eps)`, from a Lagrangian
 #'   interpolation of the values from the direct calculation for \eqn{\xi = }
-#'   `-eps`, 0 and `eps`.
+#'   `-eps`, \eqn{0} and `eps`.
 #' @returns `gevExpInfo` returns a 3 by 3 numeric matrix with row and column
 #'   named `loc, scale, shape`. The other functions return a numeric vector of
 #'   length equal to the maximum of the lengths of the arguments, excluding

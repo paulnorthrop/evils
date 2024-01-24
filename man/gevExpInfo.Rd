@@ -69,7 +69,7 @@ The expectation in \code{gev11e} can be calculated in a direct way for all
 expectation is unstable when \eqn{\xi} is close to 0. Instead, we use
 a quadratic approximation over \verb{(-eps, eps)}, from a Lagrangian
 interpolation of the values from the direct calculation for \eqn{\xi = }
-\code{-eps}, 0 and \code{eps}.
+\code{-eps}, \eqn{0} and \code{eps}.
 }
 \examples{
 # Expected information matrices for ...
