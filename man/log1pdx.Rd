@@ -14,6 +14,10 @@ d2log1pdx(x, eps = 1e-06)
 }
 \arguments{
 \item{x}{A numeric vector with values \eqn{x \geq -1}.}
+
+\item{eps}{A numeric scalar. For values of \eqn{x} that lie in
+\verb{(-eps, eps)} an approximation is used instead of a direct calculation.
+See \strong{Details}.}
 }
 \value{
 A numeric vector.
@@ -25,7 +29,9 @@ derivatives \eqn{h'(x) = x^{-1}(1+x)^{-1} - \log(1+x)/x^2} and
 \eqn{h''(x) = 2 \log(1+x)/x^3 - 2 x^{-2}(1+x)^{-1} - x^{-1}(1+x)^{-2}}.
 }
 \details{
-Add details
+For \code{dlog1pdx} and \code{d2log1pdx} a quadratic approximation over
+\verb{(-eps, eps)}, from a Lagrangian interpolation of the values from the
+direct calculation for \eqn{x = } \code{-eps}, \eqn{0} and \code{eps}.
 }
 \examples{
 # In the limit as x tends to 0, log(1+x)/x = 1

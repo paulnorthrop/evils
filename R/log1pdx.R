@@ -6,7 +6,12 @@
 #' \eqn{h''(x) = 2 \log(1+x)/x^3 - 2 x^{-2}(1+x)^{-1} - x^{-1}(1+x)^{-2}}.
 #'
 #' @param x A numeric vector with values \eqn{x \geq -1}.
-#' @details Add details
+#' @param eps A numeric scalar. For values of \eqn{x} that lie in
+#'   `(-eps, eps)` an approximation is used instead of a direct calculation.
+#'   See **Details**.
+#' @details For `dlog1pdx` and `d2log1pdx` a quadratic approximation over
+#'   `(-eps, eps)`, from a Lagrangian interpolation of the values from the
+#'   direct calculation for \eqn{x = } `-eps`, \eqn{0} and `eps`.
 #' @return A numeric vector.
 #' @examples
 #' # In the limit as x tends to 0, log(1+x)/x = 1
