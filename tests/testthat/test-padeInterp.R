@@ -37,6 +37,6 @@ test_that("padeInterp() agrees with Pade::Pade()", {
 test_that("padeInterp() errors when L is not an integer", {
   expect_error(padeInterp(L + 0.1, M, A))
 })
-test_that("padeInterp() errors when A is not longer enough", {
+test_that("padeInterp() errors when A is not long enough", {
   expect_error(padeInterp(L, M, A[-1]))
 })
