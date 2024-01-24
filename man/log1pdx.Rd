@@ -6,57 +6,17 @@
 \alias{d2log1pdx}
 \title{Accurate \code{log(1+x)/x} computation (and similar)}
 \usage{
-log1pdx(
-  x,
-  minL1 = -0.79149064,
-  eps2 = 0.01,
-  tol_logcf = 1e-14,
-  trace.lcf = FALSE,
-  logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.
-)
+log1pdx(x)
 
-dlog1pdx(
-  x,
-  minL1 = -0.79149064,
-  eps2 = 0.01,
-  tol_logcf = 1e-14,
-  trace.lcf = FALSE,
-  logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.
-)
+dlog1pdx(x, eps = 1e-06)
 
-d2log1pdx(
-  x,
-  minL1 = -0.79149064,
-  eps2 = 0.01,
-  tol_logcf = 1e-14,
-  trace.lcf = FALSE,
-  logCF = if (is.numeric(x)) DPQ::logcf else DPQ::logcfR.
-)
+d2log1pdx(x, eps = 1e-06)
 }
 \arguments{
-\item{x}{A numeric vector with values \eqn{x > -1}.}
-
-\item{minL1}{A negative cutoff \eqn{m_l}. For \eqn{x \in (m_l, 1)} the
-computations are based on the series expansion 4.1.29 on page 68 of
-Abramowitz and Stegun (1972).}
-
-\item{eps2}{A non-negative cutoff \eqn{\epsilon_2}. For
-\eqn{|x| > \epsilon_2}, \code{\link[DPQ:logcf]{logcf}} is used in the computation
-of \eqn{\log(1+x)/x} using the series expansion. Otherwise, that is,
-\eqn{|x| \leq \epsilon_2}, only a few terms of the expansion are used.}
-
-\item{tol_logcf}{A non-negative number indicating the tolerance (maximal
-relative error) for the \code{\link[DPQ:logcf]{logcf}} function.}
-
-\item{trace.lcf}{A logical scalar. Used in
-\code{\link[DPQ:logcf]{logcf}}\verb{(.., trace = trace.lcf)}.}
-
-\item{logCF}{The function to be used as \code{\link[DPQ:logcf]{logcf}}. The default
-chooses the pure \R \code{logcfR()} when \code{x} is not numeric, and chooses the
-C-based \code{logcf()} when \code{is.numeric(x)} is \code{TRUE}.}
+\item{x}{A numeric vector with values \eqn{x \geq -1}.}
 }
 \value{
-A numeric vector (with the same attributes as \code{x}).
+A numeric vector.
 }
 \description{
 Compute the function \eqn{h(x) = \log(1+x)/x} accurately also for small \eqn{x}, that is,
@@ -65,48 +25,7 @@ derivatives \eqn{h'(x) = x^{-1}(1+x)^{-1} - \log(1+x)/x^2} and
 \eqn{h''(x) = 2 \log(1+x)/x^3 - 2 x^{-2}(1+x)^{-1} - x^{-1}(1+x)^{-2}}.
 }
 \details{
-For \eqn{x} in \eqn{(m_l, 1)} the computations are based on the
-series expansion
-\deqn{\log(1+x) = 2 \left( t+\frac{t^3}{3}+\frac{t^5}{5}+\cdots \right),}
-where \eqn{t = x/(2+x)} which is formula 4.1.29 on page 68 of
-Abramowitz and Stegun (1972).
-
-Different computations are used in 3 different ranges of \eqn{x}.
-Let \eqn{y = t^2}.
-
-For \code{log1pdx}:
-\itemize{
-\item \eqn{x < m_l} or \eqn{x > 1}:
-\verb{log1pdx(x):=} \code{\link{log1p}} \verb{/x};
-\item \eqn{|x| \leq \epsilon_2}:
-\eqn{\frac{2}{2+x}\left((((\frac19y+\frac17)y+\frac15)y+\frac13)y+1\right)};
-\item \eqn{x \in (m_l, 1)} and \eqn{|x| > \epsilon_2}:
-\eqn{\frac{2}{2+x}} \code{\link{logcf}}\eqn{(y, 1, 2)}.
-}
-
-For \code{dlog1pdx}:
-\itemize{
-\item \eqn{x < m_l} or \eqn{x > 1}:
-\verb{dlog1pdx(x):= 1/(x*(1 + x)) - } \code{\link{log1p}} \verb{/x^2};
-\item \eqn{|x| \leq \epsilon_2}:
-\eqn{-\frac{1}{(2+x)^2}} \eqn{\left(\frac{2+x}{1+x} + 2 t
-   ((((\frac{1}{11}y+\frac19)y+\frac17)y+\frac15)y+\frac13\right)};
-\item \eqn{x \in (m_l, 1)} and \eqn{|x| > \epsilon_2}:
-\eqn{-\frac{1}{(2+x)^2}} \eqn{\Big(\frac{2+x}{1+x} + 2 t}
-\code{\link{logcf}}\eqn{(y, 3, 2)\Big)}.
-}
-
-For \code{d2log1pdx}:
-\itemize{
-\item \eqn{x < m_l} or \eqn{x > 1}:
-\code{dlog1pdx(x):= 2} \code{\link{log1p}} \verb{/x^3 - 2/(x^2*(1+x)) - 1/(x*(1 + x)^2)};
-\item \eqn{|x| \leq \epsilon_2}:
-\eqn{\frac{4}{(2+x)^3}} \eqn{\left(\frac{(2+x)^2}{4(1+x)^2} +
-   ((((\frac{1}{11}y+\frac19)y+\frac17)y+\frac15)y+\frac13\right)};
-\item \eqn{x \in (m_l, 1)} and \eqn{|x| > \epsilon_2}:
-\eqn{\frac{4}{(2+x)^3}} \eqn{\Big(\frac{(2+x)^2}{4(1+x)^2} + }
-\code{\link{logcf}}\eqn{(y, 3, 2)\Big)}.
-}
+Add details
 }
 \examples{
 # In the limit as x tends to 0, log(1+x)/x = 1
@@ -143,14 +62,4 @@ y1 <- d2log1pdx(x)
 y2 <- 2 * log1p(x) / x ^ 3 - 2 / (x ^ 2 * (1 + x)) - 1 / (x * (1 + x) ^ 2)
 y <- cbind(y1, y2)
 matplot(x, y, type = "l")
-}
-\references{
-Abramowitz, M. and Stegun, I. A. (1972) Handbook of Mathematical
-Functions. New York: Dover.
-\url{https://en.wikipedia.org/wiki/Abramowitz_and_Stegun}
-provides links to the full text, which is in public domain.
-}
-\author{
-Paul Northrop created these functions by modifying the code in
-\code{\link[DPQ:log1pmx]{log1pmx}}.
 }
